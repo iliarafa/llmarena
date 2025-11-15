@@ -7,7 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCreditBalance } from "@/hooks/useCreditBalance";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Coins } from "lucide-react";
+import { LogOut, User, Coins, History } from "lucide-react";
+import { Link } from "wouter";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -170,6 +171,12 @@ export default function Home() {
                   </div>
                 </div>
                 <DropdownMenuSeparator />
+                <Link href="/usage-history">
+                  <DropdownMenuItem data-testid="button-usage-history">
+                    <History className="w-4 h-4 mr-2" />
+                    Usage History
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem onClick={handleLogout} data-testid="button-logout">
                   <LogOut className="w-4 h-4 mr-2" />
                   {isGuest ? "Clear Token" : "Logout"}

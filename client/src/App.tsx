@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import Home from "@/pages/home";
 import Landing from "@/pages/landing";
+import UsageHistory from "@/pages/usage-history";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -46,6 +47,7 @@ function Router() {
       ) : isAuthenticated || isValidGuest ? (
         <>
           <Route path="/" component={Home} />
+          <Route path="/usage-history" component={UsageHistory} />
           <Route component={NotFound} />
         </>
       ) : (

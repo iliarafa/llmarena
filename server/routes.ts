@@ -74,6 +74,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get usage history
+  app.get("/api/usage-history", requireAuth, async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const authId = getAuthId(req);
+      
+      let history: any[] = [];
+      if (authId.userId) {
+        history = await storage.getUserUsageHistory(authId.userId, limit);
+      } else if (authId.guestTokenId) {
+        history = await storage.getGuestUsageHistory(authId.guestTokenId, limit);
+      }
+      
+      res.json(history);
+    } catch (error: any) {
+      console.error("Usage history error:", error);
+      res.status(500).json({ error: "Failed to fetch usage history" });
+    }
+  });
+
   // Protected comparison endpoint with credit checking
   app.post("/api/compare", requireAuth, async (req, res) => {
     try {
