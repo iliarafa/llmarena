@@ -79,9 +79,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { prompt, modelIds } = compareRequestSchema.parse(req.body);
       
-      // Check credit balance (placeholder cost: 1 credit per model)
+      // Calculate credit cost based on tiered pricing
+      const modelCount = modelIds.length;
+      const creditCostMap: Record<number, number> = {
+        1: 3,
+        2: 5,
+        3: 7,
+        4: 10,
+      };
+      const creditCost = creditCostMap[modelCount];
+      
+      if (!creditCost) {
+        return res.status(400).json({
+          error: "Invalid model count",
+          message: "Please select between 1 and 4 models.",
+        });
+      }
+      
+      // Check credit balance
       const creditBalance = parseFloat(getCreditBalance(req));
-      const creditCost = modelIds.length; // 1 credit per model
       
       if (creditBalance < creditCost) {
         return res.status(402).json({
