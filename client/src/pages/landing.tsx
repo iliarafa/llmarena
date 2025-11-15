@@ -176,6 +176,11 @@ export default function Landing() {
             </CardContent>
           </Card>
         </div>
+
+        <footer className="mt-16 pt-8 border-t text-center text-sm text-muted-foreground">
+          <p>v 1.0</p>
+          <p>This Whole World LLC - November 2025</p>
+        </footer>
       </div>
     </div>
   );
