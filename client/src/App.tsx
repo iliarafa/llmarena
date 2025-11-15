@@ -55,7 +55,7 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={Landing} />
-          <Route component={NotFound} />
+          <Route path="/:rest*" component={NotFound} />
         </>
       )}
     </Switch>
