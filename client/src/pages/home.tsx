@@ -3,6 +3,7 @@ import ModelSelector, { AVAILABLE_MODELS, type ModelId } from "@/components/Mode
 import PromptInput from "@/components/PromptInput";
 import ComparisonGrid, { type ModelResponse } from "@/components/ComparisonGrid";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Home() {
   const [selectedModels, setSelectedModels] = useState<ModelId[]>(["gpt-4o", "claude-sonnet"]);
@@ -10,7 +11,6 @@ export default function Home() {
   const [responses, setResponses] = useState<ModelResponse[]>([]);
   const { toast } = useToast();
 
-  // todo: remove mock functionality
   const handleCompare = async () => {
     if (selectedModels.length === 0) {
       toast({
@@ -38,28 +38,35 @@ export default function Home() {
       }))
     );
 
-    // Mock API calls - simulate different response times
-    selectedModels.forEach((modelId, index) => {
-      setTimeout(() => {
-        setResponses(prev => 
-          prev.map(r => 
-            r.modelId === modelId
-              ? {
-                  modelId,
-                  response: `This is a mock response from ${AVAILABLE_MODELS.find(m => m.id === modelId)?.name}.\n\nYour prompt was: "${prompt}"\n\nIn a real implementation, this would be an actual AI-generated response with detailed analysis and insights tailored to your question.`,
-                  generationTime: Math.floor(Math.random() * 2000) + 500,
-                  tokenCount: Math.floor(Math.random() * 500) + 200
-                }
-              : r
-          )
-        );
-      }, (index + 1) * 800);
-    });
-
     toast({
       title: "Generating responses",
       description: `Comparing across ${selectedModels.length} model${selectedModels.length > 1 ? 's' : ''}`
     });
+
+    try {
+      const res = await apiRequest("POST", "/api/compare", {
+        prompt,
+        modelIds: selectedModels
+      });
+
+      const result = await res.json();
+      setResponses(result.responses);
+    } catch (error: any) {
+      console.error("Comparison error:", error);
+      
+      setResponses(
+        selectedModels.map(modelId => ({
+          modelId,
+          error: "Failed to generate response"
+        }))
+      );
+
+      toast({
+        title: "Error",
+        description: "Failed to generate comparisons. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const models = AVAILABLE_MODELS.filter(m => selectedModels.includes(m.id));
