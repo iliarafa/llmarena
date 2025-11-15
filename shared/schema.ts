@@ -34,6 +34,8 @@ export const guestTokens = pgTable("guest_tokens", {
   creditBalance: decimal("credit_balance", { precision: 10, scale: 2 }).notNull().default("0"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   lastUsedAt: timestamp("last_used_at"),
+  linkedAt: timestamp("linked_at"),
+  linkedToUserId: varchar("linked_to_user_id").references(() => users.id),
 });
 
 // Usage history for tracking comparisons

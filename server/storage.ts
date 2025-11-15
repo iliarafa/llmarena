@@ -27,11 +27,13 @@ export interface IStorage {
   getGuestTokenByToken(token: string): Promise<GuestToken | undefined>;
   updateGuestTokenCredits(tokenId: string, newBalance: string): Promise<void>;
   updateGuestTokenLastUsed(tokenId: string): Promise<void>;
+  markGuestTokenAsLinked(tokenId: string, userId: string): Promise<void>;
   
   // Usage tracking
   logComparison(usage: InsertUsageHistory): Promise<UsageHistory>;
   getUserUsageHistory(userId: string, limit?: number): Promise<UsageHistory[]>;
   getGuestUsageHistory(guestTokenId: string, limit?: number): Promise<UsageHistory[]>;
+  linkGuestHistoryToUser(guestTokenId: string, userId: string): Promise<void>;
 }
 
 export class DbStorage implements IStorage {
@@ -95,6 +97,16 @@ export class DbStorage implements IStorage {
       .where(eq(guestTokens.id, tokenId));
   }
 
+  async markGuestTokenAsLinked(tokenId: string, userId: string): Promise<void> {
+    await db.update(guestTokens)
+      .set({ 
+        linkedAt: new Date(),
+        linkedToUserId: userId,
+        creditBalance: "0",
+      })
+      .where(eq(guestTokens.id, tokenId));
+  }
+
   // Usage tracking
   async logComparison(insertUsage: InsertUsageHistory): Promise<UsageHistory> {
     const result = await db.insert(usageHistory).values(insertUsage).returning();
@@ -115,6 +127,15 @@ export class DbStorage implements IStorage {
       .where(eq(usageHistory.guestTokenId, guestTokenId))
       .orderBy(desc(usageHistory.timestamp))
       .limit(limit);
+  }
+
+  async linkGuestHistoryToUser(guestTokenId: string, userId: string): Promise<void> {
+    await db.update(usageHistory)
+      .set({ 
+        userId: userId,
+        guestTokenId: null,
+      })
+      .where(eq(usageHistory.guestTokenId, guestTokenId));
   }
 }
 

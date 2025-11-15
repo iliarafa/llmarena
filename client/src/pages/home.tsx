@@ -5,7 +5,9 @@ import ComparisonGrid, { type ModelResponse } from "@/components/ComparisonGrid"
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreditBalance } from "@/hooks/useCreditBalance";
+import { useAccountLinking } from "@/hooks/useAccountLinking";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, Coins, History } from "lucide-react";
 import { Link } from "wouter";
@@ -25,6 +27,7 @@ export default function Home() {
   const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
   const { creditBalance } = useCreditBalance();
+  useAccountLinking();
   
   const isGuest = !isAuthenticated && !!localStorage.getItem("guestToken");
   
@@ -189,6 +192,8 @@ export default function Home() {
 
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         <div className="max-w-4xl mx-auto space-y-6">
+          {isGuest && <GuestAccountBanner creditBalance={creditBalance} />}
+          
           <ModelSelector 
             selectedModels={selectedModels}
             onSelectionChange={setSelectedModels}

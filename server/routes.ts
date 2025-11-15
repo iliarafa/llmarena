@@ -74,6 +74,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Link guest token to authenticated user account (transfer credits)
+  app.post("/api/link-guest-account", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any).claims.sub;
+      const { guestToken } = req.body;
+      
+      if (!guestToken) {
+        return res.status(400).json({ error: "Guest token is required" });
+      }
+      
+      // Verify guest token exists
+      const token = await storage.getGuestTokenByToken(guestToken);
+      if (!token) {
+        return res.status(404).json({ error: "Invalid guest token" });
+      }
+      
+      // Prevent re-linking tokens that have already been linked
+      if (token.linkedAt || token.linkedToUserId) {
+        return res.status(400).json({ 
+          error: "Token already linked",
+          message: "This guest token has already been linked to an account." 
+        });
+      }
+      
+      // Prevent linking tokens with zero balance
+      if (parseFloat(token.creditBalance) === 0) {
+        return res.status(400).json({ 
+          error: "No credits to transfer",
+          message: "This guest token has no credits to transfer." 
+        });
+      }
+      
+      // Get or create user
+      const user = await storage.getUser(userId) || await storage.upsertUser({
+        id: userId,
+        email: (req.user as any).claims.email,
+        firstName: (req.user as any).claims.firstName,
+        lastName: (req.user as any).claims.lastName,
+        profileImageUrl: (req.user as any).claims.profileImageUrl,
+        creditBalance: "0",
+      });
+      
+      // Calculate new balance by adding guest credits to user credits
+      const guestCredits = parseFloat(token.creditBalance);
+      const userCredits = parseFloat(user.creditBalance);
+      const newBalance = (guestCredits + userCredits).toFixed(2);
+      
+      // Update user's credit balance
+      await storage.updateUserCredits(userId, newBalance);
+      
+      // Transfer usage history from guest to user
+      await storage.linkGuestHistoryToUser(token.id, userId);
+      
+      // Mark token as linked and zero balance (atomic operation)
+      await storage.markGuestTokenAsLinked(token.id, userId);
+      
+      // Return updated balance (credits as integers for display)
+      res.json({
+        success: true,
+        creditsTransferred: Math.floor(guestCredits),
+        newBalance: Math.floor(parseFloat(newBalance)),
+        message: `Successfully linked account and transferred ${Math.floor(guestCredits)} credits`,
+      });
+    } catch (error: any) {
+      console.error("Account linking error:", error);
+      res.status(500).json({ error: "Failed to link accounts" });
+    }
+  });
+
   // Get usage history
   app.get("/api/usage-history", requireAuth, async (req, res) => {
     try {
