@@ -1,0 +1,109 @@
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Copy, Check, AlertCircle } from "lucide-react";
+import { useState } from "react";
+import type { Model } from "./ModelSelector";
+
+interface ComparisonCardProps {
+  model: Model;
+  response?: string;
+  isLoading?: boolean;
+  error?: string;
+  generationTime?: number;
+  tokenCount?: number;
+}
+
+export default function ComparisonCard({ 
+  model, 
+  response, 
+  isLoading = false, 
+  error,
+  generationTime,
+  tokenCount 
+}: ComparisonCardProps) {
+  const [copied, setCopied] = useState(false);
+  const Icon = model.icon;
+
+  const handleCopy = async () => {
+    if (!response) return;
+    
+    await navigator.clipboard.writeText(response);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <Card className="flex flex-col h-full" data-testid={`card-response-${model.id}`}>
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-4">
+        <div className="flex items-center gap-2 min-w-0">
+          <Icon className={`h-5 w-5 flex-shrink-0 ${model.color}`} />
+          <h3 className="text-lg font-semibold truncate">{model.name}</h3>
+        </div>
+        
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {generationTime && (
+            <Badge variant="secondary" className="text-xs" data-testid={`badge-time-${model.id}`}>
+              {generationTime}ms
+            </Badge>
+          )}
+          {response && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleCopy}
+              className="h-8 w-8"
+              data-testid={`button-copy-${model.id}`}
+            >
+              {copied ? (
+                <Check className="h-4 w-4 text-green-600" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+
+      <CardContent className="flex-1 overflow-hidden">
+        {isLoading ? (
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+            <Skeleton className="h-4 w-4/6" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/6" />
+          </div>
+        ) : error ? (
+          <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+            <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium text-destructive">Error</p>
+              <p className="text-sm text-destructive/90 mt-1">{error}</p>
+            </div>
+          </div>
+        ) : response ? (
+          <div 
+            className="prose prose-sm max-w-none overflow-y-auto max-h-96 leading-relaxed"
+            data-testid={`text-response-${model.id}`}
+          >
+            <p className="whitespace-pre-wrap text-foreground">{response}</p>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground italic">
+            Waiting for prompt...
+          </p>
+        )}
+      </CardContent>
+
+      {tokenCount && (
+        <CardFooter className="pt-4 border-t">
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <span data-testid={`text-tokens-${model.id}`}>~{tokenCount} tokens</span>
+          </div>
+        </CardFooter>
+      )}
+    </Card>
+  );
+}
