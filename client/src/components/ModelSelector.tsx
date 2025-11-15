@@ -1,5 +1,6 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Sparkles, Brain, Zap } from "lucide-react";
 import grokLogo from "@assets/grok--v2_1763216108457.jpg";
 
@@ -34,9 +35,41 @@ export default function ModelSelector({ selectedModels, onSelectionChange }: Mod
     }
   };
 
+  const handleSelectAll = () => {
+    onSelectionChange(AVAILABLE_MODELS.map(m => m.id));
+  };
+
+  const handleClearAll = () => {
+    onSelectionChange([]);
+  };
+
+  const allSelected = selectedModels.length === AVAILABLE_MODELS.length;
+
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-medium text-muted-foreground">Select Models to Compare</h3>
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="text-sm font-medium text-muted-foreground">Select Models to Compare</h3>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSelectAll}
+            disabled={allSelected}
+            data-testid="button-select-all"
+          >
+            Select All
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleClearAll}
+            disabled={selectedModels.length === 0}
+            data-testid="button-clear-all"
+          >
+            Clear All
+          </Button>
+        </div>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {AVAILABLE_MODELS.map((model) => {
           const Icon = model.icon;

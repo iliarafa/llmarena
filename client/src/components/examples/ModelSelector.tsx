@@ -12,7 +12,7 @@ export default function ModelSelectorExample() {
       />
       <div className="mt-4 p-4 bg-muted rounded-lg">
         <p className="text-sm text-muted-foreground">
-          Selected: {selectedModels.join(", ") || "None"}
+          Selected ({selectedModels.length}/4): {selectedModels.join(", ") || "None"}
         </p>
       </div>
     </div>
