@@ -1,18 +1,35 @@
-# LLM Debate Comparison Platform
+# LLM Comparison Platform with Prepaid Credits
 
 ## Overview
 
-This is a fully functional LLM model comparison platform that allows users to submit a single prompt and view side-by-side responses from multiple AI models (GPT-4o, Claude Sonnet 4.5, Gemini 2.5 Flash, and Grok 4 Fast). The application provides a clean, functional interface inspired by modern productivity tools for comparing lengthy text outputs efficiently.
+This is a pay-per-use LLM model comparison platform that allows users to submit a single prompt and view side-by-side responses from multiple AI models (GPT-4o, Claude Sonnet 4, Gemini Flash, and Grok). The application supports two modes:
+- **Guest Mode**: Anonymous users can create a secure token and buy credits without signing up
+- **Authenticated Mode**: Users can create an account via Replit Auth to preserve credits across devices
 
-**Status**: ✅ Complete and operational
-- All 4 LLM providers are integrated and working
-- End-to-end tested with successful responses from all models
-- Proper error handling for individual model failures
-- Responsive UI with loading states and copy functionality
+**Status**: 🚧 In Development - Core Features Complete
+- ✅ All 4 LLM providers integrated and working
+- ✅ Landing page with guest and sign-in options
+- ✅ Guest token system for anonymous usage
+- ✅ Replit Auth integration for optional accounts
+- ✅ Dual authentication middleware (guest tokens + user sessions)
+- ✅ PostgreSQL database schema for users, guest tokens, and usage tracking
+- ⏳ Stripe payment integration (pending API keys from user)
+- ⏳ Credit deduction system
+- ⏳ Credit purchase UI
+- ⏳ Usage history and account linking
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+
+## Business Model
+
+**Pay-per-use with prepaid credits** (not subscription-based):
+- Users buy credit packs via Stripe (e.g., 100 credits for $10)
+- Each comparison deducts credits based on models selected
+- No monthly fees or commitments
+- Credits never expire
+- Guest users can optionally convert to accounts to preserve credits
 
 ## System Architecture
 
@@ -27,11 +44,23 @@ Preferred communication style: Simple, everyday language.
 
 **Design Philosophy**: System-based approach emphasizing clarity and efficiency. Clean, minimal visual noise to let content take center stage. The design follows a neutral color scheme with carefully defined spacing primitives (2, 4, 6, 8, 16, 24 Tailwind units).
 
-**Key Components**:
+**Key Pages & Components**:
+- **Landing Page** (`client/src/pages/landing.tsx`): Entry point with two options:
+  - "Try as Guest" - Creates anonymous token, stores in localStorage
+  - "Sign In with Replit" - Redirects to `/api/login` for account creation
+- **Home Page** (`client/src/pages/home.tsx`): Main comparison interface with:
+  - User menu showing authentication status (guest vs logged-in)
+  - Logout/clear token functionality
 - **ModelSelector**: Checkbox-based UI for selecting 1-4 models to compare
 - **PromptInput**: Large textarea with character counter and keyboard shortcuts (Cmd/Ctrl+Enter to submit)
 - **ComparisonGrid**: Responsive grid layout that adapts based on number of selected models (1-4)
 - **ComparisonCard**: Individual cards showing model responses with metadata (generation time, token count), copy functionality, and error states
+
+**Authentication Hooks**:
+- **useAuth** (`client/src/hooks/useAuth.ts`): React hook for checking authentication status
+  - Returns `{ user, isLoading, isAuthenticated }`
+  - Queries `/api/auth/user` endpoint
+  - Used throughout the app to show/hide content based on auth state
 
 ### Backend Architecture
 
@@ -40,10 +69,27 @@ Preferred communication style: Simple, everyday language.
 - **Development**: tsx for hot-reloading during development
 - **Production**: esbuild for bundling server code
 
-**API Design**: Simple REST API with a single comparison endpoint
-- `POST /api/compare`: Accepts prompt and array of model IDs, returns parallel responses from selected models
-- Request validation using Zod schemas
-- Error handling with appropriate HTTP status codes
+**API Design**: RESTful API with authentication and payment support
+
+**Authentication Endpoints** (via Replit Auth):
+- `GET /api/login`: Initiates Replit Auth login flow (Google, GitHub, email/password)
+- `GET /api/callback`: OAuth callback handler
+- `GET /api/logout`: Logs out user and clears session
+- `GET /api/auth/user`: Returns current authenticated user (protected route)
+
+**Guest Token Endpoints**:
+- `POST /api/guest/create`: Creates anonymous guest token with 0 credits
+
+**Comparison Endpoint**:
+- `POST /api/compare`: Accepts prompt and array of model IDs, returns parallel responses
+  - Protected by dual authentication middleware (guest token OR user session)
+  - Request validation using Zod schemas
+  - Error handling with appropriate HTTP status codes
+
+**Authentication Middleware** (`server/authMiddleware.ts`):
+- `requireAuth`: Accepts both Bearer tokens (guests) and session cookies (logged-in users)
+- Populates `req.guestToken` or `req.authenticatedUser` based on auth method
+- Helper functions: `getCreditBalance()`, `getAuthId()`, `updateCreditBalance()`
 
 **LLM Integration**: Multiple AI provider SDKs orchestrated in parallel
 - OpenAI SDK for GPT-4o
@@ -59,12 +105,21 @@ All LLM clients are configured to use Replit AI Integrations, which abstract awa
 
 **ORM**: Drizzle ORM with PostgreSQL dialect
 - Schema defined in `shared/schema.ts` for type safety across client/server
-- User table structure in place for future authentication features
-- Migration support via drizzle-kit
+- Database instance exported from `server/db.ts`
+- Migration support via drizzle-kit (`npm run db:push`)
 
-**Current State**: This application operates statelessly - comparisons are not persisted. Each request to `/api/compare` generates fresh responses from the selected LLM providers. No database storage is used for comparison results as this is a single-session tool.
+**Database Tables** (`shared/schema.ts`):
+- **sessions**: Session storage for Replit Auth (required for authentication)
+- **users**: User accounts with Replit Auth fields (id, email, firstName, lastName, profileImageUrl) plus credit balance and Stripe customer ID
+- **guestTokens**: Anonymous guest tokens with credit balances for users without accounts
+- **usageHistory**: Tracks all comparisons with model IDs, credit cost, prompt, and timestamp
 
-**Session Management**: Not required for this application.
+**Storage Interface** (`server/storage.ts`):
+- User operations: `getUser()`, `getUserByEmail()`, `upsertUser()`, `updateUserCredits()`
+- Guest token operations: `createGuestToken()`, `getGuestTokenByToken()`, `updateGuestTokenCredits()`, `updateGuestTokenLastUsed()`
+- Usage tracking: `logComparison()`, `getUserUsageHistory()`, `getGuestUsageHistory()`
+
+**Session Management**: PostgreSQL-backed sessions via `connect-pg-simple` for Replit Auth
 
 ### Build & Development
 

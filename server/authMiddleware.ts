@@ -87,7 +87,11 @@ export function getAuthId(req: Express.Request): { userId?: string; guestTokenId
 export async function updateCreditBalance(req: Express.Request, newBalance: string): Promise<void> {
   if (req.guestToken) {
     await storage.updateGuestTokenCredits(req.guestToken.id, newBalance);
+    // Update the in-memory object to reflect the new balance
+    req.guestToken.creditBalance = newBalance;
   } else if (req.authenticatedUser) {
     await storage.updateUserCredits(req.authenticatedUser.id, newBalance);
+    // Update the in-memory object to reflect the new balance
+    req.authenticatedUser.creditBalance = newBalance;
   }
 }
