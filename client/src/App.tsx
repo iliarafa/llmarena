@@ -8,6 +8,7 @@ import { apiRequest } from "@/lib/queryClient";
 import Home from "@/pages/home";
 import Landing from "@/pages/landing";
 import UsageHistory from "@/pages/usage-history";
+import Purchase from "@/pages/purchase";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -48,6 +49,7 @@ function Router() {
         <>
           <Route path="/" component={Home} />
           <Route path="/usage-history" component={UsageHistory} />
+          <Route path="/purchase" component={Purchase} />
           <Route component={NotFound} />
         </>
       ) : (

@@ -9,8 +9,8 @@ import { useAccountLinking } from "@/hooks/useAccountLinking";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Coins, History } from "lucide-react";
-import { Link } from "wouter";
+import { LogOut, User, Coins, History, CreditCard } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +27,7 @@ export default function Home() {
   const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
   const { creditBalance } = useCreditBalance();
+  const [, setLocation] = useLocation();
   useAccountLinking();
   
   const isGuest = !isAuthenticated && !!localStorage.getItem("guestToken");
@@ -91,7 +92,12 @@ export default function Home() {
         toast({
           title: "Insufficient Credits",
           description: `You need ${errorData.required} credits but only have ${errorData.available}. Purchase more credits to continue.`,
-          variant: "destructive"
+          variant: "destructive",
+          action: (
+            <Button variant="outline" size="sm" onClick={() => setLocation("/purchase")}>
+              Buy Credits
+            </Button>
+          ),
         });
         return;
       }
@@ -178,6 +184,12 @@ export default function Home() {
                   <DropdownMenuItem data-testid="button-usage-history">
                     <History className="w-4 h-4 mr-2" />
                     Usage History
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/purchase">
+                  <DropdownMenuItem data-testid="button-buy-credits">
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Buy Credits
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem onClick={handleLogout} data-testid="button-logout">

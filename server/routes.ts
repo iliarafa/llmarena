@@ -6,10 +6,27 @@ import { z } from "zod";
 import { randomBytes } from "crypto";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { requireAuth, getCreditBalance, getAuthId, updateCreditBalance } from "./authMiddleware";
+import Stripe from "stripe";
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2024-11-20.acacia",
+});
 
 const compareRequestSchema = z.object({
   prompt: z.string().min(1),
   modelIds: z.array(z.enum(["gpt-4o", "claude-sonnet", "gemini-flash", "grok"])).min(1),
+});
+
+const checkoutRequestSchema = z.object({
+  credits: z.union([
+    z.literal(20),
+    z.literal(100),
+    z.literal(500),
+    z.literal(1000),
+  ]),
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -224,6 +241,160 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.error("Comparison error:", error);
       res.status(500).json({ error: "Failed to generate comparisons" });
+    }
+  });
+
+  // Stripe: Create checkout session for credit purchase
+  app.post("/api/create-checkout-session", requireAuth, async (req, res) => {
+    try {
+      // Validate request body strictly - only allow valid credit tiers
+      // Convert to number first in case it comes as a string
+      const requestData = {
+        credits: typeof req.body.credits === 'string' ? parseInt(req.body.credits) : req.body.credits,
+      };
+      
+      const parseResult = checkoutRequestSchema.safeParse(requestData);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid credit amount",
+          message: "Please select a valid credit tier (20, 100, 500, or 1000)",
+        });
+      }
+      
+      const { credits } = parseResult.data;
+      
+      // Define credit tiers with pricing
+      const creditTiers: Record<number, { amount: number; name: string }> = {
+        20: { amount: 250, name: "Starter Pack - 20 Credits" },
+        100: { amount: 1000, name: "Popular Pack - 100 Credits" },
+        500: { amount: 4000, name: "Pro Pack - 500 Credits" },
+        1000: { amount: 7000, name: "Ultimate Pack - 1000 Credits" },
+      };
+      
+      const tier = creditTiers[credits];
+      
+      // Get auth ID for metadata
+      const authId = getAuthId(req);
+      const guestToken = req.guestToken?.token;
+      
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: tier.name,
+                description: `Add ${credits} credits to your account`,
+              },
+              unit_amount: tier.amount,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+        success_url: `${req.headers.origin || 'http://localhost:5000'}/?payment=success`,
+        cancel_url: `${req.headers.origin || 'http://localhost:5000'}/purchase?payment=cancelled`,
+        metadata: {
+          credits: credits.toString(),
+          userId: authId.userId || "",
+          guestToken: guestToken || "",
+        },
+      });
+      
+      res.json({ sessionId: session.id, url: session.url });
+    } catch (error: any) {
+      console.error("Checkout session error:", error);
+      res.status(500).json({ error: "Failed to create checkout session" });
+    }
+  });
+  
+  // Stripe: Webhook handler for payment events
+  app.post("/api/stripe-webhook", async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    
+    if (!sig) {
+      return res.status(400).json({ error: "No signature" });
+    }
+    
+    let event: Stripe.Event;
+    
+    try {
+      // Verify webhook signature (using raw body)
+      const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+      if (webhookSecret) {
+        event = stripe.webhooks.constructEvent(req.rawBody as Buffer, sig, webhookSecret);
+      } else {
+        // For development without webhook secret
+        event = req.body as Stripe.Event;
+      }
+    } catch (err: any) {
+      console.error('Webhook signature verification failed:', err.message);
+      return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+    }
+    
+    // Handle the event
+    try {
+      // Check if this event has already been processed (idempotency)
+      const alreadyProcessed = await storage.isWebhookEventProcessed(event.id);
+      if (alreadyProcessed) {
+        console.log(`Event ${event.id} already processed, skipping`);
+        return res.json({ received: true, status: "already_processed" });
+      }
+      
+      if (event.type === 'checkout.session.completed') {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const { credits, userId, guestToken } = session.metadata || {};
+        
+        if (!credits) {
+          console.error("No credits in session metadata");
+          return res.status(400).json({ error: "Missing credits metadata" });
+        }
+        
+        const creditsToAdd = parseInt(credits);
+        
+        // Validate credits amount is a valid tier
+        if (![20, 100, 500, 1000].includes(creditsToAdd)) {
+          console.error(`Invalid credits amount in metadata: ${creditsToAdd}`);
+          return res.status(400).json({ error: "Invalid credits amount" });
+        }
+        
+        // Add credits to user or guest token atomically
+        if (userId) {
+          const user = await storage.getUser(userId);
+          if (user) {
+            const currentBalance = parseFloat(user.creditBalance);
+            const newBalance = (currentBalance + creditsToAdd).toFixed(2);
+            await storage.updateUserCredits(userId, newBalance);
+            console.log(`✅ Added ${creditsToAdd} credits to user ${userId}. New balance: ${newBalance}`);
+          } else {
+            console.error(`User ${userId} not found`);
+          }
+        } else if (guestToken) {
+          const token = await storage.getGuestTokenByToken(guestToken);
+          if (token) {
+            const currentBalance = parseFloat(token.creditBalance);
+            const newBalance = (currentBalance + creditsToAdd).toFixed(2);
+            await storage.updateGuestTokenCredits(token.id, newBalance);
+            console.log(`✅ Added ${creditsToAdd} credits to guest token. New balance: ${newBalance}`);
+          } else {
+            console.error(`Guest token not found`);
+          }
+        } else {
+          console.error("Neither userId nor guestToken provided in metadata");
+        }
+        
+        // Mark event as processed
+        await storage.markWebhookEventAsProcessed({
+          eventId: event.id,
+          eventType: event.type,
+        });
+      }
+      
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error("Webhook handler error:", error);
+      res.status(500).json({ error: "Webhook handler failed" });
     }
   });
 

@@ -6,9 +6,12 @@ import {
   type InsertGuestToken,
   type UsageHistory,
   type InsertUsageHistory,
+  type ProcessedWebhookEvent,
+  type InsertProcessedWebhookEvent,
   users,
   guestTokens,
   usageHistory,
+  processedWebhookEvents,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -34,6 +37,10 @@ export interface IStorage {
   getUserUsageHistory(userId: string, limit?: number): Promise<UsageHistory[]>;
   getGuestUsageHistory(guestTokenId: string, limit?: number): Promise<UsageHistory[]>;
   linkGuestHistoryToUser(guestTokenId: string, userId: string): Promise<void>;
+  
+  // Webhook event idempotency
+  isWebhookEventProcessed(eventId: string): Promise<boolean>;
+  markWebhookEventAsProcessed(event: InsertProcessedWebhookEvent): Promise<void>;
 }
 
 export class DbStorage implements IStorage {
@@ -136,6 +143,19 @@ export class DbStorage implements IStorage {
         guestTokenId: null,
       })
       .where(eq(usageHistory.guestTokenId, guestTokenId));
+  }
+
+  // Webhook event idempotency
+  async isWebhookEventProcessed(eventId: string): Promise<boolean> {
+    const result = await db.select()
+      .from(processedWebhookEvents)
+      .where(eq(processedWebhookEvents.eventId, eventId))
+      .limit(1);
+    return result.length > 0;
+  }
+
+  async markWebhookEventAsProcessed(event: InsertProcessedWebhookEvent): Promise<void> {
+    await db.insert(processedWebhookEvents).values(event);
   }
 }
 

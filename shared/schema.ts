@@ -49,6 +49,14 @@ export const usageHistory = pgTable("usage_history", {
   prompt: text("prompt").notNull(),
 });
 
+// Processed webhook events for idempotency
+export const processedWebhookEvents = pgTable("processed_webhook_events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  eventId: text("event_id").notNull().unique(),
+  eventType: text("event_type").notNull(),
+  processedAt: timestamp("processed_at").notNull().defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -67,6 +75,11 @@ export const insertUsageHistorySchema = createInsertSchema(usageHistory).omit({
   timestamp: true,
 });
 
+export const insertProcessedWebhookEventSchema = createInsertSchema(processedWebhookEvents).omit({
+  id: true,
+  processedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -77,3 +90,6 @@ export type GuestToken = typeof guestTokens.$inferSelect;
 
 export type InsertUsageHistory = z.infer<typeof insertUsageHistorySchema>;
 export type UsageHistory = typeof usageHistory.$inferSelect;
+
+export type InsertProcessedWebhookEvent = z.infer<typeof insertProcessedWebhookEventSchema>;
+export type ProcessedWebhookEvent = typeof processedWebhookEvents.$inferSelect;
