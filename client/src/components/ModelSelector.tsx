@@ -1,6 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Cpu, Sparkles, Brain, Zap } from "lucide-react";
+import { Sparkles, Brain, Zap } from "lucide-react";
+import { SiX } from "react-icons/si";
 
 export type ModelId = "gpt-4o" | "claude-sonnet" | "gemini-flash" | "grok";
 
@@ -15,7 +16,7 @@ export const AVAILABLE_MODELS: Model[] = [
   { id: "gpt-4o", name: "GPT-4o", icon: Sparkles, color: "text-green-600" },
   { id: "claude-sonnet", name: "Claude Sonnet", icon: Brain, color: "text-orange-600" },
   { id: "gemini-flash", name: "Gemini Flash", icon: Zap, color: "text-blue-600" },
-  { id: "grok", name: "Grok", icon: Cpu, color: "text-purple-600" },
+  { id: "grok", name: "Grok", icon: SiX, color: "text-foreground" },
 ];
 
 interface ModelSelectorProps {
