@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Home() {
-  const [selectedModels, setSelectedModels] = useState<ModelId[]>(["gpt-4o", "claude-sonnet"]);
+  const [selectedModels, setSelectedModels] = useState<ModelId[]>([]);
   const [prompt, setPrompt] = useState("");
   const [responses, setResponses] = useState<ModelResponse[]>([]);
   const { toast } = useToast();
