@@ -38,7 +38,11 @@ export default function ComparisonCard({
     <Card className="flex flex-col h-full" data-testid={`card-response-${model.id}`}>
       <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-4">
         <div className="flex items-center gap-2 min-w-0">
-          <Icon className={`h-5 w-5 flex-shrink-0 ${model.color}`} />
+          {Icon ? (
+            <Icon className={`h-5 w-5 flex-shrink-0 ${model.color}`} />
+          ) : model.iconImage ? (
+            <img src={model.iconImage} alt={model.name} className="h-5 w-5 flex-shrink-0 object-contain" />
+          ) : null}
           <h3 className="text-lg font-semibold truncate">{model.name}</h3>
         </div>
         
