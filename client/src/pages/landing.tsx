@@ -56,7 +56,7 @@ export default function Landing() {
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold mb-4" data-testid="text-landing-title">
-            Compare AI Models Side-by-Side
+            LLM Arena
           </h1>
           <p className="text-xl text-muted-foreground mb-2">
             Get responses from GPT-4o, Claude, Gemini, and Grok in one view
