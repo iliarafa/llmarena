@@ -50,7 +50,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/usage-history" component={UsageHistory} />
           <Route path="/purchase" component={Purchase} />
-          <Route component={NotFound} />
+          <Route path="/:rest*" component={NotFound} />
         </>
       ) : (
         <>
