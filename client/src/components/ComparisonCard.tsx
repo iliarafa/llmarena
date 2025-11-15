@@ -43,7 +43,10 @@ export default function ComparisonCard({
           ) : model.iconImage ? (
             <img src={model.iconImage} alt={model.name} className="h-5 w-5 flex-shrink-0 object-contain" />
           ) : null}
-          <h3 className="text-lg font-semibold truncate">{model.name}</h3>
+          <h3 className="text-lg font-semibold truncate">
+            <span className="hidden sm:inline">{model.name}</span>
+            <span className="sm:hidden">{model.shortName}</span>
+          </h3>
         </div>
         
         <div className="flex items-center gap-2 flex-shrink-0">

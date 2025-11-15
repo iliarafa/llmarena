@@ -9,16 +9,17 @@ export type ModelId = "gpt-4o" | "claude-sonnet" | "gemini-flash" | "grok";
 export interface Model {
   id: ModelId;
   name: string;
+  shortName: string;
   icon?: React.ComponentType<{ className?: string }>;
   iconImage?: string;
   color: string;
 }
 
 export const AVAILABLE_MODELS: Model[] = [
-  { id: "gpt-4o", name: "GPT-4o", icon: Sparkles, color: "text-green-600" },
-  { id: "claude-sonnet", name: "Claude Sonnet", icon: Brain, color: "text-orange-600" },
-  { id: "gemini-flash", name: "Gemini Flash", icon: Zap, color: "text-blue-600" },
-  { id: "grok", name: "Grok", iconImage: grokLogo, color: "text-foreground" },
+  { id: "gpt-4o", name: "GPT-4o", shortName: "GPT-4o", icon: Sparkles, color: "text-green-600" },
+  { id: "claude-sonnet", name: "Claude Sonnet", shortName: "Claude", icon: Brain, color: "text-orange-600" },
+  { id: "gemini-flash", name: "Gemini Flash", shortName: "Gemini", icon: Zap, color: "text-blue-600" },
+  { id: "grok", name: "Grok", shortName: "Grok", iconImage: grokLogo, color: "text-foreground" },
 ];
 
 interface ModelSelectorProps {
@@ -101,7 +102,8 @@ export default function ModelSelector({ selectedModels, onSelectionChange }: Mod
                   <img src={model.iconImage} alt={model.name} className="h-4 w-4 flex-shrink-0 object-contain" />
                 ) : null}
                 <Label className="text-sm font-medium cursor-pointer truncate">
-                  {model.name}
+                  <span className="hidden sm:inline">{model.name}</span>
+                  <span className="sm:hidden">{model.shortName}</span>
                 </Label>
               </div>
             </div>
