@@ -1,6 +1,6 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
+import { Send, Coins } from "lucide-react";
 
 interface PromptInputProps {
   value: string;
@@ -8,6 +8,8 @@ interface PromptInputProps {
   onSubmit: () => void;
   isLoading?: boolean;
   disabled?: boolean;
+  creditCost?: number;
+  creditBalance?: number;
 }
 
 export default function PromptInput({ 
@@ -15,14 +17,17 @@ export default function PromptInput({
   onChange, 
   onSubmit, 
   isLoading = false,
-  disabled = false 
+  disabled = false,
+  creditCost = 0,
+  creditBalance = 0
 }: PromptInputProps) {
   const characterCount = value.length;
+  const hasInsufficientCredits = creditCost > creditBalance;
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
-      if (!disabled && !isLoading) {
+      if (!disabled && !isLoading && !hasInsufficientCredits) {
         onSubmit();
       }
     }
@@ -42,14 +47,28 @@ export default function PromptInput({
         />
       </div>
       
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground" data-testid="text-character-count">
-          {characterCount} characters
-        </span>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-muted-foreground" data-testid="text-character-count">
+            {characterCount} characters
+          </span>
+          
+          {creditCost > 0 && (
+            <div className="flex items-center gap-2" data-testid="text-cost-preview">
+              <Coins className="w-4 h-4 text-muted-foreground" />
+              <span className={`text-sm font-medium ${hasInsufficientCredits ? 'text-destructive' : 'text-foreground'}`}>
+                {creditCost} credits
+              </span>
+              {hasInsufficientCredits && (
+                <span className="text-xs text-destructive">(insufficient)</span>
+              )}
+            </div>
+          )}
+        </div>
         
         <Button 
           onClick={onSubmit}
-          disabled={disabled || isLoading || !value.trim()}
+          disabled={disabled || isLoading || !value.trim() || hasInsufficientCredits}
           size="default"
           className="gap-2"
           data-testid="button-compare"

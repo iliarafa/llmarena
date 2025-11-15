@@ -4,9 +4,10 @@ import PromptInput from "@/components/PromptInput";
 import ComparisonGrid, { type ModelResponse } from "@/components/ComparisonGrid";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { apiRequest } from "@/lib/queryClient";
+import { useCreditBalance } from "@/hooks/useCreditBalance";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Coins } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,8 +23,18 @@ export default function Home() {
   const [responses, setResponses] = useState<ModelResponse[]>([]);
   const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
+  const { creditBalance } = useCreditBalance();
   
   const isGuest = !isAuthenticated && !!localStorage.getItem("guestToken");
+  
+  // Calculate credit cost based on tiered pricing
+  const creditCostMap: Record<number, number> = {
+    1: 3,
+    2: 5,
+    3: 7,
+    4: 10,
+  };
+  const creditCost = creditCostMap[selectedModels.length] || 0;
 
   const handleCompare = async () => {
     if (selectedModels.length === 0) {
@@ -63,8 +74,43 @@ export default function Home() {
         modelIds: selectedModels
       });
 
+      if (res.status === 402) {
+        const errorData = await res.json();
+        
+        setResponses(
+          selectedModels.map(modelId => ({
+            modelId,
+            error: "Insufficient credits"
+          }))
+        );
+        
+        toast({
+          title: "Insufficient Credits",
+          description: `You need ${errorData.required} credits but only have ${errorData.available}. Purchase more credits to continue.`,
+          variant: "destructive"
+        });
+        return;
+      }
+
       const result = await res.json();
       setResponses(result.responses);
+      
+      // Invalidate credit balance queries to refresh the displayed balance
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/guest/verify"] });
+      
+      // Show success message with credits used (with guards for missing fields)
+      if (result.creditsUsed !== undefined && result.creditsRemaining !== undefined) {
+        toast({
+          title: "Comparison Complete",
+          description: `Used ${result.creditsUsed} credits. You have ${result.creditsRemaining} credits remaining.`,
+        });
+      } else {
+        toast({
+          title: "Comparison Complete",
+          description: "Responses generated successfully.",
+        });
+      }
     } catch (error: any) {
       console.error("Comparison error:", error);
       
@@ -117,6 +163,13 @@ export default function Home() {
                   {isGuest ? "Guest User" : (user as any)?.email || "User"}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <div className="px-2 py-1.5 text-sm" data-testid="text-credit-balance">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Coins className="w-4 h-4" />
+                    <span className="font-medium">{creditBalance.toFixed(0)} credits</span>
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} data-testid="button-logout">
                   <LogOut className="w-4 h-4 mr-2" />
                   {isGuest ? "Clear Token" : "Logout"}
@@ -140,6 +193,8 @@ export default function Home() {
             onSubmit={handleCompare}
             isLoading={responses.some(r => r.isLoading)}
             disabled={selectedModels.length === 0}
+            creditCost={creditCost}
+            creditBalance={creditBalance}
           />
         </div>
 
