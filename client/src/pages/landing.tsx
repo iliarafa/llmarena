@@ -104,7 +104,7 @@ export default function Landing() {
           </Card>
         </div>
 
-        <div className="max-w-2xl mx-auto space-y-6">
+        <div className="grid md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
               <CardTitle data-testid="text-try-guest-title">Try as Guest</CardTitle>
@@ -155,15 +155,6 @@ export default function Landing() {
               )}
             </CardContent>
           </Card>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t"></div>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or</span>
-            </div>
-          </div>
 
           <Card>
             <CardHeader>
