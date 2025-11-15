@@ -63,11 +63,6 @@ export default function Purchase() {
     setPurchasingCredits(credits);
     
     try {
-      const stripe = await stripePromise;
-      if (!stripe) {
-        throw new Error("Stripe failed to load");
-      }
-      
       const res = await apiRequest("POST", "/api/create-checkout-session", { credits });
       
       if (!res.ok) {
@@ -75,18 +70,14 @@ export default function Purchase() {
         throw new Error(error.message || "Failed to create checkout session");
       }
       
-      const { sessionId } = await res.json();
+      const { url } = await res.json();
       
-      if (!sessionId) {
-        throw new Error("No session ID returned");
+      if (!url) {
+        throw new Error("No checkout URL returned");
       }
       
-      // Redirect to Stripe Checkout using Stripe.js
-      const result = await stripe.redirectToCheckout({ sessionId });
-      
-      if (result.error) {
-        throw new Error(result.error.message);
-      }
+      // Redirect to Stripe Checkout
+      window.location.href = url;
     } catch (error: any) {
       console.error("Purchase error:", error);
       toast({
