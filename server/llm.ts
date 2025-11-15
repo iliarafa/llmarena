@@ -114,10 +114,10 @@ async function generateWithGemini(prompt: string): Promise<LLMResponse> {
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
-    const text = await result.response?.text() || "";
+    const text = result.text || "";
     
     // Get token usage from candidates
-    const tokens = result.candidates?.[0]?.usageMetadata?.candidatesTokenCount;
+    const tokens = result.candidates?.[0]?.tokenCount;
 
     return {
       modelId: "gemini-flash",
