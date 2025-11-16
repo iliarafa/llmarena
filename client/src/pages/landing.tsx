@@ -105,14 +105,14 @@ export default function Landing() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <Card>
+          <Card className="flex flex-col h-full">
             <CardHeader>
               <CardTitle data-testid="text-try-guest-title">Try as Guest</CardTitle>
-              <CardDescription>
+              <CardDescription className="min-h-[48px]">
                 No sign-up required. Get a secure token and buy credits anonymously.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="flex-1 flex flex-col justify-end space-y-4">
               {!guestToken ? (
                 <Button 
                   onClick={handleCreateGuestToken}
@@ -156,14 +156,14 @@ export default function Landing() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="flex flex-col h-full">
             <CardHeader>
               <CardTitle data-testid="text-sign-in-title">Sign In</CardTitle>
-              <CardDescription>
+              <CardDescription className="min-h-[48px]">
                 Create an account with Google, Apple, GitHub, or email to preserve your credits across devices and sessions.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex flex-col justify-end">
               <Button 
                 onClick={handleSignIn}
                 variant="default"
