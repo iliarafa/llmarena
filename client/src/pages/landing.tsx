@@ -60,7 +60,7 @@ export default function Landing() {
             LLM Arena
           </h1>
           <p className="text-xl text-muted-foreground mb-2">
-            Get responses from GPT-4o, Claude, Gemini, and Grok in one view
+            Frontier Models Parallel Generations
           </p>
           <p className="text-sm text-muted-foreground mb-1">
             Pay-per-use with prepaid credits. No subscription required.
