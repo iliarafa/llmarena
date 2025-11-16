@@ -56,10 +56,10 @@ export default function Landing() {
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-4">
-          <h1 className="text-4xl font-bold mb-4" data-testid="text-landing-title">
+          <h1 className="text-4xl font-bold mb-2" data-testid="text-landing-title">
             LLM Arena
           </h1>
-          <p className="text-xl text-muted-foreground mb-2">
+          <p className="text-xl text-muted-foreground mb-1">
             Frontier Models Parallel Generations
           </p>
           <p className="text-sm text-muted-foreground mb-1">
