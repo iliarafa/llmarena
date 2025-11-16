@@ -73,7 +73,7 @@ export default function Landing() {
             />
           </div>
           
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-6 -mt-[19px]">
             <div className="inline-flex items-center gap-2" data-testid="privacy-guarantee-badge">
               <Shield className="w-4 h-4 text-primary" />
               <span className="text-xs font-medium" data-testid="text-privacy-guarantee">Your prompts and responses are never stored or logged</span>
