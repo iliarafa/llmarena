@@ -168,7 +168,7 @@ export default function Landing() {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Save this token! You'll need it to access your credits. It's stored in your browser, but we recommend saving it somewhere safe.
+                    Guest token auto-saves in your browser for sign-up-free access. Save it only to transfer credits to another device.
                   </p>
                   <Button
                     onClick={() => window.location.href = "/purchase"}
