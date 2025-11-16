@@ -109,7 +109,7 @@ export default function Landing() {
           <Card className="hover-elevate">
             <CardHeader>
               <Shield className="w-8 h-8 mb-2 text-primary" />
-              <CardTitle className="text-lg">Privacy First</CardTitle>
+              <CardTitle className="text-lg">True Privacy</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
