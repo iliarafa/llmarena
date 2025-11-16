@@ -73,7 +73,13 @@ export default function Landing() {
             />
           </div>
           
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-md" data-testid="privacy-guarantee-badge">
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium" data-testid="text-privacy-guarantee">Your prompts and responses are never stored or logged</span>
+            </div>
           </div>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="hover-elevate">
