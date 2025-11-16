@@ -171,11 +171,11 @@ export default function Landing() {
                     Save this token! You'll need it to access your credits. It's stored in your browser, but we recommend saving it somewhere safe.
                   </p>
                   <Button
-                    onClick={() => window.location.href = "/"}
+                    onClick={() => window.location.href = "/purchase"}
                     className="w-full"
                     data-testid="button-continue-guest"
                   >
-                    Continue as Guest
+                    Buy Credits
                   </Button>
                 </div>
               )}
