@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Sparkles, Zap, Shield } from "lucide-react";
-import llmFightImage from "@assets/LLMfight_1763256370491.png";
+import llmFightImage from "@assets/LLMfight_1763256670295.png";
 
 export default function Landing() {
   const [guestToken, setGuestToken] = useState<string | null>(null);
