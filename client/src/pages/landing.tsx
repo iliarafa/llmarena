@@ -55,14 +55,14 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="text-center mb-8">
+        <div className="text-center mb-4">
           <h1 className="text-4xl font-bold mb-4" data-testid="text-landing-title">
             LLM Arena
           </h1>
           <p className="text-xl text-muted-foreground mb-2">
             Get responses from GPT-4o, Claude, Gemini, and Grok in one view
           </p>
-          <p className="text-sm text-muted-foreground mb-2">
+          <p className="text-sm text-muted-foreground mb-1">
             Pay-per-use with prepaid credits. No subscription required.
           </p>
           <div className="flex justify-center">
