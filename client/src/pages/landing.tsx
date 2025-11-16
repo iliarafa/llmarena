@@ -204,7 +204,6 @@ export default function Landing() {
         </div>
 
         <footer className="mt-16 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p className="mb-2 text-foreground font-medium" data-testid="text-footer-privacy">Your prompts and responses are never stored or logged. We respect your privacy.</p>
           <p>v 1.0</p>
           <p>This Whole World LLC - November 2025</p>
         </footer>
