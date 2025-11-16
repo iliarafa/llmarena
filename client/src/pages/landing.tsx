@@ -158,9 +158,9 @@ export default function Landing() {
 
           <Card>
             <CardHeader>
-              <CardTitle data-testid="text-sign-in-title">Sign In with Replit</CardTitle>
+              <CardTitle data-testid="text-sign-in-title">Sign In</CardTitle>
               <CardDescription>
-                Create an account to preserve your credits across devices and sessions.
+                Create an account with Google, Apple, GitHub, or email to preserve your credits across devices and sessions.
               </CardDescription>
             </CardHeader>
             <CardContent>
