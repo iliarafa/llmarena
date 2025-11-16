@@ -9,7 +9,7 @@ import { useAccountLinking } from "@/hooks/useAccountLinking";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Coins, CreditCard, BarChart3 } from "lucide-react";
+import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
   DropdownMenu,
@@ -156,7 +156,15 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <h1 className="text-xl font-bold" data-testid="text-app-title">LLM Arena</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold" data-testid="text-app-title">LLM Arena</h1>
+            <Link href="/notebook">
+              <Button variant="ghost" size="sm" className="text-muted-foreground" data-testid="link-notebook">
+                <BookOpen className="w-4 h-4 mr-2" />
+                Notebook
+              </Button>
+            </Link>
+          </div>
           <div className="flex items-center gap-4">
             <p className="text-sm text-muted-foreground hidden sm:block">
               Compare responses across multiple AI models
