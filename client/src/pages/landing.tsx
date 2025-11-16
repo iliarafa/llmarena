@@ -62,7 +62,7 @@ export default function Landing() {
           <p className="text-xl text-muted-foreground mb-2">
             Get responses from GPT-4o, Claude, Gemini, and Grok in one view
           </p>
-          <p className="text-sm text-muted-foreground mb-8">
+          <p className="text-sm text-muted-foreground mb-4">
             Pay-per-use with prepaid credits. No subscription required.
           </p>
           <div className="flex justify-center">
