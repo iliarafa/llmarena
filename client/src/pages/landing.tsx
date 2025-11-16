@@ -167,7 +167,7 @@ export default function Landing() {
                       </Button>
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground text-center">
                     Guest token auto-saves in your browser for sign-up-free access. Save it only to transfer credits to another device.
                   </p>
                   <Button
