@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Sparkles, Zap, Shield } from "lucide-react";
+import { Copy, Sparkles, Zap, Shield, Check } from "lucide-react";
 import llmFightImage from "@assets/LLMfight_1763256670295.png";
 
 export default function Landing() {
@@ -72,6 +72,13 @@ export default function Landing() {
               className="w-64 h-auto opacity-90"
             />
           </div>
+          
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-md" data-testid="privacy-guarantee-badge">
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium" data-testid="text-privacy-guarantee">Your prompts and responses are never stored or logged</span>
+            </div>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-12">
@@ -105,9 +112,20 @@ export default function Landing() {
               <CardTitle className="text-lg">Privacy First</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Use as a guest with just a token, or create an account to preserve your credits
-              </p>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-muted-foreground">Zero data collection</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-muted-foreground">Prompts never stored</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-muted-foreground">Complete anonymity</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -186,6 +204,7 @@ export default function Landing() {
         </div>
 
         <footer className="mt-16 pt-8 border-t text-center text-sm text-muted-foreground">
+          <p className="mb-2 text-foreground font-medium" data-testid="text-footer-privacy">Your prompts and responses are never stored or logged. We respect your privacy.</p>
           <p>v 1.0</p>
           <p>This Whole World LLC - November 2025</p>
         </footer>
