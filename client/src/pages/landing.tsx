@@ -65,7 +65,7 @@ export default function Landing() {
           <p className="text-sm text-muted-foreground mb-1">
             Pay-per-use with prepaid credits. No subscription required.
           </p>
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-[76px]">
             <img 
               src={llmFightImage} 
               alt="AI models competing" 
