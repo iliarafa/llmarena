@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Sparkles, Zap, Shield } from "lucide-react";
+import llmFightImage from "@assets/LLMfight_1763256370491.png";
 
 export default function Landing() {
   const [guestToken, setGuestToken] = useState<string | null>(null);
@@ -61,9 +62,16 @@ export default function Landing() {
           <p className="text-xl text-muted-foreground mb-2">
             Get responses from GPT-4o, Claude, Gemini, and Grok in one view
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mb-8">
             Pay-per-use with prepaid credits. No subscription required.
           </p>
+          <div className="flex justify-center">
+            <img 
+              src={llmFightImage} 
+              alt="AI models competing" 
+              className="w-64 h-auto opacity-90"
+            />
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-12">
