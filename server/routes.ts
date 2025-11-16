@@ -12,7 +12,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-11-20.acacia",
+  apiVersion: "2025-10-29.clover",
 });
 
 const compareRequestSchema = z.object({
@@ -160,23 +160,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get usage history
-  app.get("/api/usage-history", requireAuth, async (req, res) => {
+  // Get dashboard stats (privacy-first: only counts and totals, no prompts/responses)
+  app.get("/api/dashboard/stats", requireAuth, async (req, res) => {
     try {
-      const limit = parseInt(req.query.limit as string) || 50;
       const authId = getAuthId(req);
       
-      let history: any[] = [];
+      let stats = {
+        totalComparisons: 0,
+        totalCreditsSpent: "0",
+        recentActivity: [] as any[]
+      };
+      
       if (authId.userId) {
-        history = await storage.getUserUsageHistory(authId.userId, limit);
+        const history = await storage.getUserUsageHistory(authId.userId, 10);
+        const allHistory = await storage.getUserUsageHistory(authId.userId, 10000);
+        
+        stats.totalComparisons = allHistory.length;
+        stats.totalCreditsSpent = allHistory.reduce((sum, h) => sum + parseFloat(h.creditsCost), 0).toFixed(2);
+        stats.recentActivity = history.map(h => ({
+          timestamp: h.timestamp,
+          creditsCost: h.creditsCost
+        }));
       } else if (authId.guestTokenId) {
-        history = await storage.getGuestUsageHistory(authId.guestTokenId, limit);
+        const history = await storage.getGuestUsageHistory(authId.guestTokenId, 10);
+        const allHistory = await storage.getGuestUsageHistory(authId.guestTokenId, 10000);
+        
+        stats.totalComparisons = allHistory.length;
+        stats.totalCreditsSpent = allHistory.reduce((sum, h) => sum + parseFloat(h.creditsCost), 0).toFixed(2);
+        stats.recentActivity = history.map(h => ({
+          timestamp: h.timestamp,
+          creditsCost: h.creditsCost
+        }));
       }
       
-      res.json(history);
+      res.json(stats);
     } catch (error: any) {
-      console.error("Usage history error:", error);
-      res.status(500).json({ error: "Failed to fetch usage history" });
+      console.error("Dashboard stats error:", error);
+      res.status(500).json({ error: "Failed to fetch dashboard stats" });
     }
   });
 
@@ -221,12 +241,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const newBalance = (creditBalance - creditCost).toFixed(2);
       await updateCreditBalance(req, newBalance);
       
-      // Log usage
+      // Log minimal usage for billing (no prompts or model details stored for privacy)
       await storage.logComparison({
         ...getAuthId(req),
-        modelIds: modelIds as string[],
         creditsCost: creditCost.toString(),
-        prompt,
       });
       
       res.json({

@@ -13,9 +13,10 @@ export interface ModelResponse {
 interface ComparisonGridProps {
   models: Model[];
   responses: ModelResponse[];
+  prompt?: string;
 }
 
-export default function ComparisonGrid({ models, responses }: ComparisonGridProps) {
+export default function ComparisonGrid({ models, responses, prompt }: ComparisonGridProps) {
   if (models.length === 0) {
     return (
       <div className="flex items-center justify-center py-16 px-4">
@@ -52,6 +53,7 @@ export default function ComparisonGrid({ models, responses }: ComparisonGridProp
             error={responseData?.error}
             generationTime={responseData?.generationTime}
             tokenCount={responseData?.tokenCount}
+            prompt={prompt}
           />
         );
       })}

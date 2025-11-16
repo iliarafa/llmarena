@@ -2,9 +2,16 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Copy, Check, AlertCircle } from "lucide-react";
+import { Copy, Check, AlertCircle, Download, Star } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import type { Model } from "./ModelSelector";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ComparisonCardProps {
   model: Model;
@@ -13,6 +20,7 @@ interface ComparisonCardProps {
   error?: string;
   generationTime?: number;
   tokenCount?: number;
+  prompt?: string;
 }
 
 export default function ComparisonCard({ 
@@ -21,9 +29,13 @@ export default function ComparisonCard({
   isLoading = false, 
   error,
   generationTime,
-  tokenCount 
+  tokenCount,
+  prompt 
 }: ComparisonCardProps) {
   const [copied, setCopied] = useState(false);
+  const [rating, setRating] = useState<number>(0);
+  const [hoveredStar, setHoveredStar] = useState<number>(0);
+  const { toast } = useToast();
   const Icon = model.icon;
 
   const handleCopy = async () => {
@@ -32,6 +44,72 @@ export default function ComparisonCard({
     await navigator.clipboard.writeText(response);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleExportJSON = () => {
+    if (!response) return;
+    
+    const exportData = {
+      model: model.name,
+      modelId: model.id,
+      prompt: prompt || null,
+      response,
+      generationTime,
+      tokenCount,
+      timestamp: new Date().toISOString(),
+      rating: rating || null
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${model.id}-${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Exported",
+      description: "Response exported as JSON",
+    });
+  };
+
+  const handleExportMarkdown = () => {
+    if (!response) return;
+    
+    let markdown = `# ${model.name} Response\n\n`;
+    if (prompt) {
+      markdown += `## Prompt\n\n${prompt}\n\n`;
+    }
+    markdown += `## Response\n\n${response}\n\n`;
+    markdown += `---\n\n`;
+    if (generationTime) {
+      markdown += `**Generation Time:** ${generationTime}ms\n\n`;
+    }
+    if (tokenCount) {
+      markdown += `**Token Count:** ~${tokenCount}\n\n`;
+    }
+    if (rating) {
+      markdown += `**Rating:** ${'★'.repeat(rating)}${'☆'.repeat(5 - rating)}\n\n`;
+    }
+    markdown += `**Exported:** ${new Date().toLocaleString()}\n`;
+    
+    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${model.id}-${Date.now()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Exported",
+      description: "Response exported as Markdown",
+    });
   };
 
   return (
@@ -56,19 +134,41 @@ export default function ComparisonCard({
             </Badge>
           )}
           {response && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleCopy}
-              className="h-8 w-8"
-              data-testid={`button-copy-${model.id}`}
-            >
-              {copied ? (
-                <Check className="h-4 w-4 text-green-600" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleCopy}
+                className="h-8 w-8"
+                data-testid={`button-copy-${model.id}`}
+              >
+                {copied ? (
+                  <Check className="h-4 w-4 text-green-600" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    data-testid={`button-export-${model.id}`}
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleExportJSON} data-testid={`button-export-json-${model.id}`}>
+                    Export as JSON
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleExportMarkdown} data-testid={`button-export-md-${model.id}`}>
+                    Export as Markdown
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           )}
         </div>
       </CardHeader>
@@ -104,10 +204,36 @@ export default function ComparisonCard({
         )}
       </CardContent>
 
-      {tokenCount && (
+      {(tokenCount || response) && (
         <CardFooter className="pt-4 border-t">
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span data-testid={`text-tokens-${model.id}`}>~{tokenCount} tokens</span>
+          <div className="flex items-center justify-between w-full gap-4">
+            {tokenCount && (
+              <div className="text-xs text-muted-foreground">
+                <span data-testid={`text-tokens-${model.id}`}>~{tokenCount} tokens</span>
+              </div>
+            )}
+            {response && !error && (
+              <div className="flex items-center gap-1" data-testid={`rating-${model.id}`}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onClick={() => setRating(star)}
+                    onMouseEnter={() => setHoveredStar(star)}
+                    onMouseLeave={() => setHoveredStar(0)}
+                    className="p-0 hover:scale-110 transition-transform"
+                    data-testid={`star-${model.id}-${star}`}
+                  >
+                    <Star
+                      className={`w-4 h-4 ${
+                        star <= (hoveredStar || rating)
+                          ? 'fill-yellow-400 text-yellow-400'
+                          : 'text-muted-foreground'
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </CardFooter>
       )}

@@ -38,15 +38,13 @@ export const guestTokens = pgTable("guest_tokens", {
   linkedToUserId: varchar("linked_to_user_id").references(() => users.id),
 });
 
-// Usage history for tracking comparisons
+// Usage history for minimal billing tracking only (privacy-first: no prompts or responses stored)
 export const usageHistory = pgTable("usage_history", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").references(() => users.id),
   guestTokenId: varchar("guest_token_id").references(() => guestTokens.id),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
-  modelIds: text("model_ids").array().notNull(),
   creditsCost: decimal("credits_cost", { precision: 10, scale: 2 }).notNull(),
-  prompt: text("prompt").notNull(),
 });
 
 // Processed webhook events for idempotency

@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import Home from "@/pages/home";
 import Landing from "@/pages/landing";
-import UsageHistory from "@/pages/usage-history";
+import Dashboard from "@/pages/dashboard";
 import Purchase from "@/pages/purchase";
 import NotFound from "@/pages/not-found";
 
@@ -48,7 +48,7 @@ function Router() {
       ) : isAuthenticated || isValidGuest ? (
         <>
           <Route path="/" component={Home} />
-          <Route path="/usage-history" component={UsageHistory} />
+          <Route path="/dashboard" component={Dashboard} />
           <Route path="/purchase" component={Purchase} />
           <Route path="/:rest*" component={NotFound} />
         </>

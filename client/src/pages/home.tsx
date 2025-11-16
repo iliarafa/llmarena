@@ -9,7 +9,7 @@ import { useAccountLinking } from "@/hooks/useAccountLinking";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Coins, History, CreditCard } from "lucide-react";
+import { LogOut, User, Coins, CreditCard, BarChart3 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
   DropdownMenu,
@@ -180,10 +180,10 @@ export default function Home() {
                   </div>
                 </div>
                 <DropdownMenuSeparator />
-                <Link href="/usage-history">
-                  <DropdownMenuItem data-testid="button-usage-history">
-                    <History className="w-4 h-4 mr-2" />
-                    Usage History
+                <Link href="/dashboard">
+                  <DropdownMenuItem data-testid="button-dashboard">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Dashboard
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/purchase">
@@ -226,6 +226,7 @@ export default function Home() {
           <ComparisonGrid 
             models={models}
             responses={responses}
+            prompt={prompt}
           />
         </div>
       </main>
