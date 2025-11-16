@@ -63,7 +63,7 @@ export default function Landing() {
             Frontier Models Parallel Generations
           </p>
           <p className="text-sm text-muted-foreground mb-1">
-            Pay-per-use with prepaid credits. No subscription required.
+            (Anthropic / Google / OpenAI / xAI)
           </p>
           <div className="flex justify-center mt-[38px] mb-[38px]">
             <img 
