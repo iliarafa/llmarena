@@ -62,8 +62,8 @@ export default function Landing() {
           <p className="text-xl text-muted-foreground mb-1">
             Frontier Models Parallel Generations
           </p>
-          <p className="text-sm text-muted-foreground mb-1">
-            (Anthropic / Google / OpenAI / xAI)
+          <p className="text-sm text-muted-foreground font-semibold mb-1">
+            Anthropic / Google / OpenAI / xAI
           </p>
           <div className="flex justify-center mt-[38px] mb-[38px]">
             <img 
