@@ -53,17 +53,18 @@ export default function PromptInput({
             {characterCount} characters
           </span>
           
-          {creditCost > 0 && (
-            <div className="flex items-center gap-2" data-testid="text-cost-preview">
-              <Coins className="w-4 h-4 text-muted-foreground" />
+          <div className="flex items-center gap-2" data-testid="text-cost-preview">
+            <Coins className="w-4 h-4 text-muted-foreground" />
+            {creditCost > 0 ? (
               <span className={`text-sm font-medium ${hasInsufficientCredits ? 'text-destructive' : 'text-foreground'}`}>
-                {creditCost} credits
+                {creditCost} required • {creditBalance.toFixed(0)} available
               </span>
-              {hasInsufficientCredits && (
-                <span className="text-xs text-destructive">(insufficient)</span>
-              )}
-            </div>
-          )}
+            ) : (
+              <span className="text-sm font-medium text-foreground">
+                {creditBalance.toFixed(0)} credits
+              </span>
+            )}
+          </div>
         </div>
         
         <Button 
