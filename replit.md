@@ -2,31 +2,56 @@
 
 ## Overview
 
-This is a pay-per-use LLM model comparison platform that allows users to submit a single prompt and view side-by-side responses from multiple AI models (GPT-4o, Claude Sonnet 4, Gemini Flash, and Grok). The application supports two modes:
+This is a **privacy-first**, pay-per-use LLM model comparison platform that allows users to submit a single prompt and view side-by-side responses from multiple AI models (GPT-4o, Claude Sonnet 4, Gemini Flash, and Grok). The application supports two modes:
 - **Guest Mode**: Anonymous users can create a secure token and buy credits without signing up
 - **Authenticated Mode**: Users can create an account via Replit Auth to preserve credits across devices
 
-**Status**: 🚧 In Development - Core Features Complete
+**Status**: ✅ **Production Ready - All Features Complete**
 - ✅ All 4 LLM providers integrated and working
-- ✅ Landing page with guest and sign-in options
+- ✅ Landing page with privacy messaging and dual auth options
 - ✅ Guest token system for anonymous usage
 - ✅ Replit Auth integration for optional accounts
 - ✅ Dual authentication middleware (guest tokens + user sessions)
-- ✅ PostgreSQL database schema for users, guest tokens, and usage tracking
-- ⏳ Stripe payment integration (pending API keys from user)
-- ⏳ Credit deduction system
-- ⏳ Credit purchase UI
-- ⏳ Usage history and account linking
+- ✅ PostgreSQL database with minimal privacy-first schema
+- ✅ Stripe payment integration (live keys configured)
+- ✅ Credit deduction system and purchase UI
+- ✅ Session-based export and rating features
+- ✅ Privacy-first dashboard (no prompt/response storage)
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 
+## Privacy-First Architecture
+
+**Core Privacy Principle**: Zero data collection of user prompts and AI responses.
+
+### What We Store (Minimal Billing Data Only)
+- **User/Guest Accounts**: Credit balances, Stripe customer IDs
+- **Usage Transactions**: Timestamp and credits spent per comparison
+- **Session Data**: Temporary authentication sessions
+
+### What We Never Store
+- ❌ User prompts
+- ❌ AI model responses
+- ❌ Model IDs used in comparisons
+- ❌ Any conversation history
+
+### Privacy Verification
+- **Database Schema**: `usageHistory` table contains only `id`, `userId`, `guestTokenId`, `timestamp`, `creditsCost`
+- **API Layer**: Comparison endpoint explicitly excludes prompts from database logging
+- **Type Safety**: Drizzle ORM's `InsertUsageHistory` schema rejects extraneous fields at compile time
+- **Runtime Safety**: Zod's strip behavior removes unknown keys, Drizzle ignores extra properties
+
 ## Business Model
 
 **Pay-per-use with prepaid credits** (not subscription-based):
-- Users buy credit packs via Stripe (e.g., 100 credits for $10)
-- Each comparison deducts credits based on models selected
+- Users buy credit packs via Stripe:
+  - Starter: $2.50 for 20 credits
+  - Popular: $10 for 100 credits
+  - Pro: $40 for 500 credits
+  - Ultimate: $70 for 1000 credits
+- Each comparison costs: 3 credits (1 model), 5 credits (2 models), 7 credits (3 models), or 10 credits (4 models)
 - No monthly fees or commitments
 - Credits never expire
 - Guest users can optionally convert to accounts to preserve credits
@@ -42,84 +67,116 @@ Preferred communication style: Simple, everyday language.
 - **Routing**: Wouter for lightweight client-side routing
 - **Typography**: Inter for UI text, JetBrains Mono for code snippets
 
-**Design Philosophy**: System-based approach emphasizing clarity and efficiency. Clean, minimal visual noise to let content take center stage. The design follows a neutral color scheme with carefully defined spacing primitives (2, 4, 6, 8, 16, 24 Tailwind units).
+**Design Philosophy**: System-based approach emphasizing clarity and efficiency. Clean, minimal visual noise to let content take center stage. The design follows a neutral color scheme with carefully defined spacing primitives.
 
 **Key Pages & Components**:
-- **Landing Page** (`client/src/pages/landing.tsx`): Entry point with two options:
+- **Landing Page** (`client/src/pages/landing.tsx`): Entry point with privacy messaging and two auth options
   - "Try as Guest" - Creates anonymous token, stores in localStorage
   - "Sign In with Replit" - Redirects to `/api/login` for account creation
-- **Home Page** (`client/src/pages/home.tsx`): Main comparison interface with:
-  - User menu showing authentication status (guest vs logged-in)
-  - Logout/clear token functionality
-- **ModelSelector**: Checkbox-based UI for selecting 1-4 models to compare
-- **PromptInput**: Large textarea with character counter and keyboard shortcuts (Cmd/Ctrl+Enter to submit)
-- **ComparisonGrid**: Responsive grid layout that adapts based on number of selected models (1-4)
-- **ComparisonCard**: Individual cards showing model responses with metadata (generation time, token count), copy functionality, and error states
+  - Privacy guarantee badge: "Your prompts and responses are never stored or logged"
+  - Large LLM Arena title (text-6xl) with robot fighting image
+- **Home Page** (`client/src/pages/home.tsx`): Main comparison interface with user menu
+- **Dashboard Page** (`client/src/pages/dashboard.tsx`): Privacy-first stats showing:
+  - Current credit balance
+  - Total comparisons count
+  - Total credits spent
+  - Recent activity (timestamps and credit amounts only)
+- **Purchase Page** (`client/src/pages/purchase.tsx`): Stripe checkout for credit packs
+- **ModelSelector**: Checkbox-based UI for selecting 1-4 models
+- **PromptInput**: Large textarea with permanent credit counter
+- **ComparisonGrid**: Responsive grid layout adapting to 1-4 models
+- **ComparisonCard**: Response cards with:
+  - Copy to clipboard button
+  - Export dropdown (JSON/Markdown) - session-only, client-side downloads
+  - Session-only 5-star rating system (not persisted)
+  - Generation time and token count display
 
 **Authentication Hooks**:
-- **useAuth** (`client/src/hooks/useAuth.ts`): React hook for checking authentication status
-  - Returns `{ user, isLoading, isAuthenticated }`
-  - Queries `/api/auth/user` endpoint
-  - Used throughout the app to show/hide content based on auth state
+- **useAuth** (`client/src/hooks/useAuth.ts`): Check authentication status
+- **useCreditBalance** (`client/src/hooks/useCreditBalance.ts`): Real-time credit balance
+- **useAccountLinking** (`client/src/hooks/useAccountLinking.ts`): Transfer guest credits to user account
 
 ### Backend Architecture
 
 **Framework**: Express.js with TypeScript
 - **Module System**: ES modules (type: "module")
-- **Development**: tsx for hot-reloading during development
-- **Production**: esbuild for bundling server code
+- **Development**: tsx for hot-reloading
+- **Production**: esbuild for bundling
 
-**API Design**: RESTful API with authentication and payment support
+**API Design**: RESTful API with dual authentication and privacy-first logging
 
 **Authentication Endpoints** (via Replit Auth):
-- `GET /api/login`: Initiates Replit Auth login flow (Google, GitHub, email/password)
-- `GET /api/callback`: OAuth callback handler
-- `GET /api/logout`: Logs out user and clears session
-- `GET /api/auth/user`: Returns current authenticated user (protected route)
+- `GET /api/login`: Initiates Replit Auth (Google, Apple, GitHub, email)
+- `GET /api/callback`: OAuth callback
+- `GET /api/logout`: Clears session
+- `GET /api/auth/user`: Returns current user (protected)
 
 **Guest Token Endpoints**:
-- `POST /api/guest/create`: Creates anonymous guest token with 0 credits
+- `POST /api/guest/create`: Creates anonymous token with 0 credits
+- `POST /api/guest/verify`: Validates guest token
+- `POST /api/link-guest-account`: Transfers guest credits to user account
 
 **Comparison Endpoint**:
-- `POST /api/compare`: Accepts prompt and array of model IDs, returns parallel responses
-  - Protected by dual authentication middleware (guest token OR user session)
-  - Request validation using Zod schemas
-  - Error handling with appropriate HTTP status codes
+- `POST /api/compare`: Processes comparison, deducts credits
+  - **Privacy Implementation**: Logs only `userId/guestTokenId` and `creditsCost` to database
+  - Returns responses to client but never stores prompts/responses
+  - Protected by dual auth middleware (guest token OR user session)
+
+**Dashboard Endpoint**:
+- `GET /api/dashboard/stats`: Returns aggregate statistics (no prompts/responses)
+  - Total comparisons count
+  - Total credits spent
+  - Recent activity (timestamps and credit amounts)
+
+**Stripe Endpoints**:
+- `POST /api/create-checkout-session`: Creates Stripe checkout
+- `POST /api/stripe-webhook`: Handles payment confirmation with idempotency
 
 **Authentication Middleware** (`server/authMiddleware.ts`):
-- `requireAuth`: Accepts both Bearer tokens (guests) and session cookies (logged-in users)
-- Populates `req.guestToken` or `req.authenticatedUser` based on auth method
+- `requireAuth`: Accepts Bearer tokens (guests) or session cookies (users)
 - Helper functions: `getCreditBalance()`, `getAuthId()`, `updateCreditBalance()`
 
 **LLM Integration**: Multiple AI provider SDKs orchestrated in parallel
 - OpenAI SDK for GPT-4o
-- Anthropic SDK for Claude Sonnet
+- Anthropic SDK for Claude Sonnet 4
 - Google GenAI SDK for Gemini Flash
-- OpenRouter (via OpenAI SDK) for Grok access
+- OpenRouter for Grok
 
-All LLM clients are configured to use Replit AI Integrations, which abstract away API key management and bill usage to Replit credits rather than requiring individual API keys.
-
-**Response Processing**: Each model request includes timing information and token counts, with graceful error handling that allows partial success (some models can succeed while others fail).
+All LLM clients use Replit AI Integrations for abstracted API key management.
 
 ### Data Storage
 
-**ORM**: Drizzle ORM with PostgreSQL dialect
-- Schema defined in `shared/schema.ts` for type safety across client/server
-- Database instance exported from `server/db.ts`
-- Migration support via drizzle-kit (`npm run db:push`)
+**ORM**: Drizzle ORM with PostgreSQL
+- Schema: `shared/schema.ts` for type safety
+- Migrations: `npm run db:push` (never manual SQL)
 
-**Database Tables** (`shared/schema.ts`):
-- **sessions**: Session storage for Replit Auth (required for authentication)
-- **users**: User accounts with Replit Auth fields (id, email, firstName, lastName, profileImageUrl) plus credit balance and Stripe customer ID
-- **guestTokens**: Anonymous guest tokens with credit balances for users without accounts
-- **usageHistory**: Tracks all comparisons with model IDs, credit cost, prompt, and timestamp
+**Database Tables** (Privacy-First Schema):
+- **sessions**: Replit Auth session storage
+- **users**: User accounts (email, name, creditBalance, stripeCustomerId)
+- **guestTokens**: Anonymous tokens (token, creditBalance)
+- **usageHistory**: **MINIMAL LOGGING ONLY**
+  - Fields: `id`, `userId`, `guestTokenId`, `timestamp`, `creditsCost`
+  - **Does NOT store**: prompts, responses, model IDs
+- **processedWebhookEvents**: Stripe webhook idempotency tracking
 
 **Storage Interface** (`server/storage.ts`):
-- User operations: `getUser()`, `getUserByEmail()`, `upsertUser()`, `updateUserCredits()`
-- Guest token operations: `createGuestToken()`, `getGuestTokenByToken()`, `updateGuestTokenCredits()`, `updateGuestTokenLastUsed()`
-- Usage tracking: `logComparison()`, `getUserUsageHistory()`, `getGuestUsageHistory()`
+- User operations: `getUser()`, `upsertUser()`, `updateUserCredits()`
+- Guest token operations: `createGuestToken()`, `getGuestTokenByToken()`, `updateGuestTokenCredits()`
+- Usage tracking: `logComparison()` (minimal data only), `getUserUsageHistory()`, `getGuestUsageHistory()`
 
-**Session Management**: PostgreSQL-backed sessions via `connect-pg-simple` for Replit Auth
+### Session-Only Features (No Persistence)
+
+**Export Functionality** (`ComparisonCard.tsx`):
+- Download individual responses as JSON or Markdown
+- Includes prompt, response, metadata, and rating
+- Client-side only - no server storage
+- Lost when page is closed/refreshed
+
+**Rating System** (`ComparisonCard.tsx`):
+- 5-star rating per model response
+- Stored in React component state
+- Helps users compare during current session
+- Never persisted to database
 
 ### Build & Development
 
@@ -135,49 +192,68 @@ All LLM clients are configured to use Replit AI Integrations, which abstract awa
 - `@assets/*` → `attached_assets/*`
 
 **Development Workflow**:
-- `npm run dev`: Runs development server with Vite middleware integrated into Express
-- `npm run build`: Builds both frontend (Vite) and backend (esbuild)
+- `npm run dev`: Development server (Vite + Express)
+- `npm run build`: Production build
 - `npm run start`: Production server
-- `npm run db:push`: Push schema changes to database
-
-**Vite Configuration**: Custom setup with React plugin, runtime error overlay, and Replit-specific plugins (cartographer, dev-banner) in development mode.
+- `npm run db:push`: Sync database schema
 
 ## External Dependencies
 
 ### AI Model Providers
-
-**Replit AI Integrations**: All AI models accessed through Replit's unified integration layer
-- Configured via environment variables (base URLs and API keys)
-- Supports OpenAI, Anthropic, Google Gemini, and OpenRouter
+- OpenAI, Anthropic, Google Gemini, OpenRouter via Replit AI Integrations
 - Credits-based billing instead of direct API costs
 
 ### Database
+- Neon PostgreSQL via `@neondatabase/serverless`
 
-**Neon PostgreSQL**: Serverless PostgreSQL via `@neondatabase/serverless`
-- Connection string via `DATABASE_URL` environment variable
-- WebSocket-based connection for serverless compatibility
+### Payment Processing
+- Stripe for credit purchases
+- Live mode configured with webhook support
 
-### UI Component Libraries
+### UI Components
+- Radix UI primitives (Dialog, Dropdown, Popover, etc.)
+- Shadcn/ui component library
+- Lucide React icons
 
-**Radix UI**: Complete set of unstyled, accessible primitives
-- Dialog, Dropdown Menu, Popover, Toast, Tooltip, and 20+ other components
-- Fully keyboard navigable and ARIA compliant
+## Environment Variables (All Configured)
+- `STRIPE_SECRET_KEY` - Live Stripe secret key
+- `VITE_STRIPE_PUBLIC_KEY` - Live Stripe publishable key
+- `STRIPE_WEBHOOK_SECRET` - Webhook signing secret
+- `DATABASE_URL` - PostgreSQL connection
+- `SESSION_SECRET` - Session encryption
 
-**Additional UI Dependencies**:
-- `cmdk`: Command menu component
-- `react-day-picker`: Calendar/date picker
-- `embla-carousel-react`: Carousel component
-- `vaul`: Drawer component
-- `recharts`: Charting library (configured but not actively used)
+## Recent Changes (Nov 16, 2025)
 
-### Styling & Utilities
+### Privacy-First Implementation
+1. **Database Schema Updated**:
+   - Removed `prompt` and `modelIds` fields from `usageHistory` table
+   - Only stores timestamp and credits spent for billing purposes
+   
+2. **API Layer Protected**:
+   - Comparison endpoint explicitly excludes prompts from logging
+   - Dashboard endpoint returns only aggregate stats (counts, totals)
+   
+3. **Usage History Removed**:
+   - Deleted usage history page (no meaningful data to display)
+   - Replaced with privacy-first dashboard showing minimal stats
+   
+4. **New Features Added**:
+   - Session-based export (JSON/Markdown downloads)
+   - Session-only 5-star rating system
+   - Privacy-first dashboard with aggregate statistics
+   
+5. **Landing Page Updates**:
+   - Large LLM Arena title (text-6xl)
+   - Green privacy guarantee badge
+   - Robot fighting image centered above feature cards
 
-- **Tailwind CSS**: Utility-first styling with custom configuration
-- **class-variance-authority**: Type-safe variant handling for components
-- **clsx** and **tailwind-merge**: Class name composition utilities
+## Design Philosophy
 
-### Form Handling
+- **Privacy First**: Zero data collection messaging throughout
+- **Minimal Interface**: Clean, system-based design with neutral colors
+- **Accessibility**: ARIA compliant, keyboard navigable
+- **Responsive**: Mobile-first design adapting to all screen sizes
 
-- **react-hook-form**: Form state management
-- **@hookform/resolvers**: Validation resolver integration
-- **zod**: Schema validation for both forms and API requests
+## Footer
+- v 1.0
+- This Whole World LLC - November 2025
