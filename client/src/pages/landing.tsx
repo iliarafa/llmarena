@@ -55,7 +55,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="text-center mb-4">
+        <div className="mb-4">
           <h1 className="text-6xl font-bold mb-2" data-testid="text-landing-title">
             LLM Arena
           </h1>
