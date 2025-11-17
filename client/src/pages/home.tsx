@@ -159,7 +159,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-bold" data-testid="text-app-title">LLM Arena</h1>
             <Link href="/notebook">
-              <Button variant="ghost" size="sm" className="text-muted-foreground" data-testid="link-notebook">
+              <Button variant="ghost" size="sm" className="text-[#000000] dark:text-white" data-testid="link-notebook">
                 <BookOpen className="w-4 h-4 mr-2" />
                 Notebook
               </Button>
