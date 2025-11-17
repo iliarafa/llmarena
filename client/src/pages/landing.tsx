@@ -171,11 +171,11 @@ export default function Landing() {
                     Guest token auto-saves in your browser for sign-up-free access. Save it only to transfer credits to another device.
                   </p>
                   <Button
-                    onClick={() => window.location.href = "/purchase"}
+                    onClick={() => window.location.href = "/"}
                     className="w-full"
                     data-testid="button-continue-guest"
                   >
-                    Buy Credits
+                    Continue to Arena
                   </Button>
                 </div>
               )}
