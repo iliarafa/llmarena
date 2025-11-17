@@ -68,7 +68,7 @@ export default function Notebook() {
           ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Start writing... Your notes are saved automatically and stored only on your device."
+          placeholder=""
           className="min-h-[calc(100vh-12rem)] resize-none text-base focus-visible:ring-0 border-0"
           data-testid="textarea-notebook"
         />
