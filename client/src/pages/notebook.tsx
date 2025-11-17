@@ -58,12 +58,11 @@ export default function Notebook() {
             </Link>
             <h1 className="text-xl font-bold" data-testid="text-notebook-title">Notebook</h1>
           </div>
-          <p className="text-sm text-muted-foreground hidden sm:block">
+          <p className="hidden sm:block text-[12px] font-medium text-[#000000]">
             Auto-saves locally as you type
           </p>
         </div>
       </header>
-
       <main className="max-w-4xl mx-auto px-6 py-8">
         <Textarea
           ref={textareaRef}
