@@ -166,11 +166,7 @@ export default function Home() {
             </Link>
           </div>
           <div className="flex items-center gap-4">
-            <p className="text-sm text-muted-foreground hidden sm:block">
-              Compare responses across multiple AI models
-            </p>
-            
-            <div className="flex items-center gap-2 text-sm text-muted-foreground hidden sm:flex">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground hidden sm:flex"></div>
               <Coins className="w-4 h-4" />
               <span data-testid="text-header-credits">{creditBalance.toFixed(0)} credits</span>
               <Link href="/purchase">
