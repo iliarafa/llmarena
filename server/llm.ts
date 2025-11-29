@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 import { GoogleGenAI } from "@google/genai";
+import { buildCaesarPrompt, type CaesarResponse, type CaesarVerdict, type JudgeModelId } from "./prompts/caesarPrompt";
 
 // Initialize all LLM clients using Replit AI Integrations
 // These use AI integrations which don't require API keys and are billed to your credits
@@ -195,4 +196,113 @@ export async function generateComparisons(
   }
 
   return Promise.all(promises);
+}
+
+// Model name mapping for Caesar prompt
+const MODEL_NAMES: { [key: string]: string } = {
+  "gpt-4o": "GPT-4o",
+  "claude-sonnet": "Claude Sonnet",
+  "gemini-flash": "Gemini Flash",
+  "grok": "Grok",
+};
+
+export async function generateCaesarVerdict(
+  userPrompt: string,
+  modelResponses: LLMResponse[],
+  judgeModel: JudgeModelId
+): Promise<CaesarResponse> {
+  const startTime = Date.now();
+  
+  // Filter out errored responses and build the prompt
+  const validResponses = modelResponses
+    .filter(r => r.response && !r.error)
+    .map(r => ({
+      modelId: r.modelId,
+      modelName: MODEL_NAMES[r.modelId] || r.modelId,
+      response: r.response!,
+    }));
+  
+  if (validResponses.length < 2) {
+    return {
+      error: "Need at least 2 valid responses to judge",
+      judgeModel: judgeModel,
+      modelMapping: {},
+    };
+  }
+  
+  const { prompt: caesarPrompt, modelMapping } = buildCaesarPrompt(userPrompt, validResponses);
+  
+  try {
+    let responseText = "";
+    
+    switch (judgeModel) {
+      case "claude-3-5-sonnet":
+        const claudeResponse = await anthropic.messages.create({
+          model: "claude-3-5-sonnet-20241022",
+          max_tokens: 2048,
+          messages: [{ role: "user", content: caesarPrompt }],
+        });
+        const claudeContent = claudeResponse.content[0];
+        responseText = claudeContent.type === "text" ? claudeContent.text : "";
+        break;
+        
+      case "gpt-4o":
+        const openaiResponse = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [{ role: "user", content: caesarPrompt }],
+          max_tokens: 2048,
+        });
+        responseText = openaiResponse.choices[0]?.message?.content || "";
+        break;
+        
+      case "gemini-flash":
+        const geminiResult = await gemini.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: [{ role: "user", parts: [{ text: caesarPrompt }] }],
+        });
+        responseText = geminiResult.text || "";
+        break;
+        
+      case "grok":
+        const grokResponse = await openrouter.chat.completions.create({
+          model: "x-ai/grok-2-1212",
+          messages: [{ role: "user", content: caesarPrompt }],
+          max_tokens: 2048,
+        });
+        responseText = grokResponse.choices[0]?.message?.content || "";
+        break;
+    }
+    
+    // Parse the JSON response
+    // Try to extract JSON from the response (it might have markdown code blocks)
+    let jsonStr = responseText;
+    const jsonMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (jsonMatch) {
+      jsonStr = jsonMatch[1].trim();
+    } else {
+      // Try to find JSON object directly
+      const startIdx = responseText.indexOf('{');
+      const endIdx = responseText.lastIndexOf('}');
+      if (startIdx !== -1 && endIdx !== -1) {
+        jsonStr = responseText.substring(startIdx, endIdx + 1);
+      }
+    }
+    
+    const verdict: CaesarVerdict = JSON.parse(jsonStr);
+    
+    return {
+      verdict,
+      generationTime: Date.now() - startTime,
+      judgeModel: judgeModel,
+      modelMapping,
+    };
+  } catch (error: any) {
+    console.error("Caesar verdict error:", error);
+    return {
+      error: error.message || "Failed to generate verdict",
+      generationTime: Date.now() - startTime,
+      judgeModel: judgeModel,
+      modelMapping,
+    };
+  }
 }

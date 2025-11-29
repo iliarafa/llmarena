@@ -1,7 +1,8 @@
 import { useState } from "react";
-import ModelSelector, { AVAILABLE_MODELS, type ModelId } from "@/components/ModelSelector";
+import ModelSelector, { AVAILABLE_MODELS, type ModelId, type JudgeModelId } from "@/components/ModelSelector";
 import PromptInput from "@/components/PromptInput";
 import ComparisonGrid, { type ModelResponse } from "@/components/ComparisonGrid";
+import CaesarCard, { type CaesarResponse } from "@/components/CaesarCard";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreditBalance } from "@/hooks/useCreditBalance";
@@ -24,6 +25,10 @@ export default function Home() {
   const [selectedModels, setSelectedModels] = useState<ModelId[]>([]);
   const [prompt, setPrompt] = useState("");
   const [responses, setResponses] = useState<ModelResponse[]>([]);
+  const [caesarEnabled, setCaesarEnabled] = useState(false);
+  const [caesarJudgeModel, setCaesarJudgeModel] = useState<JudgeModelId>("claude-3-5-sonnet");
+  const [caesarResponse, setCaesarResponse] = useState<CaesarResponse | undefined>();
+  const [caesarLoading, setCaesarLoading] = useState(false);
   const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
   const { creditBalance } = useCreditBalance();
@@ -39,7 +44,15 @@ export default function Home() {
     3: 7,
     4: 10,
   };
-  const creditCost = creditCostMap[selectedModels.length] || 0;
+  const baseCreditCost = creditCostMap[selectedModels.length] || 0;
+  const caesarCost = caesarEnabled ? 3 : 0;
+  const creditCost = baseCreditCost + caesarCost;
+
+  // Create model name mapping for Caesar card
+  const modelNames: { [modelId: string]: string } = {};
+  AVAILABLE_MODELS.forEach(m => {
+    modelNames[m.id] = m.name;
+  });
 
   const handleCompare = async () => {
     if (selectedModels.length === 0) {
@@ -67,16 +80,24 @@ export default function Home() {
         isLoading: true
       }))
     );
+    
+    // Set Caesar to loading if enabled
+    if (caesarEnabled) {
+      setCaesarLoading(true);
+      setCaesarResponse(undefined);
+    }
 
     toast({
       title: "Generating responses",
-      description: `Comparing across ${selectedModels.length} model${selectedModels.length > 1 ? 's' : ''}`
+      description: `Comparing across ${selectedModels.length} model${selectedModels.length > 1 ? 's' : ''}${caesarEnabled ? ' + Caesar judging' : ''}`
     });
 
     try {
       const res = await apiRequest("POST", "/api/compare", {
         prompt,
-        modelIds: selectedModels
+        modelIds: selectedModels,
+        caesarEnabled,
+        caesarJudgeModel: caesarEnabled ? caesarJudgeModel : undefined,
       });
 
       if (res.status === 402) {
@@ -88,6 +109,7 @@ export default function Home() {
             error: "Insufficient credits"
           }))
         );
+        setCaesarLoading(false);
         
         toast({
           title: "Insufficient Credits",
@@ -104,6 +126,12 @@ export default function Home() {
 
       const result = await res.json();
       setResponses(result.responses);
+      
+      // Set Caesar response if present
+      if (result.caesar) {
+        setCaesarResponse(result.caesar);
+      }
+      setCaesarLoading(false);
       
       // Invalidate credit balance queries to refresh the displayed balance
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -130,6 +158,7 @@ export default function Home() {
           error: "Failed to generate response"
         }))
       );
+      setCaesarLoading(false);
 
       toast({
         title: "Error",
@@ -223,13 +252,17 @@ export default function Home() {
           <ModelSelector 
             selectedModels={selectedModels}
             onSelectionChange={setSelectedModels}
+            caesarEnabled={caesarEnabled}
+            onCaesarToggle={setCaesarEnabled}
+            caesarJudgeModel={caesarJudgeModel}
+            onCaesarJudgeChange={setCaesarJudgeModel}
           />
           
           <PromptInput
             value={prompt}
             onChange={setPrompt}
             onSubmit={handleCompare}
-            isLoading={responses.some(r => r.isLoading)}
+            isLoading={responses.some(r => r.isLoading) || caesarLoading}
             disabled={selectedModels.length === 0}
             creditCost={creditCost}
             creditBalance={creditBalance}
@@ -237,11 +270,22 @@ export default function Home() {
         </div>
 
         <div className="pt-8">
-          <ComparisonGrid 
-            models={models}
-            responses={responses}
-            prompt={prompt}
-          />
+          <div className={`grid gap-6 ${caesarEnabled || caesarResponse ? 'lg:grid-cols-[1fr_350px]' : ''}`}>
+            <ComparisonGrid 
+              models={models}
+              responses={responses}
+              prompt={prompt}
+            />
+            {(caesarEnabled || caesarResponse) && (
+              <div className="lg:sticky lg:top-24 lg:self-start">
+                <CaesarCard 
+                  caesarResponse={caesarResponse}
+                  isLoading={caesarLoading}
+                  modelNames={modelNames}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>

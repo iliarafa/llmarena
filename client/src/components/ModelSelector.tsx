@@ -1,10 +1,18 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Brain, Zap } from "lucide-react";
+import { Sparkles, Brain, Zap, Gavel } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import grokLogo from "@assets/grok--v2_1763216108457.jpg";
 
 export type ModelId = "gpt-4o" | "claude-sonnet" | "gemini-flash" | "grok";
+export type JudgeModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
 
 export interface Model {
   id: ModelId;
@@ -15,6 +23,11 @@ export interface Model {
   color: string;
 }
 
+export interface JudgeModel {
+  id: JudgeModelId;
+  name: string;
+}
+
 export const AVAILABLE_MODELS: Model[] = [
   { id: "gpt-4o", name: "GPT-4o", shortName: "GPT-4o", icon: Sparkles, color: "text-green-600" },
   { id: "claude-sonnet", name: "Claude Sonnet", shortName: "Claude", icon: Brain, color: "text-orange-600" },
@@ -22,12 +35,30 @@ export const AVAILABLE_MODELS: Model[] = [
   { id: "grok", name: "Grok", shortName: "Grok", iconImage: grokLogo, color: "text-foreground" },
 ];
 
+export const JUDGE_MODELS: JudgeModel[] = [
+  { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet (new)" },
+  { id: "gpt-4o", name: "GPT-4o (Nov 2025)" },
+  { id: "gemini-flash", name: "Gemini 1.5 Flash" },
+  { id: "grok", name: "Grok-2-1212" },
+];
+
 interface ModelSelectorProps {
   selectedModels: ModelId[];
   onSelectionChange: (models: ModelId[]) => void;
+  caesarEnabled: boolean;
+  onCaesarToggle: (enabled: boolean) => void;
+  caesarJudgeModel: JudgeModelId;
+  onCaesarJudgeChange: (model: JudgeModelId) => void;
 }
 
-export default function ModelSelector({ selectedModels, onSelectionChange }: ModelSelectorProps) {
+export default function ModelSelector({ 
+  selectedModels, 
+  onSelectionChange,
+  caesarEnabled,
+  onCaesarToggle,
+  caesarJudgeModel,
+  onCaesarJudgeChange,
+}: ModelSelectorProps) {
   const handleToggle = (modelId: ModelId) => {
     if (selectedModels.includes(modelId)) {
       onSelectionChange(selectedModels.filter(id => id !== modelId));
@@ -71,6 +102,7 @@ export default function ModelSelector({ selectedModels, onSelectionChange }: Mod
           </Button>
         </div>
       </div>
+      
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {AVAILABLE_MODELS.map((model) => {
           const Icon = model.icon;
@@ -109,6 +141,58 @@ export default function ModelSelector({ selectedModels, onSelectionChange }: Mod
             </div>
           );
         })}
+      </div>
+
+      <div className="pt-4 border-t">
+        <div
+          onClick={() => onCaesarToggle(!caesarEnabled)}
+          className={`
+            flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all
+            ${caesarEnabled 
+              ? 'border-amber-500 bg-amber-500/10' 
+              : 'border-border hover-elevate'
+            }
+          `}
+          data-testid="checkbox-caesar"
+        >
+          <Checkbox
+            checked={caesarEnabled}
+            onCheckedChange={(checked) => onCaesarToggle(checked as boolean)}
+            className="pointer-events-none"
+            data-testid="checkbox-input-caesar"
+          />
+          <div className="flex items-center gap-2 flex-1">
+            <Gavel className={`h-4 w-4 flex-shrink-0 ${caesarEnabled ? 'text-amber-600' : 'text-muted-foreground'}`} />
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 flex-1">
+              <Label className="text-sm font-medium cursor-pointer">
+                Caesar
+                <span className="text-xs text-muted-foreground ml-1">(+3 credits)</span>
+              </Label>
+              {caesarEnabled && (
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Select
+                    value={caesarJudgeModel}
+                    onValueChange={(value) => onCaesarJudgeChange(value as JudgeModelId)}
+                  >
+                    <SelectTrigger className="h-8 w-[180px] text-xs" data-testid="select-caesar-judge">
+                      <SelectValue placeholder="Select judge" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {JUDGE_MODELS.map((judge) => (
+                        <SelectItem key={judge.id} value={judge.id} data-testid={`option-judge-${judge.id}`}>
+                          {judge.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground mt-2 ml-1">
+          Caesar judges the responses and declares a winner with detailed scoring
+        </p>
       </div>
     </div>
   );

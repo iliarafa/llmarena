@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { generateComparisons } from "./llm";
+import { generateComparisons, generateCaesarVerdict } from "./llm";
 import { z } from "zod";
 import { randomBytes } from "crypto";
 import { setupAuth, isAuthenticated } from "./replitAuth";
@@ -18,6 +18,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 const compareRequestSchema = z.object({
   prompt: z.string().min(1),
   modelIds: z.array(z.enum(["gpt-4o", "claude-sonnet", "gemini-flash", "grok"])).min(1),
+  caesarEnabled: z.boolean().optional(),
+  caesarJudgeModel: z.enum(["claude-3-5-sonnet", "gpt-4o", "gemini-flash", "grok"]).optional(),
 });
 
 const checkoutRequestSchema = z.object({
@@ -203,7 +205,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Protected comparison endpoint with credit checking
   app.post("/api/compare", requireAuth, async (req, res) => {
     try {
-      const { prompt, modelIds } = compareRequestSchema.parse(req.body);
+      const { prompt, modelIds, caesarEnabled, caesarJudgeModel } = compareRequestSchema.parse(req.body);
       
       // Calculate credit cost based on tiered pricing
       const modelCount = modelIds.length;
@@ -213,14 +215,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         3: 7,
         4: 10,
       };
-      const creditCost = creditCostMap[modelCount];
+      const baseCreditCost = creditCostMap[modelCount];
       
-      if (!creditCost) {
+      if (!baseCreditCost) {
         return res.status(400).json({
           error: "Invalid model count",
           message: "Please select between 1 and 4 models.",
         });
       }
+      
+      // Add Caesar cost if enabled (+3 credits)
+      const caesarCost = caesarEnabled ? 3 : 0;
+      const creditCost = baseCreditCost + caesarCost;
       
       // Check credit balance
       const creditBalance = parseFloat(getCreditBalance(req));
@@ -237,6 +243,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate comparisons
       const responses = await generateComparisons(prompt, modelIds);
       
+      // Generate Caesar verdict if enabled
+      let caesar = undefined;
+      if (caesarEnabled && caesarJudgeModel) {
+        caesar = await generateCaesarVerdict(prompt, responses, caesarJudgeModel);
+      }
+      
       // Deduct credits after successful comparison
       const newBalance = (creditBalance - creditCost).toFixed(2);
       await updateCreditBalance(req, newBalance);
@@ -249,6 +261,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({
         responses,
+        caesar,
         creditsUsed: creditCost,
         creditsRemaining: newBalance,
       });
