@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Search, Gift, User, Key, Coins } from "lucide-react";
+import { ArrowLeft, Search, Gift, User, Key, Coins, UserPlus } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "wouter";
 import type { User as UserType, GuestToken } from "@shared/schema";
 
@@ -20,6 +21,13 @@ export default function Admin() {
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [selectedGuest, setSelectedGuest] = useState<GuestToken | null>(null);
   const [creditsAmount, setCreditsAmount] = useState("");
+  
+  // Registration form state
+  const [newUserEmail, setNewUserEmail] = useState("");
+  const [newUserFirstName, setNewUserFirstName] = useState("");
+  const [newUserLastName, setNewUserLastName] = useState("");
+  const [newUserCredits, setNewUserCredits] = useState("");
+  const [newUserIsAdmin, setNewUserIsAdmin] = useState(false);
 
   const { data: users, isLoading: usersLoading, refetch: refetchUsers } = useQuery<UserType[]>({
     queryKey: ["/api/admin/users", userSearch],

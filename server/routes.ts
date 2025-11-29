@@ -468,6 +468,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin: Create a new user
+  const createUserSchema = z.object({
+    email: z.string().email(),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    initialCredits: z.number().int().min(0).optional(),
+    isAdmin: z.boolean().optional(),
+  });
+
+  app.post("/api/admin/create-user", isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin || !admin.isAdmin) {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+      
+      const parseResult = createUserSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data",
+          details: parseResult.error.errors.map(e => e.message).join(", ")
+        });
+      }
+      
+      const { email, firstName, lastName, initialCredits, isAdmin } = parseResult.data;
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ error: "A user with this email already exists" });
+      }
+      
+      // Create the user
+      const newUser = await storage.createUser({
+        email,
+        firstName: firstName || null,
+        lastName: lastName || null,
+        creditBalance: (initialCredits || 0).toString(),
+        isAdmin: isAdmin || false,
+      });
+      
+      res.json({ 
+        success: true, 
+        message: `User ${email} created successfully`,
+        user: newUser
+      });
+    } catch (error: any) {
+      console.error("Admin create user error:", error);
+      res.status(500).json({ error: "Failed to create user" });
+    }
+  });
+
   // Admin: Gift credits to user or guest token
   const giftCreditsSchema = z.object({
     targetType: z.enum(["user", "guest"]),
