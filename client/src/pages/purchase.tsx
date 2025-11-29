@@ -22,28 +22,28 @@ interface CreditTier {
 
 const creditTiers: CreditTier[] = [
   {
-    credits: 20,
+    credits: 25,
     price: 3.00,
     name: "Starter",
   },
   {
     credits: 100,
     price: 10.00,
-    name: "Popular",
-    savings: "Save 33%",
+    name: "Challenger",
+    savings: "Save 17%",
     popular: true,
   },
   {
-    credits: 500,
+    credits: 300,
     price: 25.00,
     name: "Pro",
-    savings: "Save 67%",
+    savings: "Save 31%",
   },
   {
     credits: 1000,
     price: 50.00,
     name: "Ultimate",
-    savings: "Save 67%",
+    savings: "Save 58%",
   },
 ];
 
