@@ -238,6 +238,22 @@ All LLM clients use Replit AI Integrations for abstracted API key management.
 
 ## Recent Changes
 
+### Blind Mode Feature (Nov 29, 2025)
+1. **Blind Mode Toggle** (`client/src/components/ModelSelector.tsx`):
+   - Toggle with EyeOff icon and purple styling when enabled
+   - Shows "Contender A", "Contender B", etc. instead of model names
+   - Reveals real identities after user votes or Caesar decides
+
+2. **Voting System** (`client/src/components/ComparisonCard.tsx`):
+   - Vote button appears in blind mode (thumbs up icon)
+   - Clicking Vote reveals all model identities
+   - Star ratings hidden during blind mode, shown after reveal
+
+3. **Auto-Reveal Logic** (`client/src/pages/home.tsx`):
+   - Blind mode resets when starting new comparison
+   - Auto-reveals when Caesar verdict arrives
+   - Toast notification confirms vote and reveal
+
 ### Caesar Judge Feature (Nov 29, 2025)
 1. **Caesar Prompt Template** (`server/prompts/caesarPrompt.ts`):
    - Anonymizes models as "Response A/B/C/D" to prevent bias
