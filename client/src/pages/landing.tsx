@@ -146,7 +146,7 @@ export default function Landing() {
               <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
                 <Gavel className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
               </div>
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white">Caesar Judge</h3>
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white">Caesar</h3>
             </div>
             <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
               Let an AI arbiter analyze and score responses across accuracy, clarity, creativity, and safety.
