@@ -536,6 +536,7 @@ export default function Home() {
               blindModeEnabled={blindModeEnabled}
               blindModeRevealed={blindModeRevealed}
               onVote={handleVote}
+              caesarResponse={caesarResponse}
             />
             {(caesarEnabled || caesarResponse) && (
               <div className="lg:sticky lg:top-24 lg:self-start">
