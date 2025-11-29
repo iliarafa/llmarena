@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ModelSelector, { AVAILABLE_MODELS, type ModelId, type JudgeModelId } from "@/components/ModelSelector";
+import ModelSelector, { AVAILABLE_MODELS, type ModelId, type JudgeModelId, type Model } from "@/components/ModelSelector";
 import PromptInput from "@/components/PromptInput";
 import ComparisonGrid, { type ModelResponse } from "@/components/ComparisonGrid";
 import CaesarCard, { type CaesarResponse } from "@/components/CaesarCard";
@@ -14,6 +14,16 @@ import { generatePDF, downloadMarkdown, downloadJSON } from "@/lib/reportExporte
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History, Shield } from "lucide-react";
+
+// Fisher-Yates shuffle algorithm for randomizing model display order in blind mode
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 import { Link, useLocation } from "wouter";
 import {
   DropdownMenu,
@@ -42,6 +52,7 @@ export default function Home() {
   const [blindModeEnabled, setBlindModeEnabled] = useState(false);
   const [blindModeRevealed, setBlindModeRevealed] = useState(false);
   const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0);
+  const [displayOrder, setDisplayOrder] = useState<Model[]>([]); // Randomized model order for blind mode
   const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
   const { creditBalance } = useCreditBalance();
@@ -83,6 +94,19 @@ export default function Home() {
     // Reset blind mode reveal state for new comparison
     if (blindModeEnabled) {
       setBlindModeRevealed(false);
+    }
+
+    // Get the models for this comparison
+    const modelsForComparison = AVAILABLE_MODELS.filter(m => selectedModels.includes(m.id));
+    
+    // If blind mode is enabled, shuffle the display order to prevent predictability
+    // This randomizes which model appears as "Contender A", "Contender B", etc.
+    if (blindModeEnabled) {
+      const shuffledModels = shuffleArray(modelsForComparison);
+      setDisplayOrder(shuffledModels);
+    } else {
+      // When blind mode is off, use the original selection order
+      setDisplayOrder(modelsForComparison);
     }
 
     // Set all selected models to loading state
@@ -216,7 +240,12 @@ export default function Home() {
     }
   };
 
+  // For non-comparison display (like the selector), use the raw selected models order
   const models = AVAILABLE_MODELS.filter(m => selectedModels.includes(m.id));
+  
+  // For displaying comparison results, use displayOrder (which is shuffled in blind mode)
+  // Fall back to models if displayOrder hasn't been set yet (before first comparison)
+  const displayModels = displayOrder.length > 0 ? displayOrder : models;
 
   // Handle voting in blind mode - reveals the model names
   const handleVote = (modelId: string) => {
@@ -247,6 +276,10 @@ export default function Home() {
     // Set selected models from the battle
     const modelIds = battle.responses.map(r => r.modelId as ModelId);
     setSelectedModels(modelIds);
+    
+    // Set display order from the loaded battle (maintain original order from history)
+    const loadedModels = AVAILABLE_MODELS.filter(m => modelIds.includes(m.id));
+    setDisplayOrder(loadedModels);
     
     // Restore Caesar response if available
     if (battle.caesar) {
@@ -541,7 +574,7 @@ export default function Home() {
           )}
           <div className={`grid gap-6 ${caesarEnabled || caesarResponse ? 'lg:grid-cols-[1fr_350px] items-stretch' : ''}`}>
             <ComparisonGrid 
-              models={models}
+              models={displayModels}
               responses={responses}
               prompt={prompt}
               blindModeEnabled={blindModeEnabled}
