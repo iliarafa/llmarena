@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, X, LucideIcon } from "lucide-react";
+import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, X, LucideIcon, BookOpen } from "lucide-react";
+import { Link } from "wouter";
 import llmFightImage from "@assets/LLMfight_1763256670295.png";
 
 interface Feature {
@@ -319,7 +320,7 @@ export default function Landing() {
             </div>
 
             <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 col-span-2 md:col-span-1 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
               onClick={() => handleFeatureClick(FEATURES[2])}
               data-testid="feature-tile-privacy"
             >
@@ -344,6 +345,20 @@ export default function Landing() {
                 </div>
               </div>
             </div>
+
+            <Link href="/notebook" className="md:hidden">
+              <div 
+                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer active:scale-[0.98]"
+                data-testid="feature-tile-notebook"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800">
+                    <BookOpen className="w-4 h-4 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+                  </div>
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Notebook</h3>
+                </div>
+              </div>
+            </Link>
           </div>
 
           <div className="grid grid-cols-2 gap-3 md:gap-5">
