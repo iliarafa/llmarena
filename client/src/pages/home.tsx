@@ -50,14 +50,8 @@ export default function Home() {
   
   const isGuest = !isAuthenticated && !!localStorage.getItem("guestToken");
   
-  // Calculate credit cost based on tiered pricing
-  const creditCostMap: Record<number, number> = {
-    1: 3,
-    2: 5,
-    3: 7,
-    4: 10,
-  };
-  const baseCreditCost = creditCostMap[selectedModels.length] || 0;
+  // Calculate credit cost: 1 credit per model + 3 for Caesar
+  const baseCreditCost = selectedModels.length;
   const caesarCost = caesarEnabled ? 3 : 0;
   const creditCost = baseCreditCost + caesarCost;
 
@@ -448,6 +442,7 @@ export default function Home() {
               disabled={selectedModels.length === 0}
               creditCost={creditCost}
               creditBalance={creditBalance}
+              noModelsSelected={selectedModels.length === 0}
             />
           </div>
         </div>
@@ -560,6 +555,7 @@ export default function Home() {
           disabled={selectedModels.length === 0}
           creditCost={creditCost}
           creditBalance={creditBalance}
+          noModelsSelected={selectedModels.length === 0}
           isMobileFooter={true}
         />
       </div>

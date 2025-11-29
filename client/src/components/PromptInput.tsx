@@ -11,6 +11,7 @@ interface PromptInputProps {
   creditCost?: number;
   creditBalance?: number;
   isMobileFooter?: boolean;
+  noModelsSelected?: boolean;
 }
 
 export default function PromptInput({ 
@@ -22,9 +23,11 @@ export default function PromptInput({
   creditCost = 0,
   creditBalance = 0,
   isMobileFooter = false,
+  noModelsSelected = false,
 }: PromptInputProps) {
   const characterCount = value.length;
   const hasInsufficientCredits = creditCost > creditBalance;
+  const hasActiveCost = creditCost > 0;
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
@@ -68,9 +71,14 @@ export default function PromptInput({
           <span className="text-[10px] font-mono text-gray-400">
             {characterCount} chars
           </span>
-          <span className={`text-[10px] font-mono ${hasInsufficientCredits ? 'text-red-500' : 'text-gray-400'}`}>
-            {creditCost > 0 ? `${creditCost} cr` : ''} {creditBalance.toFixed(0)} avail
-          </span>
+          <div className="flex items-center gap-1">
+            <span className={`text-[10px] font-mono ${hasActiveCost ? (hasInsufficientCredits ? 'text-red-500' : 'text-gray-900 dark:text-white font-medium') : 'text-gray-400'}`}>
+              {creditCost} cr
+            </span>
+            <span className="text-[10px] font-mono text-gray-400">
+              • {creditBalance.toFixed(0)} avail
+            </span>
+          </div>
         </div>
       </div>
     );
@@ -97,15 +105,18 @@ export default function PromptInput({
           </span>
           
           <div className="flex items-center gap-2" data-testid="text-cost-preview">
-            {creditCost > 0 ? (
-              <span className={`text-xs font-mono ${hasInsufficientCredits ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
-                {creditCost} credits • {creditBalance.toFixed(0)} available
+            {hasActiveCost ? (
+              <span className={`text-xs font-mono ${hasInsufficientCredits ? 'text-red-500' : 'text-gray-900 dark:text-white font-medium'}`}>
+                {creditCost} credits
               </span>
             ) : (
               <span className="text-xs font-mono text-gray-400">
-                {creditBalance.toFixed(0)} credits
+                0 credits
               </span>
             )}
+            <span className="text-xs font-mono text-gray-400">
+              • {creditBalance.toFixed(0)} available
+            </span>
           </div>
         </div>
         
@@ -115,13 +126,22 @@ export default function PromptInput({
           </span>
           <Button 
             onClick={onSubmit}
-            disabled={disabled || isLoading || !value.trim() || hasInsufficientCredits}
+            disabled={disabled || isLoading || !value.trim() || hasInsufficientCredits || noModelsSelected}
             size="sm"
             className="bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 gap-2 px-4 font-medium"
             data-testid="button-compare"
           >
             <Send className="h-4 w-4" />
-            {isLoading ? "Generating..." : "Compare"}
+            {isLoading ? (
+              "Generating..."
+            ) : noModelsSelected ? (
+              "Select a Model"
+            ) : (
+              <>
+                Compare Models
+                <span className="opacity-70">• {creditCost} Credits</span>
+              </>
+            )}
           </Button>
         </div>
       </div>
