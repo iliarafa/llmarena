@@ -539,7 +539,7 @@ export default function Home() {
               </DropdownMenu>
             </div>
           )}
-          <div className={`grid gap-6 ${caesarEnabled || caesarResponse ? 'lg:grid-cols-[1fr_350px]' : ''}`}>
+          <div className={`grid gap-6 ${caesarEnabled || caesarResponse ? 'lg:grid-cols-[1fr_350px] items-stretch' : ''}`}>
             <ComparisonGrid 
               models={models}
               responses={responses}
@@ -550,7 +550,7 @@ export default function Home() {
               caesarResponse={caesarResponse}
             />
             {(caesarEnabled || caesarResponse) && (
-              <div className="lg:sticky lg:top-24 lg:self-start">
+              <div className="h-full min-h-full">
                 <CaesarCard 
                   caesarResponse={caesarResponse}
                   isLoading={caesarLoading}

@@ -44,14 +44,14 @@ interface CaesarCardProps {
 export default function CaesarCard({ caesarResponse, isLoading, modelNames }: CaesarCardProps) {
   if (isLoading) {
     return (
-      <Card className="border-2 border-amber-500/50 bg-amber-50/5">
+      <Card className="border-2 border-amber-500/50 bg-amber-50/5 h-full min-h-full flex flex-col">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-amber-600">
             <Crown className="h-5 w-5" />
             Caesar's Verdict
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-1 flex flex-col items-center justify-center">
           <div className="flex flex-col items-center justify-center py-12 gap-4">
             <div className="animate-spin w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full" />
             <p className="text-sm text-muted-foreground">Caesar is deliberating...</p>
@@ -67,14 +67,14 @@ export default function CaesarCard({ caesarResponse, isLoading, modelNames }: Ca
 
   if (caesarResponse.error) {
     return (
-      <Card className="border-2 border-red-500/50 bg-red-50/5">
+      <Card className="border-2 border-red-500/50 bg-red-50/5 h-full min-h-full flex flex-col">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-red-600">
             <Crown className="h-5 w-5" />
             Caesar's Verdict
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-1 flex flex-col justify-center">
           <p className="text-sm text-red-600">{caesarResponse.error}</p>
         </CardContent>
       </Card>
@@ -100,7 +100,7 @@ export default function CaesarCard({ caesarResponse, isLoading, modelNames }: Ca
   };
 
   return (
-    <Card className="border-2 border-amber-500/50 bg-gradient-to-br from-amber-50/10 to-orange-50/10 dark:from-amber-950/20 dark:to-orange-950/20">
+    <Card className="border-2 border-amber-500/50 bg-gradient-to-br from-amber-50/10 to-orange-50/10 dark:from-amber-950/20 dark:to-orange-950/20 h-full min-h-full flex flex-col">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
@@ -116,7 +116,7 @@ export default function CaesarCard({ caesarResponse, isLoading, modelNames }: Ca
         </div>
         <p className="text-xs text-muted-foreground">Judge: {judgeModel}</p>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 flex-1 flex flex-col">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-amber-500" />
