@@ -1,0 +1,49 @@
+"Refine the 'Chat/Compare' page UI to match the premium, engineered aesthetic of the homepage. Transform the current vertical layout into a cohesive 'Workspace' dashboard.
+
+Please implement these specific Tailwind styling changes:
+
+The Container:
+
+Apply the same subtle background: bg-gradient-to-b from-white to-gray-50.
+
+Constrain the content width (max-w-4xl) so the interface feels focused and tight, not stretched.
+
+The Model Selector (Top Section):
+
+Turn the 4 model checkboxes into a single row grid of interactive 'Tiles'.
+
+Inactive State: bg-white, border-gray-200, text-gray-500.
+
+Active/Selected State: ring-2 ring-black, bg-gray-50, text-gray-900, border-transparent.
+
+Make the 'Select All' / 'Clear All' buttons tiny, text-only links (text-xs, text-gray-400, hover:text-black) positioned neatly above the grid to reduce visual noise.
+
+The Control Deck (Caesar & Blind Mode):
+
+Problem: Currently, these are large vertical rows.
+
+Fix: Combine them into a single horizontal 'Control Bar' underneath the model grid.
+
+Style this bar as a 'pill' or rounded container: flex, items-center, gap-6, p-3, bg-white, border border-gray-200, rounded-lg, shadow-sm.
+
+Use Switch/Toggle controls for Caesar and Blind Mode instead of checkboxes.
+
+Specific tweak: When Caesar is enabled, show the cost (+3 credits) in a small badge: bg-gray-100, text-xs, px-2, py-0.5, rounded-full.
+
+The Input Area (The Console):
+
+Detach the input box from the background. Make it look like a floating console.
+
+Style: bg-white, border border-gray-300, rounded-2xl, shadow-md.
+
+Focus State: focus-within:ring-2, focus-within:ring-gray-200, focus-within:border-black.
+
+Move the 'Compare Models' button inside the input box area (bottom right), making it feel integrated. Use a black button with a white icon.
+
+Typography & Details:
+
+Use a monospace font (font-mono) for the credit counter and character count (text-xs, text-gray-400).
+
+Change the empty state text ('Select models...') to look like a code comment: text-gray-300, font-mono, italic.
+
+Goal: The page should feel like a professional cockpit where the user configures their battle parameters and executes the command."

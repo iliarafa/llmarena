@@ -1,7 +1,6 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Sparkles, Brain, Zap, Gavel, EyeOff } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Sparkles, Brain, Zap, Crown, EyeOff } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -36,10 +35,10 @@ export const AVAILABLE_MODELS: Model[] = [
 ];
 
 export const JUDGE_MODELS: JudgeModel[] = [
-  { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet (new)" },
-  { id: "gpt-4o", name: "GPT-4o (Nov 2025)" },
-  { id: "gemini-flash", name: "Gemini 1.5 Flash" },
-  { id: "grok", name: "Grok-2-1212" },
+  { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet" },
+  { id: "gpt-4o", name: "GPT-4o" },
+  { id: "gemini-flash", name: "Gemini Flash" },
+  { id: "grok", name: "Grok-2" },
 ];
 
 interface ModelSelectorProps {
@@ -83,150 +82,121 @@ export default function ModelSelector({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <h3 className="text-sm font-medium text-muted-foreground">Select Models to Compare</h3>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          Select Models
+        </span>
+        <div className="flex items-center gap-3">
+          <button
             onClick={handleSelectAll}
             disabled={allSelected}
+            className="text-xs text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             data-testid="button-select-all"
           >
             Select All
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
+          </button>
+          <span className="text-gray-300 dark:text-gray-600">|</span>
+          <button
             onClick={handleClearAll}
             disabled={selectedModels.length === 0}
+            className="text-xs text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             data-testid="button-clear-all"
           >
-            Clear All
-          </Button>
+            Clear
+          </button>
         </div>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {AVAILABLE_MODELS.map((model) => {
           const Icon = model.icon;
           const isSelected = selectedModels.includes(model.id);
           
           return (
-            <div
+            <button
               key={model.id}
               onClick={() => handleToggle(model.id)}
               className={`
-                flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all
+                flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all
                 ${isSelected 
-                  ? 'border-primary bg-primary/5' 
-                  : 'border-border hover-elevate'
+                  ? 'ring-2 ring-gray-900 dark:ring-white bg-gray-50 dark:bg-gray-800 border-transparent text-gray-900 dark:text-white' 
+                  : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }
               `}
               data-testid={`checkbox-model-${model.id}`}
             >
-              <Checkbox
-                checked={isSelected}
-                onCheckedChange={() => handleToggle(model.id)}
-                className="pointer-events-none"
-                data-testid={`checkbox-input-${model.id}`}
-              />
-              <div className="flex items-center gap-2 flex-1 min-w-0">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${isSelected ? 'bg-gray-200 dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-800'}`}>
                 {Icon ? (
-                  <Icon className={`h-4 w-4 flex-shrink-0 ${model.color}`} />
+                  <Icon className={`h-5 w-5 ${isSelected ? model.color : 'text-gray-400 dark:text-gray-500'}`} />
                 ) : model.iconImage ? (
-                  <img src={model.iconImage} alt={model.name} className="h-4 w-4 flex-shrink-0 object-contain" />
+                  <img src={model.iconImage} alt={model.name} className={`h-5 w-5 object-contain ${isSelected ? '' : 'opacity-50'}`} />
                 ) : null}
-                <Label className="text-sm font-medium cursor-pointer truncate">
-                  <span className="hidden sm:inline">{model.name}</span>
-                  <span className="sm:hidden">{model.shortName}</span>
-                </Label>
               </div>
-            </div>
+              <Label className={`text-sm font-medium cursor-pointer ${isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                <span className="hidden sm:inline">{model.shortName}</span>
+                <span className="sm:hidden">{model.shortName}</span>
+              </Label>
+            </button>
           );
         })}
       </div>
 
-      <div className="pt-4 border-t">
-        <div
-          onClick={() => onCaesarToggle(!caesarEnabled)}
-          className={`
-            flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all
-            ${caesarEnabled 
-              ? 'border-amber-500 bg-amber-500/10' 
-              : 'border-border hover-elevate'
-            }
-          `}
-          data-testid="checkbox-caesar"
-        >
-          <Checkbox
+      <div className="flex flex-wrap items-center gap-4 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-600' : 'text-gray-400'}`} />
+            <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+              Caesar
+            </Label>
+            {caesarEnabled && (
+              <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs px-2 py-0.5 rounded-full font-mono">
+                +3
+              </span>
+            )}
+          </div>
+          <Switch
+            id="caesar-toggle"
             checked={caesarEnabled}
-            onCheckedChange={(checked) => onCaesarToggle(checked as boolean)}
-            className="pointer-events-none"
+            onCheckedChange={onCaesarToggle}
             data-testid="checkbox-input-caesar"
           />
-          <div className="flex items-center gap-2 flex-1">
-            <Gavel className={`h-4 w-4 flex-shrink-0 ${caesarEnabled ? 'text-amber-600' : 'text-muted-foreground'}`} />
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 flex-1">
-              <Label className="text-sm font-medium cursor-pointer">
-                Caesar
-                <span className="text-xs text-muted-foreground ml-1">(+3 credits)</span>
-              </Label>
-              {caesarEnabled && (
-                <div onClick={(e) => e.stopPropagation()}>
-                  <Select
-                    value={caesarJudgeModel}
-                    onValueChange={(value) => onCaesarJudgeChange(value as JudgeModelId)}
-                  >
-                    <SelectTrigger className="h-8 w-[180px] text-xs" data-testid="select-caesar-judge">
-                      <SelectValue placeholder="Select judge" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {JUDGE_MODELS.map((judge) => (
-                        <SelectItem key={judge.id} value={judge.id} data-testid={`option-judge-${judge.id}`}>
-                          {judge.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
-        <p className="text-xs text-muted-foreground mt-2 ml-1">
-          Caesar is an AI model. Your battle data is sent to it for evaluation but is not stored by us.
-        </p>
-      </div>
 
-      <div className="pt-4 border-t">
-        <div
-          onClick={() => onBlindModeToggle(!blindModeEnabled)}
-          className={`
-            flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all
-            ${blindModeEnabled 
-              ? 'border-purple-500 bg-purple-500/10' 
-              : 'border-border hover-elevate'
-            }
-          `}
-          data-testid="checkbox-blind-mode"
-        >
-          <Checkbox
-            checked={blindModeEnabled}
-            onCheckedChange={(checked) => onBlindModeToggle(checked as boolean)}
-            className="pointer-events-none"
-            data-testid="checkbox-input-blind-mode"
-          />
-          <div className="flex items-center gap-2 flex-1">
-            <EyeOff className={`h-4 w-4 flex-shrink-0 ${blindModeEnabled ? 'text-purple-600' : 'text-muted-foreground'}`} />
-            <Label className="text-sm font-medium cursor-pointer">
-              Blind Mode
+        {caesarEnabled && (
+          <div className="flex items-center gap-2 pl-4 border-l border-gray-200 dark:border-gray-700">
+            <span className="text-xs text-gray-400">Judge:</span>
+            <Select
+              value={caesarJudgeModel}
+              onValueChange={(value) => onCaesarJudgeChange(value as JudgeModelId)}
+            >
+              <SelectTrigger className="h-8 w-[140px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-caesar-judge">
+                <SelectValue placeholder="Select judge" />
+              </SelectTrigger>
+              <SelectContent>
+                {JUDGE_MODELS.map((judge) => (
+                  <SelectItem key={judge.id} value={judge.id} data-testid={`option-judge-${judge.id}`}>
+                    {judge.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        <div className="flex items-center gap-3 ml-auto">
+          <div className="flex items-center gap-2">
+            <EyeOff className={`h-4 w-4 ${blindModeEnabled ? 'text-purple-600' : 'text-gray-400'}`} />
+            <Label htmlFor="blind-toggle" className={`text-sm font-medium cursor-pointer ${blindModeEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+              Blind
             </Label>
           </div>
+          <Switch
+            id="blind-toggle"
+            checked={blindModeEnabled}
+            onCheckedChange={onBlindModeToggle}
+            data-testid="checkbox-input-blind-mode"
+          />
         </div>
-        <p className="text-xs text-muted-foreground mt-2 ml-1">
-          Hide model names until you vote or Caesar decides. Models show as "Contender A", "Contender B", etc.
-        </p>
       </div>
     </div>
   );
