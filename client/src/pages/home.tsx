@@ -29,6 +29,8 @@ export default function Home() {
   const [caesarJudgeModel, setCaesarJudgeModel] = useState<JudgeModelId>("gemini-flash");
   const [caesarResponse, setCaesarResponse] = useState<CaesarResponse | undefined>();
   const [caesarLoading, setCaesarLoading] = useState(false);
+  const [blindModeEnabled, setBlindModeEnabled] = useState(false);
+  const [blindModeRevealed, setBlindModeRevealed] = useState(false);
   const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
   const { creditBalance } = useCreditBalance();
@@ -71,6 +73,11 @@ export default function Home() {
         variant: "destructive"
       });
       return;
+    }
+
+    // Reset blind mode reveal state for new comparison
+    if (blindModeEnabled) {
+      setBlindModeRevealed(false);
     }
 
     // Set all selected models to loading state
@@ -127,9 +134,12 @@ export default function Home() {
       const result = await res.json();
       setResponses(result.responses);
       
-      // Set Caesar response if present
+      // Set Caesar response if present and auto-reveal blind mode
       if (result.caesar) {
         setCaesarResponse(result.caesar);
+        if (blindModeEnabled) {
+          setBlindModeRevealed(true);
+        }
       }
       setCaesarLoading(false);
       
@@ -169,6 +179,17 @@ export default function Home() {
   };
 
   const models = AVAILABLE_MODELS.filter(m => selectedModels.includes(m.id));
+
+  // Handle voting in blind mode - reveals the model names
+  const handleVote = (modelId: string) => {
+    if (blindModeEnabled && !blindModeRevealed) {
+      setBlindModeRevealed(true);
+      toast({
+        title: "Vote Recorded!",
+        description: `You voted for the response. Model identities revealed!`,
+      });
+    }
+  };
 
   const handleLogout = () => {
     if (isGuest) {
@@ -256,6 +277,8 @@ export default function Home() {
             onCaesarToggle={setCaesarEnabled}
             caesarJudgeModel={caesarJudgeModel}
             onCaesarJudgeChange={setCaesarJudgeModel}
+            blindModeEnabled={blindModeEnabled}
+            onBlindModeToggle={setBlindModeEnabled}
           />
           
           <PromptInput
@@ -275,6 +298,9 @@ export default function Home() {
               models={models}
               responses={responses}
               prompt={prompt}
+              blindModeEnabled={blindModeEnabled}
+              blindModeRevealed={blindModeRevealed}
+              onVote={handleVote}
             />
             {(caesarEnabled || caesarResponse) && (
               <div className="lg:sticky lg:top-24 lg:self-start">

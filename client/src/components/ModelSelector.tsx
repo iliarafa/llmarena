@@ -1,7 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Brain, Zap, Gavel } from "lucide-react";
+import { Sparkles, Brain, Zap, Gavel, EyeOff } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -49,6 +49,8 @@ interface ModelSelectorProps {
   onCaesarToggle: (enabled: boolean) => void;
   caesarJudgeModel: JudgeModelId;
   onCaesarJudgeChange: (model: JudgeModelId) => void;
+  blindModeEnabled: boolean;
+  onBlindModeToggle: (enabled: boolean) => void;
 }
 
 export default function ModelSelector({ 
@@ -58,6 +60,8 @@ export default function ModelSelector({
   onCaesarToggle,
   caesarJudgeModel,
   onCaesarJudgeChange,
+  blindModeEnabled,
+  onBlindModeToggle,
 }: ModelSelectorProps) {
   const handleToggle = (modelId: ModelId) => {
     if (selectedModels.includes(modelId)) {
@@ -192,6 +196,36 @@ export default function ModelSelector({
         </div>
         <p className="text-xs text-muted-foreground mt-2 ml-1">
           Caesar is an AI model. Your battle data is sent to it for evaluation but is not stored by us.
+        </p>
+      </div>
+
+      <div className="pt-4 border-t">
+        <div
+          onClick={() => onBlindModeToggle(!blindModeEnabled)}
+          className={`
+            flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all
+            ${blindModeEnabled 
+              ? 'border-purple-500 bg-purple-500/10' 
+              : 'border-border hover-elevate'
+            }
+          `}
+          data-testid="checkbox-blind-mode"
+        >
+          <Checkbox
+            checked={blindModeEnabled}
+            onCheckedChange={(checked) => onBlindModeToggle(checked as boolean)}
+            className="pointer-events-none"
+            data-testid="checkbox-input-blind-mode"
+          />
+          <div className="flex items-center gap-2 flex-1">
+            <EyeOff className={`h-4 w-4 flex-shrink-0 ${blindModeEnabled ? 'text-purple-600' : 'text-muted-foreground'}`} />
+            <Label className="text-sm font-medium cursor-pointer">
+              Blind Mode
+            </Label>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground mt-2 ml-1">
+          Hide model names until you vote or Caesar decides. Models show as "Contender A", "Contender B", etc.
         </p>
       </div>
     </div>

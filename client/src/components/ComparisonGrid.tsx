@@ -14,9 +14,21 @@ interface ComparisonGridProps {
   models: Model[];
   responses: ModelResponse[];
   prompt?: string;
+  blindModeEnabled?: boolean;
+  blindModeRevealed?: boolean;
+  onVote?: (modelId: string) => void;
 }
 
-export default function ComparisonGrid({ models, responses, prompt }: ComparisonGridProps) {
+const CONTENDER_LABELS = ["Contender A", "Contender B", "Contender C", "Contender D"];
+
+export default function ComparisonGrid({ 
+  models, 
+  responses, 
+  prompt,
+  blindModeEnabled = false,
+  blindModeRevealed = false,
+  onVote,
+}: ComparisonGridProps) {
   if (models.length === 0) {
     return (
       <div className="flex items-center justify-center py-16 px-4">
@@ -41,8 +53,10 @@ export default function ComparisonGrid({ models, responses, prompt }: Comparison
           : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2'
       }`}
     >
-      {models.map((model) => {
+      {models.map((model, index) => {
         const responseData = responses.find(r => r.modelId === model.id);
+        const showBlindLabel = blindModeEnabled && !blindModeRevealed;
+        const contenderLabel = CONTENDER_LABELS[index] || `Contender ${index + 1}`;
         
         return (
           <ComparisonCard
@@ -54,6 +68,8 @@ export default function ComparisonGrid({ models, responses, prompt }: Comparison
             generationTime={responseData?.generationTime}
             tokenCount={responseData?.tokenCount}
             prompt={prompt}
+            blindModeLabel={showBlindLabel ? contenderLabel : undefined}
+            onVote={blindModeEnabled && !blindModeRevealed ? onVote : undefined}
           />
         );
       })}

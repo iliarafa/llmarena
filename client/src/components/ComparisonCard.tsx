@@ -2,7 +2,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Copy, Check, AlertCircle, Download, Star } from "lucide-react";
+import { Copy, Check, AlertCircle, Download, Star, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import type { Model } from "./ModelSelector";
@@ -21,6 +21,8 @@ interface ComparisonCardProps {
   generationTime?: number;
   tokenCount?: number;
   prompt?: string;
+  blindModeLabel?: string;
+  onVote?: (modelId: string) => void;
 }
 
 export default function ComparisonCard({ 
@@ -30,7 +32,9 @@ export default function ComparisonCard({
   error,
   generationTime,
   tokenCount,
-  prompt 
+  prompt,
+  blindModeLabel,
+  onVote,
 }: ComparisonCardProps) {
   const [copied, setCopied] = useState(false);
   const [rating, setRating] = useState<number>(0);
@@ -116,14 +120,24 @@ export default function ComparisonCard({
     <Card className="flex flex-col h-full" data-testid={`card-response-${model.id}`}>
       <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-4">
         <div className="flex items-center gap-2 min-w-0">
-          {Icon ? (
+          {blindModeLabel ? (
+            <div className="h-5 w-5 flex-shrink-0 rounded-full bg-purple-500/20 flex items-center justify-center">
+              <span className="text-xs font-bold text-purple-600">?</span>
+            </div>
+          ) : Icon ? (
             <Icon className={`h-5 w-5 flex-shrink-0 ${model.color}`} />
           ) : model.iconImage ? (
             <img src={model.iconImage} alt={model.name} className="h-5 w-5 flex-shrink-0 object-contain" />
           ) : null}
           <h3 className="text-lg font-semibold truncate">
-            <span className="hidden sm:inline">{model.name}</span>
-            <span className="sm:hidden">{model.shortName}</span>
+            {blindModeLabel ? (
+              <span className="text-purple-600">{blindModeLabel}</span>
+            ) : (
+              <>
+                <span className="hidden sm:inline">{model.name}</span>
+                <span className="sm:hidden">{model.shortName}</span>
+              </>
+            )}
           </h3>
         </div>
         
@@ -204,36 +218,52 @@ export default function ComparisonCard({
         )}
       </CardContent>
 
-      {(tokenCount || response) && (
+      {(tokenCount || response || onVote) && (
         <CardFooter className="pt-4 border-t">
           <div className="flex items-center justify-between w-full gap-4">
-            {tokenCount && (
-              <div className="text-xs text-muted-foreground">
-                <span data-testid={`text-tokens-${model.id}`}>~{tokenCount} tokens</span>
-              </div>
-            )}
-            {response && !error && (
-              <div className="flex items-center gap-1" data-testid={`rating-${model.id}`}>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => setRating(star)}
-                    onMouseEnter={() => setHoveredStar(star)}
-                    onMouseLeave={() => setHoveredStar(0)}
-                    className="p-0 hover:scale-110 transition-transform"
-                    data-testid={`star-${model.id}-${star}`}
-                  >
-                    <Star
-                      className={`w-4 h-4 ${
-                        star <= (hoveredStar || rating)
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-muted-foreground'
-                      }`}
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              {tokenCount && (
+                <div className="text-xs text-muted-foreground">
+                  <span data-testid={`text-tokens-${model.id}`}>~{tokenCount} tokens</span>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              {onVote && response && !error && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onVote(model.id)}
+                  className="border-purple-500 text-purple-600 hover:bg-purple-500/10"
+                  data-testid={`button-vote-${model.id}`}
+                >
+                  <ThumbsUp className="w-4 h-4 mr-1" />
+                  Vote
+                </Button>
+              )}
+              {response && !error && !blindModeLabel && (
+                <div className="flex items-center gap-1" data-testid={`rating-${model.id}`}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoveredStar(star)}
+                      onMouseLeave={() => setHoveredStar(0)}
+                      className="p-0 hover:scale-110 transition-transform"
+                      data-testid={`star-${model.id}-${star}`}
+                    >
+                      <Star
+                        className={`w-4 h-4 ${
+                          star <= (hoveredStar || rating)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-muted-foreground'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </CardFooter>
       )}
