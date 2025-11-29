@@ -153,7 +153,7 @@ export default function Landing() {
             <img 
               src={llmFightImage} 
               alt="AI models competing" 
-              className="w-56 md:w-[345px] h-auto opacity-80"
+              className="w-72 md:w-[431px] h-auto opacity-80"
             />
           </div>
           
