@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Sparkles, Zap, Shield, Check, Gavel, Eye } from "lucide-react";
+import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye } from "lucide-react";
 import llmFightImage from "@assets/LLMfight_1763256670295.png";
 
 export default function Landing() {
@@ -144,7 +144,7 @@ export default function Landing() {
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                <Gavel className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+                <Crown className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
               </div>
               <h3 className="text-base font-semibold text-gray-900 dark:text-white">Caesar</h3>
             </div>
