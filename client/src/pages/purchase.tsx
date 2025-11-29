@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Check, Coins, Sparkles } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -20,7 +18,6 @@ interface CreditTier {
   name: string;
   savings?: string;
   popular?: boolean;
-  comparisons: string;
 }
 
 const creditTiers: CreditTier[] = [
@@ -28,7 +25,6 @@ const creditTiers: CreditTier[] = [
     credits: 20,
     price: 2.50,
     name: "Starter",
-    comparisons: "2-6 comparisons",
   },
   {
     credits: 100,
@@ -36,21 +32,18 @@ const creditTiers: CreditTier[] = [
     name: "Popular",
     savings: "Save 20%",
     popular: true,
-    comparisons: "10-33 comparisons",
   },
   {
     credits: 500,
     price: 40.00,
     name: "Pro",
     savings: "Save 36%",
-    comparisons: "50-166 comparisons",
   },
   {
     credits: 1000,
     price: 70.00,
     name: "Ultimate",
     savings: "Save 44%",
-    comparisons: "100-333 comparisons",
   },
 ];
 
@@ -76,7 +69,6 @@ export default function Purchase() {
         throw new Error("No checkout URL returned");
       }
       
-      // Redirect to Stripe Checkout
       window.location.href = url;
     } catch (error: any) {
       console.error("Purchase error:", error);
@@ -90,8 +82,8 @@ export default function Purchase() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
+      <header className="sticky top-0 z-10 border-b bg-white/95 dark:bg-gray-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-gray-950/60">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-4">
           <Link href="/">
             <Button variant="ghost" size="icon" data-testid="button-back">
@@ -102,89 +94,82 @@ export default function Purchase() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Choose Your Credit Pack</h2>
-          <p className="text-muted-foreground text-lg">
-            Pay only for what you use. Credits never expire.
-          </p>
+      <main className="max-w-6xl mx-auto px-4 py-16">
+        <div className="text-center mb-4">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+            Choose Your Credit Pack
+          </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="flex items-center justify-center gap-6 text-gray-500 dark:text-gray-400 text-sm font-medium mb-10">
+          <span>Credits never expire</span>
+          <span className="text-gray-300 dark:text-gray-600">•</span>
+          <span>Access all models</span>
+          <span className="text-gray-300 dark:text-gray-600">•</span>
+          <span>Instant delivery</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
           {creditTiers.map((tier) => (
-            <Card
+            <div
               key={tier.credits}
-              className={tier.popular ? "border-primary shadow-lg relative" : "relative"}
+              className={`bg-white dark:bg-gray-900 rounded-xl p-6 flex flex-col justify-between transition-all ${
+                tier.popular 
+                  ? "ring-2 ring-black dark:ring-white border-transparent relative" 
+                  : "border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-md"
+              }`}
               data-testid={`credit-tier-${tier.credits}`}
             >
               {tier.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge className="bg-primary text-primary-foreground px-3 py-1">
-                    <Sparkles className="w-3 h-3 mr-1" />
-                    Most Popular
-                  </Badge>
+                <div className="text-xs font-bold uppercase tracking-widest text-center text-black dark:text-white mb-4">
+                  Most Popular
                 </div>
               )}
               
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>{tier.name}</span>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{tier.name}</span>
                   {tier.savings && (
-                    <Badge variant="secondary" className="text-xs">
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
                       {tier.savings}
-                    </Badge>
+                    </span>
                   )}
-                </CardTitle>
-                <CardDescription>{tier.comparisons}</CardDescription>
-              </CardHeader>
-
-              <CardContent className="space-y-6">
-                <div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold">${tier.price.toFixed(2)}</span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-2 text-muted-foreground">
-                    <Coins className="w-4 h-4" />
-                    <span className="font-medium">{tier.credits} credits</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    ${(tier.price / tier.credits).toFixed(3)} per credit
-                  </p>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex items-start gap-2 text-sm">
-                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Never expires</span>
+                <div className="mt-4">
+                  <div className="font-mono text-4xl font-bold tracking-tighter text-gray-900 dark:text-gray-100">
+                    ${tier.price.toFixed(2)}
                   </div>
-                  <div className="flex items-start gap-2 text-sm">
-                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>All 4 AI models</span>
-                  </div>
-                  <div className="flex items-start gap-2 text-sm">
-                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Instant delivery</span>
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">
+                    {tier.credits} credits
                   </div>
                 </div>
-              </CardContent>
 
-              <CardFooter>
-                <Button
-                  className="w-full"
-                  variant={tier.popular ? "default" : "outline"}
+                <div className="text-xs text-gray-400 dark:text-gray-500 font-mono mt-4">
+                  ${(tier.price / tier.credits).toFixed(3)}/credit
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <button
                   onClick={() => handlePurchase(tier.credits)}
                   disabled={purchasingCredits !== null}
+                  className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                    tier.popular
+                      ? "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+                      : "border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  }`}
                   data-testid={`button-purchase-${tier.credits}`}
                 >
                   {purchasingCredits === tier.credits ? "Processing..." : `Buy ${tier.credits} Credits`}
-                </Button>
-              </CardFooter>
-            </Card>
+                </button>
+              </div>
+            </div>
           ))}
         </div>
 
-        <div className="mt-12 text-center text-sm text-muted-foreground">
-          <p>Secure payment powered by Stripe. All prices in USD.</p>
+        <div className="mt-12 text-center text-xs text-gray-400 dark:text-gray-500">
+          Secure payment powered by Stripe. All prices in USD.
         </div>
       </main>
     </div>
