@@ -191,7 +191,7 @@ export default function ModelSelector({
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-2 ml-1">
-          Caesar judges the responses and declares a winner with detailed scoring
+          Caesar is an AI model. Your battle data is sent to it for evaluation but is not stored by us.
         </p>
       </div>
     </div>
