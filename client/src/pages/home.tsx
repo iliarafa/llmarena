@@ -3,11 +3,13 @@ import ModelSelector, { AVAILABLE_MODELS, type ModelId, type JudgeModelId } from
 import PromptInput from "@/components/PromptInput";
 import ComparisonGrid, { type ModelResponse } from "@/components/ComparisonGrid";
 import CaesarCard, { type CaesarResponse } from "@/components/CaesarCard";
+import HistorySidebar from "@/components/HistorySidebar";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreditBalance } from "@/hooks/useCreditBalance";
 import { useAccountLinking } from "@/hooks/useAccountLinking";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { saveBattle, type Battle } from "@/lib/battleHistory";
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen } from "lucide-react";
@@ -31,6 +33,7 @@ export default function Home() {
   const [caesarLoading, setCaesarLoading] = useState(false);
   const [blindModeEnabled, setBlindModeEnabled] = useState(false);
   const [blindModeRevealed, setBlindModeRevealed] = useState(false);
+  const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0);
   const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
   const { creditBalance } = useCreditBalance();
@@ -147,6 +150,39 @@ export default function Home() {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       queryClient.invalidateQueries({ queryKey: ["/api/guest/verify"] });
       
+      // Save battle to local history
+      const validResponses = result.responses.filter((r: ModelResponse) => r.response && !r.error);
+      if (validResponses.length > 0) {
+        const battleResponses = validResponses.map((r: ModelResponse) => ({
+          modelId: r.modelId,
+          modelName: modelNames[r.modelId] || r.modelId,
+          response: r.response!,
+          generationTime: r.generationTime,
+          tokenCount: r.tokenCount,
+        }));
+
+        const caesarResult = result.caesar?.verdict ? {
+          winner: result.caesar.verdict.winner,
+          winnerModelName: result.caesar.verdict.winner === "Tie" 
+            ? "Tie" 
+            : modelNames[result.caesar.modelMapping[result.caesar.verdict.winner]] || result.caesar.verdict.winner,
+          confidence: result.caesar.verdict.confidence,
+          oneLineVerdict: result.caesar.verdict.one_line_verdict,
+          detailedReasoning: result.caesar.verdict.detailed_reasoning || [],
+          scores: result.caesar.verdict.scores || {},
+          judgeModel: result.caesar.judgeModel,
+          modelMapping: result.caesar.modelMapping,
+        } : undefined;
+
+        saveBattle({
+          prompt,
+          responses: battleResponses,
+          caesar: caesarResult,
+          blindMode: blindModeEnabled,
+        });
+        setHistoryRefreshTrigger(prev => prev + 1);
+      }
+
       // Show success message with credits used (with guards for missing fields)
       if (result.creditsUsed !== undefined && result.creditsRemaining !== undefined) {
         toast({
@@ -191,6 +227,51 @@ export default function Home() {
     }
   };
 
+  // Load a battle from history
+  const handleLoadBattle = (battle: Battle) => {
+    setPrompt(battle.prompt);
+    setBlindModeEnabled(battle.blindMode);
+    setBlindModeRevealed(true); // Always reveal when loading from history
+    
+    // Convert battle responses back to ModelResponse format
+    const loadedResponses: ModelResponse[] = battle.responses.map(r => ({
+      modelId: r.modelId,
+      response: r.response,
+      generationTime: r.generationTime,
+      tokenCount: r.tokenCount,
+    }));
+    setResponses(loadedResponses);
+    
+    // Set selected models from the battle
+    const modelIds = battle.responses.map(r => r.modelId as ModelId);
+    setSelectedModels(modelIds);
+    
+    // Restore Caesar response if available
+    if (battle.caesar) {
+      const caesarResp: CaesarResponse = {
+        verdict: {
+          winner: battle.caesar.winner as "A" | "B" | "C" | "D" | "Tie",
+          confidence: battle.caesar.confidence,
+          one_line_verdict: battle.caesar.oneLineVerdict,
+          detailed_reasoning: battle.caesar.detailedReasoning || [],
+          scores: battle.caesar.scores || {},
+        },
+        judgeModel: battle.caesar.judgeModel,
+        modelMapping: battle.caesar.modelMapping || {},
+      };
+      setCaesarResponse(caesarResp);
+      setCaesarEnabled(true);
+    } else {
+      setCaesarResponse(undefined);
+      setCaesarEnabled(false);
+    }
+    
+    toast({
+      title: "Battle Loaded",
+      description: "Viewing saved battle from history",
+    });
+  };
+
   const handleLogout = () => {
     if (isGuest) {
       // Clear guest token
@@ -208,6 +289,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-bold" data-testid="text-app-title">LLM Arena</h1>
+            <HistorySidebar 
+              onLoadBattle={handleLoadBattle}
+              refreshTrigger={historyRefreshTrigger}
+            />
             <Link href="/notebook">
               <Button variant="ghost" size="sm" className="text-[#616161] dark:text-white" data-testid="link-notebook">
                 <BookOpen className="w-4 h-4 mr-2" />
