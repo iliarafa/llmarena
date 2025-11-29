@@ -388,92 +388,91 @@ export default function Admin() {
       <main className="max-w-6xl mx-auto px-6 py-8">
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Gift className="w-5 h-5" />
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <Gift className="w-4 h-4" />
                 Gift Credits
               </CardTitle>
-              <CardDescription>
-                Select a user or guest token, then enter the amount of credits to gift.
-              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {(selectedUser || selectedGuest) && (
-                <div className="p-4 rounded-lg border bg-muted/50">
+            <CardContent className="space-y-3">
+              {(selectedUser || selectedGuest) ? (
+                <div className="p-3 rounded-md bg-muted/30 border border-border/50">
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <p className="text-sm font-medium">Selected:</p>
+                      <p className="text-xs uppercase tracking-widest text-muted-foreground">Selected</p>
                       {selectedUser && (
-                        <p className="text-sm text-muted-foreground" data-testid="text-selected-user">
-                          User: {selectedUser.email || selectedUser.id}
+                        <p className="text-sm font-mono" data-testid="text-selected-user">
+                          {selectedUser.email || selectedUser.id}
                         </p>
                       )}
                       {selectedGuest && (
-                        <p className="text-sm text-muted-foreground font-mono" data-testid="text-selected-guest">
-                          Guest: {selectedGuest.token.substring(0, 16)}...
+                        <p className="text-sm font-mono" data-testid="text-selected-guest">
+                          {selectedGuest.token.substring(0, 20)}...
                         </p>
                       )}
                     </div>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => {
                         setSelectedUser(null);
                         setSelectedGuest(null);
                       }}
                       data-testid="button-clear-selection"
+                      className="h-7 text-xs"
                     >
                       Clear
                     </Button>
                   </div>
                 </div>
+              ) : (
+                <p className="text-sm text-muted-foreground py-2">Select a user or guest token below</p>
               )}
-              <div className="space-y-2">
-                <Label htmlFor="credits-amount">Credits to Gift</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="credits-amount"
-                    type="number"
-                    min="1"
-                    placeholder="Enter amount..."
-                    value={creditsAmount}
-                    onChange={(e) => setCreditsAmount(e.target.value)}
-                    data-testid="input-credits-amount"
-                  />
-                  <Button
-                    onClick={handleGiftCredits}
-                    disabled={!selectedUser && !selectedGuest || !creditsAmount || giftCreditsMutation.isPending}
-                    data-testid="button-gift-credits"
-                  >
-                    <Coins className="w-4 h-4 mr-2" />
-                    {giftCreditsMutation.isPending ? "Gifting..." : "Gift"}
-                  </Button>
-                </div>
+              <div className="flex gap-2 items-center">
+                <Input
+                  id="credits-amount"
+                  type="number"
+                  min="1"
+                  placeholder="Amount"
+                  value={creditsAmount}
+                  onChange={(e) => setCreditsAmount(e.target.value)}
+                  data-testid="input-credits-amount"
+                  className="bg-muted/30 border-transparent focus:border-primary font-mono"
+                />
+                <Button
+                  onClick={handleGiftCredits}
+                  disabled={!selectedUser && !selectedGuest || !creditsAmount || giftCreditsMutation.isPending}
+                  data-testid="button-gift-credits"
+                  size="sm"
+                >
+                  <Coins className="w-4 h-4 mr-1.5" />
+                  {giftCreditsMutation.isPending ? "..." : "Gift"}
+                </Button>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Quick Stats</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Quick Stats</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg border">
-                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                    <User className="w-4 h-4" />
-                    <span className="text-sm">Total Users</span>
-                  </div>
-                  <p className="text-2xl font-bold" data-testid="text-total-users">
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1 flex items-center gap-1.5">
+                    <User className="w-3 h-3" />
+                    Total Users
+                  </p>
+                  <p className="text-5xl font-bold font-mono tracking-tighter" data-testid="text-total-users">
                     {users?.length || 0}
                   </p>
                 </div>
-                <div className="p-4 rounded-lg border">
-                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                    <Key className="w-4 h-4" />
-                    <span className="text-sm">Guest Tokens</span>
-                  </div>
-                  <p className="text-2xl font-bold" data-testid="text-total-guests">
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1 flex items-center gap-1.5">
+                    <Key className="w-3 h-3" />
+                    Guest Tokens
+                  </p>
+                  <p className="text-5xl font-bold font-mono tracking-tighter" data-testid="text-total-guests">
                     {guestTokens?.length || 0}
                   </p>
                 </div>
@@ -482,19 +481,16 @@ export default function Admin() {
           </Card>
 
           <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <UserPlus className="w-5 h-5" />
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <UserPlus className="w-4 h-4" />
                 Register New User
               </CardTitle>
-              <CardDescription>
-                Create a new user account with optional initial credits.
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleCreateUser} className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-                <div className="space-y-2">
-                  <Label htmlFor="new-user-email">Email *</Label>
+              <form onSubmit={handleCreateUser} className="flex flex-wrap items-end gap-3">
+                <div className="flex-1 min-w-[180px]">
+                  <Label htmlFor="new-user-email" className="text-xs uppercase tracking-widest text-muted-foreground">Email *</Label>
                   <Input
                     id="new-user-email"
                     type="email"
@@ -503,30 +499,33 @@ export default function Admin() {
                     onChange={(e) => setNewUserEmail(e.target.value)}
                     required
                     data-testid="input-new-user-email"
+                    className="mt-1 border-0 border-b border-border rounded-none px-0 focus:ring-0 focus:border-foreground bg-transparent"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-user-firstname">First Name</Label>
+                <div className="w-28">
+                  <Label htmlFor="new-user-firstname" className="text-xs uppercase tracking-widest text-muted-foreground">First</Label>
                   <Input
                     id="new-user-firstname"
                     placeholder="John"
                     value={newUserFirstName}
                     onChange={(e) => setNewUserFirstName(e.target.value)}
                     data-testid="input-new-user-firstname"
+                    className="mt-1 border-0 border-b border-border rounded-none px-0 focus:ring-0 focus:border-foreground bg-transparent"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-user-lastname">Last Name</Label>
+                <div className="w-28">
+                  <Label htmlFor="new-user-lastname" className="text-xs uppercase tracking-widest text-muted-foreground">Last</Label>
                   <Input
                     id="new-user-lastname"
                     placeholder="Doe"
                     value={newUserLastName}
                     onChange={(e) => setNewUserLastName(e.target.value)}
                     data-testid="input-new-user-lastname"
+                    className="mt-1 border-0 border-b border-border rounded-none px-0 focus:ring-0 focus:border-foreground bg-transparent"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-user-credits">Initial Credits</Label>
+                <div className="w-24">
+                  <Label htmlFor="new-user-credits" className="text-xs uppercase tracking-widest text-muted-foreground">Credits</Label>
                   <Input
                     id="new-user-credits"
                     type="number"
@@ -535,76 +534,81 @@ export default function Admin() {
                     value={newUserCredits}
                     onChange={(e) => setNewUserCredits(e.target.value)}
                     data-testid="input-new-user-credits"
+                    className="mt-1 border-0 border-b border-border rounded-none px-0 focus:ring-0 focus:border-foreground bg-transparent font-mono"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label>Options</Label>
-                  <div className="flex items-center gap-4 h-9">
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="new-user-admin"
-                        checked={newUserIsAdmin}
-                        onCheckedChange={(checked) => setNewUserIsAdmin(checked === true)}
-                        data-testid="checkbox-new-user-admin"
-                      />
-                      <Label htmlFor="new-user-admin" className="text-sm font-normal">Admin</Label>
-                    </div>
-                    <Button type="submit" disabled={createUserMutation.isPending} data-testid="button-create-user">
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      {createUserMutation.isPending ? "Creating..." : "Create"}
-                    </Button>
-                  </div>
+                <div className="flex items-center gap-2 h-9">
+                  <Checkbox
+                    id="new-user-admin"
+                    checked={newUserIsAdmin}
+                    onCheckedChange={(checked) => setNewUserIsAdmin(checked === true)}
+                    data-testid="checkbox-new-user-admin"
+                  />
+                  <Label htmlFor="new-user-admin" className="text-xs font-normal">Admin</Label>
                 </div>
+                <Button type="submit" disabled={createUserMutation.isPending} data-testid="button-create-user" size="sm">
+                  <UserPlus className="w-4 h-4 mr-1.5" />
+                  {createUserMutation.isPending ? "..." : "Create"}
+                </Button>
               </form>
             </CardContent>
           </Card>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-6">
           <Tabs defaultValue="users">
-            <TabsList className="mb-4">
-              <TabsTrigger value="users" data-testid="tab-users">
-                <User className="w-4 h-4 mr-2" />
+            <TabsList className="mb-4 inline-flex bg-muted p-1 rounded-lg">
+              <TabsTrigger 
+                value="users" 
+                data-testid="tab-users"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md px-4 py-1.5 text-sm transition-all"
+              >
+                <User className="w-3.5 h-3.5 mr-1.5" />
                 Users
               </TabsTrigger>
-              <TabsTrigger value="guests" data-testid="tab-guests">
-                <Key className="w-4 h-4 mr-2" />
-                Guest Tokens
+              <TabsTrigger 
+                value="guests" 
+                data-testid="tab-guests"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md px-4 py-1.5 text-sm transition-all"
+              >
+                <Key className="w-3.5 h-3.5 mr-1.5" />
+                Tokens
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="users">
               <Card>
-                <CardHeader>
-                  <CardTitle>Registered Users</CardTitle>
-                  <form onSubmit={handleUserSearch} className="flex gap-2 mt-2">
-                    <Input
-                      placeholder="Search by email or name..."
-                      value={userSearch}
-                      onChange={(e) => setUserSearch(e.target.value)}
-                      data-testid="input-search-users"
-                    />
-                    <Button type="submit" variant="outline" data-testid="button-search-users">
-                      <Search className="w-4 h-4" />
-                    </Button>
-                  </form>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <CardTitle className="text-base">Registered Users</CardTitle>
+                    <form onSubmit={handleUserSearch} className="relative">
+                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        placeholder="Search..."
+                        value={userSearch}
+                        onChange={(e) => setUserSearch(e.target.value)}
+                        data-testid="input-search-users"
+                        className="pl-9 pr-4 h-8 w-48 rounded-full border-border/50 shadow-sm text-sm"
+                      />
+                    </form>
+                  </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-0">
                   {usersLoading ? (
                     <div className="flex justify-center py-8">
-                      <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
+                      <div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" />
                     </div>
                   ) : !users || users.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8" data-testid="text-no-users">
+                    <p className="text-center text-muted-foreground py-8 text-sm" data-testid="text-no-users">
                       No users found
                     </p>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="divide-y divide-border/50">
                       {users.map((u) => (
                         <div
                           key={u.id}
-                          className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover-elevate ${
-                            selectedUser?.id === u.id ? "ring-2 ring-primary" : ""
+                          className={`flex items-center justify-between py-2.5 px-1 cursor-pointer hover:bg-muted/30 transition-colors ${
+                            selectedUser?.id === u.id ? "bg-muted/50" : ""
                           }`}
                           onClick={() => {
                             setSelectedUser(u);
@@ -612,42 +616,43 @@ export default function Admin() {
                           }}
                           data-testid={`user-row-${u.id}`}
                         >
-                          <div className="flex items-center gap-3">
-                            <User className="w-5 h-5 text-muted-foreground" />
-                            <div>
-                              <p className="font-medium">
-                                {u.firstName} {u.lastName}
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-sm truncate">
+                                  {u.firstName || u.lastName ? `${u.firstName || ''} ${u.lastName || ''}`.trim() : 'Unnamed'}
+                                </span>
                                 {u.isAdmin && (
-                                  <span className="ml-2 text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">
+                                  <span className="bg-foreground text-background text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide shrink-0">
                                     Admin
                                   </span>
                                 )}
-                              </p>
-                              <p className="text-sm text-muted-foreground">{u.email || "No email"}</p>
+                              </div>
+                              <p className="font-mono text-xs text-muted-foreground truncate">{u.email || "No email"}</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 shrink-0">
                             <div className="text-right">
-                              <p className="font-semibold">{Math.floor(parseFloat(u.creditBalance))} credits</p>
-                              <p className="text-xs text-muted-foreground">
-                                {new Date(u.createdAt).toLocaleDateString()}
-                              </p>
+                              <p className="font-mono font-bold text-sm">{Math.floor(parseFloat(u.creditBalance))}</p>
+                              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">credits</p>
                             </div>
-                            <div className="flex gap-1">
+                            <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                               <Button
                                 variant="ghost"
                                 size="icon"
+                                className="h-7 w-7"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   openEditModal(u);
                                 }}
                                 data-testid={`button-edit-user-${u.id}`}
                               >
-                                <Pencil className="w-4 h-4" />
+                                <Pencil className="w-3.5 h-3.5" />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="icon"
+                                className="h-7 w-7"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setDeletingUser(u);
@@ -655,7 +660,7 @@ export default function Admin() {
                                 disabled={u.id === user?.id}
                                 data-testid={`button-delete-user-${u.id}`}
                               >
-                                <Trash2 className="w-4 h-4 text-destructive" />
+                                <Trash2 className="w-3.5 h-3.5 text-destructive" />
                               </Button>
                             </div>
                           </div>
@@ -669,36 +674,37 @@ export default function Admin() {
 
             <TabsContent value="guests">
               <Card>
-                <CardHeader>
-                  <CardTitle>Guest Tokens</CardTitle>
-                  <form onSubmit={handleGuestSearch} className="flex gap-2 mt-2">
-                    <Input
-                      placeholder="Search by token..."
-                      value={guestSearch}
-                      onChange={(e) => setGuestSearch(e.target.value)}
-                      data-testid="input-search-guests"
-                    />
-                    <Button type="submit" variant="outline" data-testid="button-search-guests">
-                      <Search className="w-4 h-4" />
-                    </Button>
-                  </form>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <CardTitle className="text-base">Guest Tokens</CardTitle>
+                    <form onSubmit={handleGuestSearch} className="relative">
+                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        placeholder="Search..."
+                        value={guestSearch}
+                        onChange={(e) => setGuestSearch(e.target.value)}
+                        data-testid="input-search-guests"
+                        className="pl-9 pr-4 h-8 w-48 rounded-full border-border/50 shadow-sm text-sm"
+                      />
+                    </form>
+                  </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-0">
                   {guestsLoading ? (
                     <div className="flex justify-center py-8">
-                      <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
+                      <div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" />
                     </div>
                   ) : !guestTokens || guestTokens.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8" data-testid="text-no-guests">
+                    <p className="text-center text-muted-foreground py-8 text-sm" data-testid="text-no-guests">
                       No guest tokens found
                     </p>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="divide-y divide-border/50">
                       {guestTokens.map((g) => (
                         <div
                           key={g.id}
-                          className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover-elevate ${
-                            selectedGuest?.id === g.id ? "ring-2 ring-primary" : ""
+                          className={`flex items-center justify-between py-2.5 px-1 cursor-pointer hover:bg-muted/30 transition-colors ${
+                            selectedGuest?.id === g.id ? "bg-muted/50" : ""
                           }`}
                           onClick={() => {
                             setSelectedGuest(g);
@@ -706,20 +712,17 @@ export default function Admin() {
                           }}
                           data-testid={`guest-row-${g.id}`}
                         >
-                          <div className="flex items-center gap-3">
-                            <Key className="w-5 h-5 text-muted-foreground" />
-                            <div>
-                              <p className="font-mono text-sm">{g.token.substring(0, 24)}...</p>
-                              <p className="text-xs text-muted-foreground">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="min-w-0">
+                              <p className="font-mono text-xs text-muted-foreground truncate">{g.token.substring(0, 32)}...</p>
+                              <span className={`text-[10px] uppercase tracking-wide ${g.linkedAt ? 'text-muted-foreground' : 'text-green-600 dark:text-green-400'}`}>
                                 {g.linkedAt ? "Linked" : "Active"}
-                              </p>
+                              </span>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="font-semibold">{Math.floor(parseFloat(g.creditBalance))} credits</p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(g.createdAt).toLocaleDateString()}
-                            </p>
+                          <div className="text-right shrink-0">
+                            <p className="font-mono font-bold text-sm">{Math.floor(parseFloat(g.creditBalance))}</p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">credits</p>
                           </div>
                         </div>
                       ))}

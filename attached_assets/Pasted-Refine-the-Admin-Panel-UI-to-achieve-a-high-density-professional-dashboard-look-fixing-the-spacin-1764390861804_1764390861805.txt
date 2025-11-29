@@ -1,0 +1,45 @@
+Refine the Admin Panel UI to achieve a 'high-density' professional dashboard look, fixing the spacing and visual hierarchy seen in the current build.
+
+Please implement these specific adjustments using Tailwind CSS:
+
+Refine the 'Quick Stats' & 'Gift' Cards (Top Row):
+
+Typography: Change the big numbers (1, 19) to a monospace font (font-mono) to make them look like data. Increase size to text-5xl and make them tracking-tighter.
+
+Labels: Make the 'Total Users' labels smaller (text-xs uppercase tracking-widest text-gray-400).
+
+Gift Input: Remove the standard border. Make the input feel 'integrated' with a subtle gray background (bg-gray-50) and a transparent border.
+
+Compact the 'Register New User' Section:
+
+Currently, this section takes up too much vertical space.
+
+Grid: Change the input layout to a single horizontal row (grid-cols-5 gap-4 items-end) so the Email, Name, Credits, and Create button all fit on one line.
+
+Inputs: Style them as 'minimal' inputs: border-b border-gray-300 rounded-none px-0 focus:border-black focus:ring-0 (removing the box look for a cleaner form line).
+
+Fix the 'Registered Users' List & Search:
+
+The Search Bar: Fix the double-border visual glitch. Style it as a floating pill: rounded-full border border-gray-200 pl-4 py-2 shadow-sm focus:ring-2 focus:ring-black. Move the search icon inside the input (absolute left).
+
+The List Items:
+
+Create a distinct separation between rows using border-b border-gray-50.
+
+User Info: Display the email in font-mono text-sm text-gray-600.
+
+Badge: Style the 'Admin' badge as a tiny pill: bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded-full.
+
+Credits: Align the credit count to the far right and use a bold monospace font (font-mono font-bold).
+
+The Tabs (Users / Guest Tokens):
+
+Convert the loose buttons into a proper Segmented Control.
+
+Container: inline-flex bg-gray-100 p-1 rounded-lg.
+
+Active Tab: bg-white text-black shadow-sm rounded-md transition-all.
+
+Inactive Tab: text-gray-500 hover:text-gray-900.
+
+Goal: Remove the 'default HTML' feel. The page should look like a Stripe or Vercel dashboard—data-heavy, precise, and using monospace fonts for all metrics and identifiers.
