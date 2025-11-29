@@ -76,6 +76,56 @@ export default function Admin() {
     },
   });
 
+  const createUserMutation = useMutation({
+    mutationFn: async (userData: { email: string; firstName?: string; lastName?: string; initialCredits?: number; isAdmin?: boolean }) => {
+      const res = await apiRequest("POST", "/api/admin/create-user", userData);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to create user");
+      }
+      return res.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "User Created",
+        description: data.message,
+      });
+      setNewUserEmail("");
+      setNewUserFirstName("");
+      setNewUserLastName("");
+      setNewUserCredits("");
+      setNewUserIsAdmin(false);
+      refetchUsers();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create user",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleCreateUser = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUserEmail.trim()) {
+      toast({
+        title: "Email Required",
+        description: "Please enter an email address",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    createUserMutation.mutate({
+      email: newUserEmail.trim(),
+      firstName: newUserFirstName.trim() || undefined,
+      lastName: newUserLastName.trim() || undefined,
+      initialCredits: newUserCredits ? parseInt(newUserCredits) : 0,
+      isAdmin: newUserIsAdmin,
+    });
+  };
+
   const handleGiftCredits = () => {
     const amount = parseInt(creditsAmount);
     if (isNaN(amount) || amount <= 0) {
@@ -252,6 +302,84 @@ export default function Admin() {
                   </p>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UserPlus className="w-5 h-5" />
+                Register New User
+              </CardTitle>
+              <CardDescription>
+                Create a new user account with optional initial credits.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleCreateUser} className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+                <div className="space-y-2">
+                  <Label htmlFor="new-user-email">Email *</Label>
+                  <Input
+                    id="new-user-email"
+                    type="email"
+                    placeholder="user@example.com"
+                    value={newUserEmail}
+                    onChange={(e) => setNewUserEmail(e.target.value)}
+                    required
+                    data-testid="input-new-user-email"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="new-user-firstname">First Name</Label>
+                  <Input
+                    id="new-user-firstname"
+                    placeholder="John"
+                    value={newUserFirstName}
+                    onChange={(e) => setNewUserFirstName(e.target.value)}
+                    data-testid="input-new-user-firstname"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="new-user-lastname">Last Name</Label>
+                  <Input
+                    id="new-user-lastname"
+                    placeholder="Doe"
+                    value={newUserLastName}
+                    onChange={(e) => setNewUserLastName(e.target.value)}
+                    data-testid="input-new-user-lastname"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="new-user-credits">Initial Credits</Label>
+                  <Input
+                    id="new-user-credits"
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    value={newUserCredits}
+                    onChange={(e) => setNewUserCredits(e.target.value)}
+                    data-testid="input-new-user-credits"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Options</Label>
+                  <div className="flex items-center gap-4 h-9">
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id="new-user-admin"
+                        checked={newUserIsAdmin}
+                        onCheckedChange={(checked) => setNewUserIsAdmin(checked === true)}
+                        data-testid="checkbox-new-user-admin"
+                      />
+                      <Label htmlFor="new-user-admin" className="text-sm font-normal">Admin</Label>
+                    </div>
+                    <Button type="submit" disabled={createUserMutation.isPending} data-testid="button-create-user">
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      {createUserMutation.isPending ? "Creating..." : "Create"}
+                    </Button>
+                  </div>
+                </div>
+              </form>
             </CardContent>
           </Card>
         </div>
