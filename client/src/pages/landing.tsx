@@ -51,8 +51,8 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
-      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-16 pb-24 md:pb-16">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
+      <div className="flex-1 max-w-6xl mx-auto w-full px-4 md:px-6 py-8 md:py-16">
         <div className="text-center mb-6 md:mb-8">
           <h1 
             className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-2 md:mb-3" 
@@ -88,6 +88,56 @@ export default function Landing() {
                 Prompts & responses never stored
               </span>
             </div>
+          </div>
+
+          <div className="flex flex-row items-center justify-center gap-3 mt-6 md:hidden" data-testid="mobile-hero-cta">
+            {!guestToken ? (
+              <>
+                <Button 
+                  onClick={handleCreateGuestToken}
+                  disabled={isCreatingToken}
+                  size="sm"
+                  className="bg-gray-900 hover:bg-gray-800 text-white font-medium dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+                  data-testid="button-create-guest-token-mobile"
+                >
+                  {isCreatingToken ? "Creating..." : "Create Guest Token"}
+                </Button>
+                <Button 
+                  onClick={handleSignIn}
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 dark:text-gray-400 font-medium"
+                  data-testid="button-sign-in-mobile"
+                >
+                  Sign In
+                </Button>
+              </>
+            ) : (
+              <div className="flex flex-col items-center gap-3 w-full px-4">
+                <div className="flex items-center gap-2 p-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 w-full max-w-sm">
+                  <code className="flex-1 text-xs truncate font-mono text-gray-600 dark:text-gray-300" data-testid="text-guest-token-mobile">
+                    {guestToken}
+                  </code>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleCopyToken}
+                    className="text-gray-500"
+                    data-testid="button-copy-token-mobile"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                </div>
+                <Button
+                  onClick={() => window.location.href = "/"}
+                  size="sm"
+                  className="w-full max-w-sm bg-gray-900 hover:bg-gray-800 text-white font-medium dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+                  data-testid="button-continue-guest-mobile"
+                >
+                  Continue to Arena
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -168,136 +218,88 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 mb-3 md:mb-5">
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200">
-            <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-              <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                <Zap className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+        <div className="my-8 md:my-0">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 mb-3 md:mb-5">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200">
+              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
+                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Zap className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+                </div>
+                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Compare 4 Models</h3>
               </div>
-              <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Compare 4 Models</h3>
+              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                See responses from GPT-4o, Claude Sonnet, Gemini Flash, and Grok side-by-side
+              </p>
             </div>
-            <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-              See responses from GPT-4o, Claude Sonnet, Gemini Flash, and Grok side-by-side
-            </p>
+
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200">
+              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
+                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+                </div>
+                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Pay As You Go</h3>
+              </div>
+              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                Buy credits when you need them. No monthly subscription or commitments.
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 col-span-2 md:col-span-1">
+              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
+                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Shield className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+                </div>
+                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">True Privacy</h3>
+              </div>
+              <div className="hidden md:block space-y-2">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Zero data collection</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Prompts never stored</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Complete anonymity</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200">
-            <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-              <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+          <div className="grid grid-cols-2 gap-3 md:gap-5">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200">
+              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
+                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Crown className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+                </div>
+                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Caesar</h3>
               </div>
-              <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Pay As You Go</h3>
+              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                Let an AI arbiter analyze and score responses across accuracy, clarity, creativity, and safety.
+              </p>
             </div>
-            <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-              Buy credits when you need them. No monthly subscription or commitments.
-            </p>
-          </div>
 
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-              <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                <Shield className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200">
+              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
+                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Eye className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+                </div>
+                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
               </div>
-              <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">True Privacy</h3>
-            </div>
-            <div className="hidden md:block space-y-2">
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
-                <p className="text-sm text-gray-500 dark:text-gray-400">Zero data collection</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
-                <p className="text-sm text-gray-500 dark:text-gray-400">Prompts never stored</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
-                <p className="text-sm text-gray-500 dark:text-gray-400">Complete anonymity</p>
-              </div>
+              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                Evaluate responses without bias. Model names are hidden until you vote or reveal results.
+              </p>
             </div>
           </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-3 md:gap-5">
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200">
-            <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-              <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                <Crown className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-              </div>
-              <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Caesar</h3>
-            </div>
-            <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-              Let an AI arbiter analyze and score responses across accuracy, clarity, creativity, and safety.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200">
-            <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-              <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                <Eye className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-              </div>
-              <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
-            </div>
-            <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-              Evaluate responses without bias. Model names are hidden until you vote or reveal results.
-            </p>
-          </div>
-        </div>
-
-        <footer className="mt-10 md:mt-16 pt-6 md:pt-8 border-t border-gray-200 dark:border-gray-800 text-center">
-          <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">v 1.0</p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">This Whole World LLC — November 2025</p>
-        </footer>
       </div>
 
-      <div 
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/85 dark:bg-gray-950/85 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 p-4 safe-area-inset-bottom"
-        data-testid="mobile-cta-dock"
-      >
-        {!guestToken ? (
-          <div className="flex flex-row gap-3">
-            <Button 
-              onClick={handleCreateGuestToken}
-              disabled={isCreatingToken}
-              className="flex-1 h-10 font-medium bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
-              data-testid="button-create-guest-token-mobile"
-            >
-              {isCreatingToken ? "Creating..." : "Create Guest Token"}
-            </Button>
-            <Button 
-              onClick={handleSignIn}
-              variant="ghost"
-              className="h-10 px-4 font-medium text-gray-600 dark:text-gray-400"
-              data-testid="button-sign-in-mobile"
-            >
-              Sign In
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 p-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-              <code className="flex-1 text-xs truncate font-mono text-gray-600 dark:text-gray-300" data-testid="text-guest-token-mobile">
-                {guestToken}
-              </code>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCopyToken}
-                className="h-7 px-2 text-gray-500"
-                data-testid="button-copy-token-mobile"
-              >
-                <Copy className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-            <Button
-              onClick={() => window.location.href = "/"}
-              className="w-full h-10 font-medium bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
-              data-testid="button-continue-guest-mobile"
-            >
-              Continue to Arena
-            </Button>
-          </div>
-        )}
-      </div>
+      <footer className="mt-auto py-6 md:py-8 border-t border-gray-200 dark:border-gray-800 text-center">
+        <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">v 1.0</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">This Whole World LLC — November 2025</p>
+      </footer>
     </div>
   );
 }
