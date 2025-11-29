@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import grokLogo from "@assets/grok--v2_1763216108457.jpg";
+import grokLogo from "@assets/grok_1764386738517.png";
 import chatGptLogo from "@assets/ChatGPT-Logo_1764386066627.png";
 import geminiLogo from "@assets/gemini-color_1764386333911.png";
 import claudeLogo from "@assets/claude-color_1764386516580.png";
