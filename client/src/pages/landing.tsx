@@ -153,7 +153,7 @@ export default function Landing() {
             <img 
               src={llmFightImage} 
               alt="AI models competing" 
-              className="w-72 md:w-[431px] h-auto mix-blend-multiply dark:mix-blend-screen dark:invert"
+              className="w-72 md:w-[431px] h-auto mix-blend-multiply brightness-105 dark:mix-blend-normal dark:invert dark:hue-rotate-180"
             />
           </div>
           
