@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Sparkles, Brain, Zap, Crown, EyeOff } from "lucide-react";
+import { Brain, Zap, Crown, EyeOff } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import grokLogo from "@assets/grok--v2_1763216108457.jpg";
+import chatGptLogo from "@assets/ChatGPT-Logo_1764386066627.png";
 
 export type ModelId = "gpt-4o" | "claude-sonnet" | "gemini-flash" | "grok";
 export type JudgeModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
@@ -28,7 +29,7 @@ export interface JudgeModel {
 }
 
 export const AVAILABLE_MODELS: Model[] = [
-  { id: "gpt-4o", name: "GPT-4o", shortName: "GPT-4o", icon: Sparkles, color: "text-green-600" },
+  { id: "gpt-4o", name: "GPT-4o", shortName: "GPT-4o", iconImage: chatGptLogo, color: "text-green-600" },
   { id: "claude-sonnet", name: "Claude Sonnet", shortName: "Claude", icon: Brain, color: "text-orange-600" },
   { id: "gemini-flash", name: "Gemini Flash", shortName: "Gemini", icon: Zap, color: "text-blue-600" },
   { id: "grok", name: "Grok", shortName: "Grok", iconImage: grokLogo, color: "text-foreground" },
