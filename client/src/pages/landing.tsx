@@ -52,7 +52,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
-      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-16">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-16 pb-24 md:pb-16">
         <div className="text-center mb-6 md:mb-8">
           <h1 
             className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-2 md:mb-3" 
@@ -91,7 +91,7 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="space-y-3 md:grid md:grid-cols-2 md:gap-5 mb-6 md:mb-8">
+        <div className="hidden md:grid md:grid-cols-2 md:gap-5 mb-6 md:mb-8">
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 md:p-6 shadow-sm flex flex-col">
             <div className="mb-3 md:mb-4">
               <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-1" data-testid="text-try-guest-title">
@@ -247,6 +247,56 @@ export default function Landing() {
           <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">v 1.0</p>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">This Whole World LLC — November 2025</p>
         </footer>
+      </div>
+
+      <div 
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/85 dark:bg-gray-950/85 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 p-4 safe-area-inset-bottom"
+        data-testid="mobile-cta-dock"
+      >
+        {!guestToken ? (
+          <div className="flex flex-row gap-3">
+            <Button 
+              onClick={handleCreateGuestToken}
+              disabled={isCreatingToken}
+              className="flex-1 h-10 font-medium bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+              data-testid="button-create-guest-token-mobile"
+            >
+              {isCreatingToken ? "Creating..." : "Create Guest Token"}
+            </Button>
+            <Button 
+              onClick={handleSignIn}
+              variant="ghost"
+              className="h-10 px-4 font-medium text-gray-600 dark:text-gray-400"
+              data-testid="button-sign-in-mobile"
+            >
+              Sign In
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 p-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <code className="flex-1 text-xs truncate font-mono text-gray-600 dark:text-gray-300" data-testid="text-guest-token-mobile">
+                {guestToken}
+              </code>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopyToken}
+                className="h-7 px-2 text-gray-500"
+                data-testid="button-copy-token-mobile"
+              >
+                <Copy className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+            <Button
+              onClick={() => window.location.href = "/"}
+              className="w-full h-10 font-medium bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+              data-testid="button-continue-guest-mobile"
+            >
+              Continue to Arena
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
