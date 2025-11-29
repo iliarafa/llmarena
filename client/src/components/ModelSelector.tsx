@@ -132,7 +132,7 @@ export default function ModelSelector({
                 {Icon ? (
                   <Icon className={`h-5 w-5 ${isSelected ? model.color : 'text-gray-400 dark:text-gray-500'}`} />
                 ) : model.iconImage ? (
-                  <img src={model.iconImage} alt={model.name} className={`h-5 w-5 object-contain ${isSelected ? '' : 'opacity-50'}`} />
+                  <img src={model.iconImage} alt={model.name} className={`h-6 w-6 object-contain ${isSelected ? '' : 'opacity-50'}`} />
                 ) : null}
               </div>
               <Label className={`text-sm font-medium cursor-pointer ${isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>

@@ -127,7 +127,7 @@ export default function ComparisonCard({
           ) : Icon ? (
             <Icon className={`h-5 w-5 flex-shrink-0 ${model.color}`} />
           ) : model.iconImage ? (
-            <img src={model.iconImage} alt={model.name} className="h-5 w-5 flex-shrink-0 object-contain" />
+            <img src={model.iconImage} alt={model.name} className="h-6 w-6 flex-shrink-0 object-contain" />
           ) : null}
           <h3 className="text-lg font-semibold truncate">
             {blindModeLabel ? (
