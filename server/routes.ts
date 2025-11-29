@@ -429,6 +429,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin: Get all users (with optional search)
+  app.get("/api/admin/users", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || !user.isAdmin) {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+      
+      const search = req.query.search as string | undefined;
+      const users = await storage.getAllUsers(search);
+      res.json(users);
+    } catch (error: any) {
+      console.error("Admin get users error:", error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+
+  // Admin: Get all guest tokens (with optional search)
+  app.get("/api/admin/guest-tokens", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || !user.isAdmin) {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+      
+      const search = req.query.search as string | undefined;
+      const tokens = await storage.getAllGuestTokens(search);
+      res.json(tokens);
+    } catch (error: any) {
+      console.error("Admin get guest tokens error:", error);
+      res.status(500).json({ error: "Failed to fetch guest tokens" });
+    }
+  });
+
+  // Admin: Gift credits to user or guest token
+  const giftCreditsSchema = z.object({
+    targetType: z.enum(["user", "guest"]),
+    targetId: z.string().min(1),
+    amount: z.number().int().positive(),
+  });
+  
+  app.post("/api/admin/gift-credits", isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin || !admin.isAdmin) {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+      
+      const parseResult = giftCreditsSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data",
+          details: parseResult.error.errors.map(e => e.message).join(", ")
+        });
+      }
+      
+      const { targetType, targetId, amount } = parseResult.data;
+      
+      if (targetType === "user") {
+        const updated = await storage.addCreditsToUser(targetId, amount);
+        res.json({ 
+          success: true, 
+          message: `Added ${amount} credits to user`,
+          newBalance: updated.creditBalance 
+        });
+      } else {
+        const updated = await storage.addCreditsToGuestToken(targetId, amount);
+        res.json({ 
+          success: true, 
+          message: `Added ${amount} credits to guest token`,
+          newBalance: updated.creditBalance 
+        });
+      }
+    } catch (error: any) {
+      console.error("Admin gift credits error:", error);
+      res.status(500).json({ error: "Failed to gift credits" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

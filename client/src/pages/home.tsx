@@ -13,7 +13,7 @@ import { saveBattle, type Battle } from "@/lib/battleHistory";
 import { generatePDF, downloadMarkdown, downloadJSON } from "@/lib/reportExporter";
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History } from "lucide-react";
+import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History, Shield } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
   DropdownMenu,
@@ -330,6 +330,14 @@ export default function Home() {
                         Buy Credits
                       </Button>
                     </Link>
+                    {user?.isAdmin && (
+                      <Link href="/admin">
+                        <Button variant="ghost" className="w-full justify-start" data-testid="link-admin-mobile">
+                          <Shield className="w-4 h-4 mr-3" />
+                          Admin Panel
+                        </Button>
+                      </Link>
+                    )}
                   </div>
                   <div className="pt-4 border-t">
                     <Button 
@@ -408,6 +416,14 @@ export default function Home() {
                     Buy Credits
                   </DropdownMenuItem>
                 </Link>
+                {user?.isAdmin && (
+                  <Link href="/admin">
+                    <DropdownMenuItem data-testid="button-admin">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Admin Panel
+                    </DropdownMenuItem>
+                  </Link>
+                )}
                 <DropdownMenuItem onClick={handleLogout} data-testid="button-logout">
                   <LogOut className="w-4 h-4 mr-2" />
                   {isGuest ? "Clear Token" : "Logout"}

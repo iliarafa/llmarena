@@ -41,6 +41,12 @@ export interface IStorage {
   // Webhook event idempotency
   isWebhookEventProcessed(eventId: string): Promise<boolean>;
   markWebhookEventAsProcessed(event: InsertProcessedWebhookEvent): Promise<void>;
+  
+  // Admin operations
+  getAllUsers(search?: string): Promise<User[]>;
+  getAllGuestTokens(search?: string): Promise<GuestToken[]>;
+  addCreditsToUser(userId: string, amount: number): Promise<User>;
+  addCreditsToGuestToken(tokenId: string, amount: number): Promise<GuestToken>;
 }
 
 export class DbStorage implements IStorage {
@@ -156,6 +162,72 @@ export class DbStorage implements IStorage {
 
   async markWebhookEventAsProcessed(event: InsertProcessedWebhookEvent): Promise<void> {
     await db.insert(processedWebhookEvents).values(event);
+  }
+
+  // Admin operations
+  async getAllUsers(search?: string): Promise<User[]> {
+    if (search && search.trim()) {
+      const searchPattern = `%${search.trim()}%`;
+      return await db.select()
+        .from(users)
+        .where(
+          or(
+            like(users.email, searchPattern),
+            like(users.firstName, searchPattern),
+            like(users.lastName, searchPattern)
+          )
+        )
+        .orderBy(desc(users.createdAt))
+        .limit(100);
+    }
+    return await db.select()
+      .from(users)
+      .orderBy(desc(users.createdAt))
+      .limit(100);
+  }
+
+  async getAllGuestTokens(search?: string): Promise<GuestToken[]> {
+    if (search && search.trim()) {
+      const searchPattern = `%${search.trim()}%`;
+      return await db.select()
+        .from(guestTokens)
+        .where(like(guestTokens.token, searchPattern))
+        .orderBy(desc(guestTokens.createdAt))
+        .limit(100);
+    }
+    return await db.select()
+      .from(guestTokens)
+      .orderBy(desc(guestTokens.createdAt))
+      .limit(100);
+  }
+
+  async addCreditsToUser(userId: string, amount: number): Promise<User> {
+    const user = await this.getUser(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const currentBalance = parseFloat(user.creditBalance);
+    const newBalance = (currentBalance + amount).toFixed(2);
+    await db.update(users)
+      .set({ creditBalance: newBalance })
+      .where(eq(users.id, userId));
+    const updated = await this.getUser(userId);
+    return updated!;
+  }
+
+  async addCreditsToGuestToken(tokenId: string, amount: number): Promise<GuestToken> {
+    const result = await db.select().from(guestTokens).where(eq(guestTokens.id, tokenId)).limit(1);
+    const token = result[0];
+    if (!token) {
+      throw new Error("Guest token not found");
+    }
+    const currentBalance = parseFloat(token.creditBalance);
+    const newBalance = (currentBalance + amount).toFixed(2);
+    await db.update(guestTokens)
+      .set({ creditBalance: newBalance })
+      .where(eq(guestTokens.id, tokenId));
+    const updatedResult = await db.select().from(guestTokens).where(eq(guestTokens.id, tokenId)).limit(1);
+    return updatedResult[0];
   }
 }
 

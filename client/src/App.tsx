@@ -10,6 +10,7 @@ import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import Purchase from "@/pages/purchase";
 import Notebook from "@/pages/notebook";
+import Admin from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -52,6 +53,7 @@ function Router() {
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/purchase" component={Purchase} />
           <Route path="/notebook" component={Notebook} />
+          <Route path="/admin" component={Admin} />
           <Route path="/:rest*" component={NotFound} />
         </>
       ) : (
