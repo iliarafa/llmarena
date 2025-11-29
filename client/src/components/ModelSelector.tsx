@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import grokLogo from "@assets/grok--v2_1763216108457.jpg";
 import chatGptLogo from "@assets/ChatGPT-Logo_1764386066627.png";
-import geminiLogo from "@assets/rectangle-gemini-google-icon-symbol-logo-free-png_1764386284999.webp";
+import geminiLogo from "@assets/gemini-color_1764386333911.png";
 
 export type ModelId = "gpt-4o" | "claude-sonnet" | "gemini-flash" | "grok";
 export type JudgeModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
