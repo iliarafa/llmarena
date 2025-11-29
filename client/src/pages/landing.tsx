@@ -65,7 +65,7 @@ const FEATURES: Feature[] = [
     id: "notebook",
     icon: BookOpen,
     title: "Notebook",
-    description: "Save your favorite prompts, responses, and comparisons for later. Build a personal library of AI interactions you can reference, refine, and reuse anytime.",
+    description: "Keep notes locally on your device. Your notebook data stays in your browser and is never sent to our servers - consistent with our zero data collection policy.",
     extraContent: (
       <div className="mt-4">
         <a href="/notebook">
