@@ -26,7 +26,7 @@ export default function Home() {
   const [prompt, setPrompt] = useState("");
   const [responses, setResponses] = useState<ModelResponse[]>([]);
   const [caesarEnabled, setCaesarEnabled] = useState(false);
-  const [caesarJudgeModel, setCaesarJudgeModel] = useState<JudgeModelId>("claude-3-5-sonnet");
+  const [caesarJudgeModel, setCaesarJudgeModel] = useState<JudgeModelId>("gemini-flash");
   const [caesarResponse, setCaesarResponse] = useState<CaesarResponse | undefined>();
   const [caesarLoading, setCaesarLoading] = useState(false);
   const { toast } = useToast();
