@@ -71,7 +71,7 @@ export default function ComparisonGrid({
         className="md:hidden sticky top-12 z-40 py-2 px-4"
         data-testid="model-switcher-bar"
       >
-        <div className="bg-gray-100/90 dark:bg-gray-800/90 backdrop-blur-sm p-1 rounded-xl flex justify-between">
+        <div className="bg-gray-100/90 dark:bg-gray-800/90 backdrop-blur-sm p-1 rounded-xl flex justify-between gap-1">
           {models.map((model, index) => {
             const contenderLabel = CONTENDER_LABELS[index] || `${index + 1}`;
             const isActive = activeIndex === index;
@@ -84,7 +84,7 @@ export default function ComparisonGrid({
                 className={`relative flex-1 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${
                   isActive
                     ? 'bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm'
-                    : 'text-gray-500 dark:text-gray-400'
+                    : 'text-gray-500'
                 }`}
                 data-testid={`switcher-${model.id}`}
               >
@@ -106,7 +106,7 @@ export default function ComparisonGrid({
         {activeModel && (
           <div 
             key={activeModel.id}
-            className="animate-in fade-in duration-200"
+            className="fade-in-animation"
             data-testid={`response-view-${activeModel.id}`}
           >
             <ComparisonCard

@@ -292,3 +292,17 @@
     inset: -1px;
   }
 }
+
+/* Custom fade animation for mobile model switcher */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in-animation {
+  animation: fadeIn 200ms ease-out;
+}
