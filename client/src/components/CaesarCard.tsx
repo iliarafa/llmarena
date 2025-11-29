@@ -1,7 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Gavel, Trophy, Clock } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Crown, Trophy, Clock, AlertTriangle } from "lucide-react";
+
+export interface HallucinationWarning {
+  detected: boolean;
+  suspects: string[];
+  reason: string;
+}
 
 export interface CaesarVerdict {
   winner: "A" | "B" | "C" | "D" | "Tie";
@@ -17,6 +24,7 @@ export interface CaesarVerdict {
       overall: number;
     };
   };
+  hallucination_warning?: HallucinationWarning;
 }
 
 export interface CaesarResponse {
@@ -39,7 +47,7 @@ export default function CaesarCard({ caesarResponse, isLoading, modelNames }: Ca
       <Card className="border-2 border-amber-500/50 bg-amber-50/5">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-amber-600">
-            <Gavel className="h-5 w-5" />
+            <Crown className="h-5 w-5" />
             Caesar's Verdict
           </CardTitle>
         </CardHeader>
@@ -62,7 +70,7 @@ export default function CaesarCard({ caesarResponse, isLoading, modelNames }: Ca
       <Card className="border-2 border-red-500/50 bg-red-50/5">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-red-600">
-            <Gavel className="h-5 w-5" />
+            <Crown className="h-5 w-5" />
             Caesar's Verdict
           </CardTitle>
         </CardHeader>
@@ -96,7 +104,7 @@ export default function CaesarCard({ caesarResponse, isLoading, modelNames }: Ca
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
-            <Gavel className="h-5 w-5" />
+            <Crown className="h-5 w-5" />
             Caesar's Verdict
           </CardTitle>
           {generationTime && (
@@ -153,17 +161,38 @@ export default function CaesarCard({ caesarResponse, isLoading, modelNames }: Ca
               const modelName = getModelNameForLabel(label);
               if (modelName === "N/A") return null;
               
+              const isSuspect = verdict.hallucination_warning?.detected && 
+                verdict.hallucination_warning.suspects.includes(label);
+              
               return (
                 <div 
                   key={label} 
                   className={`p-2 rounded border ${
-                    verdict.winner === label 
-                      ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/30' 
-                      : 'border-border'
+                    isSuspect
+                      ? 'border-amber-400 bg-amber-50/30 dark:bg-amber-950/20'
+                      : verdict.winner === label 
+                        ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/30' 
+                        : 'border-border'
                   }`}
+                  data-testid={`caesar-score-${label}`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-medium">{modelName}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium">{modelName}</span>
+                      {isSuspect && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <AlertTriangle 
+                              className="h-3.5 w-3.5 text-amber-500 cursor-help" 
+                              data-testid={`warning-icon-${label}`}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs">
+                            <p className="text-xs">Potential hallucination detected</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
                     <Badge variant="outline" className="text-xs">
                       Overall: {scores.overall}/10
                     </Badge>
@@ -179,6 +208,20 @@ export default function CaesarCard({ caesarResponse, isLoading, modelNames }: Ca
             })}
           </div>
         </div>
+
+        {verdict.hallucination_warning?.detected && (
+          <div 
+            className="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg"
+            data-testid="hallucination-warning"
+          >
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-amber-700 dark:text-amber-300" data-testid="hallucination-reason">
+                Potentially hallucinated: {verdict.hallucination_warning.reason}
+              </p>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
