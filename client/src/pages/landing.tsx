@@ -61,6 +61,21 @@ const FEATURES: Feature[] = [
     title: "Blind Mode",
     description: "Evaluate responses without bias. Model names are hidden until you vote or reveal results. Make your choice based purely on quality, not brand recognition.",
   },
+  {
+    id: "notebook",
+    icon: BookOpen,
+    title: "Notebook",
+    description: "Save your favorite prompts, responses, and comparisons for later. Build a personal library of AI interactions you can reference, refine, and reuse anytime.",
+    extraContent: (
+      <div className="mt-4">
+        <a href="/notebook">
+          <button className="w-full bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 text-white font-medium py-2.5 px-4 rounded-lg transition-colors">
+            Open Notebook
+          </button>
+        </a>
+      </div>
+    ),
+  },
 ];
 
 export default function Landing() {
@@ -346,19 +361,18 @@ export default function Landing() {
               </div>
             </div>
 
-            <Link href="/notebook" className="md:hidden">
-              <div 
-                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer active:scale-[0.98]"
-                data-testid="feature-tile-notebook"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800">
-                    <BookOpen className="w-4 h-4 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-                  </div>
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Notebook</h3>
+            <div 
+              className="md:hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer active:scale-[0.98]"
+              onClick={() => handleFeatureClick(FEATURES[5])}
+              data-testid="feature-tile-notebook"
+            >
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <BookOpen className="w-4 h-4 text-gray-700 dark:text-gray-300" strokeWidth={2} />
                 </div>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Notebook</h3>
               </div>
-            </Link>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 md:gap-5">
