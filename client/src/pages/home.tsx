@@ -13,7 +13,7 @@ import { saveBattle, type Battle } from "@/lib/battleHistory";
 import { generatePDF, downloadMarkdown, downloadJSON } from "@/lib/reportExporter";
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown } from "lucide-react";
+import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
   DropdownMenu,
@@ -23,6 +23,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function Home() {
   const [selectedModels, setSelectedModels] = useState<ModelId[]>([]);
@@ -287,22 +294,82 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
       <header className="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold" data-testid="text-app-title">LLM Arena</h1>
-            <HistorySidebar 
-              onLoadBattle={handleLoadBattle}
-              refreshTrigger={historyRefreshTrigger}
-            />
-            <Link href="/notebook">
-              <Button variant="ghost" size="sm" className="text-[#616161] dark:text-white" data-testid="link-notebook">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Notebook
-              </Button>
-            </Link>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-12 md:h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2 md:gap-4">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden h-9 w-9" data-testid="button-mobile-menu">
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72">
+                <SheetHeader>
+                  <SheetTitle>LLM Arena</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6 space-y-4">
+                  <div className="px-2 py-2 rounded-lg bg-gray-50 dark:bg-gray-900">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Coins className="w-4 h-4 text-muted-foreground" />
+                      <span className="font-medium">{creditBalance.toFixed(0)} credits</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <HistorySidebar 
+                      onLoadBattle={handleLoadBattle}
+                      refreshTrigger={historyRefreshTrigger}
+                    />
+                    <Link href="/notebook">
+                      <Button variant="ghost" className="w-full justify-start" data-testid="link-notebook-mobile">
+                        <BookOpen className="w-4 h-4 mr-3" />
+                        Notebook
+                      </Button>
+                    </Link>
+                    <Link href="/dashboard">
+                      <Button variant="ghost" className="w-full justify-start" data-testid="link-dashboard-mobile">
+                        <BarChart3 className="w-4 h-4 mr-3" />
+                        Dashboard
+                      </Button>
+                    </Link>
+                    <Link href="/purchase">
+                      <Button variant="ghost" className="w-full justify-start" data-testid="link-purchase-mobile">
+                        <CreditCard className="w-4 h-4 mr-3" />
+                        Buy Credits
+                      </Button>
+                    </Link>
+                  </div>
+                  <div className="pt-4 border-t">
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start text-muted-foreground" 
+                      onClick={handleLogout}
+                      data-testid="button-logout-mobile"
+                    >
+                      <LogOut className="w-4 h-4 mr-3" />
+                      {isGuest ? "Clear Token" : "Logout"}
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+            
+            <h1 className="text-lg md:text-xl font-bold" data-testid="text-app-title">LLM Arena</h1>
+            
+            <div className="hidden md:flex items-center gap-2">
+              <HistorySidebar 
+                onLoadBattle={handleLoadBattle}
+                refreshTrigger={historyRefreshTrigger}
+              />
+              <Link href="/notebook">
+                <Button variant="ghost" size="sm" className="text-[#616161] dark:text-white" data-testid="link-notebook">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Notebook
+                </Button>
+              </Link>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground hidden sm:flex">
+          
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
               <Coins className="w-4 h-4" />
               <span data-testid="text-header-credits">{creditBalance.toFixed(0)} credits</span>
               <Link href="/purchase">
@@ -312,9 +379,14 @@ export default function Home() {
               </Link>
             </div>
             
+            <div className="flex md:hidden items-center gap-1 text-xs text-muted-foreground">
+              <Coins className="w-3.5 h-3.5" />
+              <span data-testid="text-header-credits-mobile">{creditBalance.toFixed(0)}</span>
+            </div>
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" data-testid="button-user-menu">
+                <Button variant="ghost" size="icon" className="h-9 w-9" data-testid="button-user-menu">
                   <User className="w-5 h-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -352,8 +424,8 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8 space-y-6 md:space-y-8 pb-28 md:pb-8">
+        <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
           {isGuest && <GuestAccountBanner creditBalance={creditBalance} />}
           
           <ModelSelector 
@@ -367,15 +439,17 @@ export default function Home() {
             onBlindModeToggle={setBlindModeEnabled}
           />
           
-          <PromptInput
-            value={prompt}
-            onChange={setPrompt}
-            onSubmit={handleCompare}
-            isLoading={responses.some(r => r.isLoading) || caesarLoading}
-            disabled={selectedModels.length === 0}
-            creditCost={creditCost}
-            creditBalance={creditBalance}
-          />
+          <div className="hidden md:block">
+            <PromptInput
+              value={prompt}
+              onChange={setPrompt}
+              onSubmit={handleCompare}
+              isLoading={responses.some(r => r.isLoading) || caesarLoading}
+              disabled={selectedModels.length === 0}
+              creditCost={creditCost}
+              creditBalance={creditBalance}
+            />
+          </div>
         </div>
 
         <div className="pt-8">
@@ -475,6 +549,19 @@ export default function Home() {
           </div>
         </div>
       </main>
+      
+      <div className="md:hidden">
+        <PromptInput
+          value={prompt}
+          onChange={setPrompt}
+          onSubmit={handleCompare}
+          isLoading={responses.some(r => r.isLoading) || caesarLoading}
+          disabled={selectedModels.length === 0}
+          creditCost={creditCost}
+          creditBalance={creditBalance}
+          isMobileFooter={true}
+        />
+      </div>
     </div>
   );
 }

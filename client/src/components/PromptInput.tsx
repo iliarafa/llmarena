@@ -10,6 +10,7 @@ interface PromptInputProps {
   disabled?: boolean;
   creditCost?: number;
   creditBalance?: number;
+  isMobileFooter?: boolean;
 }
 
 export default function PromptInput({ 
@@ -19,7 +20,8 @@ export default function PromptInput({
   isLoading = false,
   disabled = false,
   creditCost = 0,
-  creditBalance = 0
+  creditBalance = 0,
+  isMobileFooter = false,
 }: PromptInputProps) {
   const characterCount = value.length;
   const hasInsufficientCredits = creditCost > creditBalance;
@@ -32,6 +34,47 @@ export default function PromptInput({
       }
     }
   };
+
+  if (isMobileFooter) {
+    return (
+      <div 
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 p-3 safe-area-inset-bottom"
+        data-testid="mobile-input-footer"
+      >
+        <div className="flex items-center gap-2 max-w-7xl mx-auto">
+          <div className="flex-1 relative">
+            <Textarea
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={disabled ? "Select models..." : "Enter prompt..."}
+              className="min-h-[44px] max-h-24 py-2.5 px-3 text-base resize-none rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus-visible:ring-1 focus-visible:ring-gray-400"
+              disabled={disabled || isLoading}
+              rows={1}
+              data-testid="input-prompt-mobile"
+            />
+          </div>
+          <Button 
+            onClick={onSubmit}
+            disabled={disabled || isLoading || !value.trim() || hasInsufficientCredits}
+            size="icon"
+            className="h-11 w-11 rounded-xl bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 flex-shrink-0"
+            data-testid="button-compare-mobile"
+          >
+            <Send className="h-5 w-5" />
+          </Button>
+        </div>
+        <div className="flex items-center justify-between px-1 mt-1.5">
+          <span className="text-[10px] font-mono text-gray-400">
+            {characterCount} chars
+          </span>
+          <span className={`text-[10px] font-mono ${hasInsufficientCredits ? 'text-red-500' : 'text-gray-400'}`}>
+            {creditCost > 0 ? `${creditCost} cr` : ''} {creditBalance.toFixed(0)} avail
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-2xl shadow-md focus-within:ring-2 focus-within:ring-gray-200 dark:focus-within:ring-gray-700 focus-within:border-gray-900 dark:focus-within:border-gray-400 transition-all">
