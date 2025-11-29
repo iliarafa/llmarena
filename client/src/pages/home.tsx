@@ -10,9 +10,10 @@ import { useCreditBalance } from "@/hooks/useCreditBalance";
 import { useAccountLinking } from "@/hooks/useAccountLinking";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { saveBattle, type Battle } from "@/lib/battleHistory";
+import { generatePDF, downloadMarkdown, downloadJSON } from "@/lib/reportExporter";
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen } from "lucide-react";
+import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
   DropdownMenu,
@@ -378,6 +379,81 @@ export default function Home() {
         </div>
 
         <div className="pt-8">
+          {responses.some(r => r.response && !r.error) && (
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Comparison Results</h2>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" data-testid="button-download-report">
+                    <FileDown className="w-4 h-4 mr-2" />
+                    Download Report
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      generatePDF({
+                        prompt,
+                        responses,
+                        modelNames,
+                        caesar: caesarResponse,
+                        blindMode: blindModeEnabled && !blindModeRevealed,
+                      });
+                      toast({
+                        title: "PDF Generated",
+                        description: blindModeEnabled && !blindModeRevealed 
+                          ? "Report downloaded - model names are revealed in export"
+                          : "Your comparison report has been downloaded",
+                      });
+                    }}
+                    data-testid="button-export-pdf"
+                  >
+                    Export as PDF
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      downloadMarkdown({
+                        prompt,
+                        responses,
+                        modelNames,
+                        caesar: caesarResponse,
+                        blindMode: blindModeEnabled && !blindModeRevealed,
+                      });
+                      toast({
+                        title: "Markdown Generated",
+                        description: blindModeEnabled && !blindModeRevealed 
+                          ? "Report downloaded - model names are revealed in export"
+                          : "Your comparison report has been downloaded",
+                      });
+                    }}
+                    data-testid="button-export-markdown"
+                  >
+                    Export as Markdown
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      downloadJSON({
+                        prompt,
+                        responses,
+                        modelNames,
+                        caesar: caesarResponse,
+                        blindMode: blindModeEnabled && !blindModeRevealed,
+                      });
+                      toast({
+                        title: "JSON Generated",
+                        description: blindModeEnabled && !blindModeRevealed 
+                          ? "Report downloaded - model names are revealed in export"
+                          : "Your comparison report has been downloaded",
+                      });
+                    }}
+                    data-testid="button-export-json"
+                  >
+                    Export as JSON
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
           <div className={`grid gap-6 ${caesarEnabled || caesarResponse ? 'lg:grid-cols-[1fr_350px]' : ''}`}>
             <ComparisonGrid 
               models={models}

@@ -27,6 +27,7 @@ The platform is designed with a core principle of zero data collection regarding
     - **Session-Only Features**: Client-side export (JSON/Markdown) and 5-star rating system, not persisted to the database.
     - **Blind Mode**: Toggles model names to "Contender A/B" until revealed by user vote or Caesar verdict.
     - **Battle History**: Stores the last 10 battles locally (localStorage) for privacy, allowing users to reload previous comparisons.
+    - **Download Report**: Client-side PDF/Markdown/JSON generation for full comparison reports including all responses and Caesar verdict.
 
 ### Backend Architecture
 - **Framework**: Express.js with TypeScript (ES modules, tsx for dev, esbuild for prod).
