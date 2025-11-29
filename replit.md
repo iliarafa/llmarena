@@ -17,6 +17,7 @@ This is a **privacy-first**, pay-per-use LLM model comparison platform that allo
 - ✅ Credit deduction system and purchase UI
 - ✅ Session-based export and rating features
 - ✅ Privacy-first dashboard (no prompt/response storage)
+- ✅ Caesar Judge feature for AI-powered response evaluation
 
 ## User Preferences
 
@@ -52,6 +53,7 @@ Preferred communication style: Simple, everyday language.
   - Pro: $40 for 500 credits
   - Ultimate: $70 for 1000 credits
 - Each comparison costs: 3 credits (1 model), 5 credits (2 models), 7 credits (3 models), or 10 credits (4 models)
+- Caesar Judge adds +3 credits when enabled
 - No monthly fees or commitments
 - Credits never expire
 - Guest users can optionally convert to accounts to preserve credits
@@ -90,6 +92,13 @@ Preferred communication style: Simple, everyday language.
   - Export dropdown (JSON/Markdown) - session-only, client-side downloads
   - Session-only 5-star rating system (not persisted)
   - Generation time and token count display
+- **CaesarCard** (`client/src/components/CaesarCard.tsx`): AI judge verdict display
+  - Winner badge with model name
+  - Confidence meter (0-100%)
+  - One-line verdict summary
+  - Detailed reasoning bullets
+  - Score breakdown per model (accuracy, clarity, creativity, safety, overall)
+  - Amber themed styling to distinguish from model responses
 
 **Authentication Hooks**:
 - **useAuth** (`client/src/hooks/useAuth.ts`): Check authentication status
@@ -121,6 +130,11 @@ Preferred communication style: Simple, everyday language.
   - **Privacy Implementation**: Logs only `userId/guestTokenId` and `creditsCost` to database
   - Returns responses to client but never stores prompts/responses
   - Protected by dual auth middleware (guest token OR user session)
+  - **Caesar Judge** (optional): When `caesarEnabled=true`, calls judge model after responses
+    - Request: `{ prompt, modelIds, caesarEnabled, caesarJudgeModel }`
+    - Response includes `caesar: { verdict, generationTime, judgeModel, modelMapping }`
+    - Judge models: claude-3-5-sonnet (default), gpt-4o, gemini-flash, grok
+    - Responses anonymized as A/B/C/D in judge prompt for unbiased evaluation
 
 **Dashboard Endpoint**:
 - `GET /api/dashboard/stats`: Returns aggregate statistics (no prompts/responses)
@@ -222,9 +236,38 @@ All LLM clients use Replit AI Integrations for abstracted API key management.
 - `DATABASE_URL` - PostgreSQL connection
 - `SESSION_SECRET` - Session encryption
 
-## Recent Changes (Nov 16, 2025)
+## Recent Changes
 
-### Privacy-First Implementation
+### Caesar Judge Feature (Nov 29, 2025)
+1. **Caesar Prompt Template** (`server/prompts/caesarPrompt.ts`):
+   - Anonymizes models as "Response A/B/C/D" to prevent bias
+   - Returns structured JSON: winner, confidence, one_line_verdict, detailed_reasoning, scores
+   - Helper function `buildCaesarPrompt()` constructs prompt with internal model mapping
+
+2. **ModelSelector Caesar Toggle** (`client/src/components/ModelSelector.tsx`):
+   - Separate toggle card with gavel icon below model selection
+   - Amber border styling when enabled
+   - Judge model dropdown: Claude 3.5 Sonnet (default), GPT-4o, Gemini Flash, Grok
+   - Shows "(+3 credits)" label
+
+3. **LLM Module Extension** (`server/llm.ts`):
+   - New `generateCaesarVerdict()` function
+   - Supports all 4 judge models via their respective SDKs
+   - JSON parsing with markdown code block handling
+
+4. **CaesarCard Component** (`client/src/components/CaesarCard.tsx`):
+   - Winner badge with actual model name (mapped from A/B/C/D)
+   - Confidence meter with percentage display
+   - One-line verdict in highlighted box
+   - Detailed reasoning bullets
+   - Score breakdown grid (accuracy, clarity, creativity, safety, overall)
+   - Loading and error states with amber theming
+
+5. **Credit System Update**:
+   - Base cost (3/5/7/10 for 1/2/3/4 models) + 3 credits when Caesar enabled
+   - Dynamic credit display updates in PromptInput component
+
+### Privacy-First Implementation (Nov 16, 2025)
 1. **Database Schema Updated**:
    - Removed `prompt` and `modelIds` fields from `usageHistory` table
    - Only stores timestamp and credits spent for billing purposes
