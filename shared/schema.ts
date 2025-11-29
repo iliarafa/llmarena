@@ -23,6 +23,7 @@ export const users = pgTable("users", {
   profileImageUrl: varchar("profile_image_url"),
   creditBalance: decimal("credit_balance", { precision: 10, scale: 2 }).notNull().default("0"),
   stripeCustomerId: text("stripe_customer_id"),
+  isAdmin: boolean("is_admin").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
