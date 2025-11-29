@@ -522,6 +522,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin: Update user
+  const updateUserSchema = z.object({
+    email: z.string().email().optional(),
+    firstName: z.string().optional().nullable(),
+    lastName: z.string().optional().nullable(),
+    isAdmin: z.boolean().optional(),
+  });
+
+  app.patch("/api/admin/users/:userId", isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin || !admin.isAdmin) {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+      
+      const { userId } = req.params;
+      const parseResult = updateUserSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data",
+          details: parseResult.error.errors.map(e => e.message).join(", ")
+        });
+      }
+      
+      // Check if user exists
+      const existingUser = await storage.getUser(userId);
+      if (!existingUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      // If changing email, check for duplicates
+      if (parseResult.data.email && parseResult.data.email !== existingUser.email) {
+        const emailExists = await storage.getUserByEmail(parseResult.data.email);
+        if (emailExists) {
+          return res.status(400).json({ error: "Email already in use by another user" });
+        }
+      }
+      
+      const updatedUser = await storage.updateUser(userId, parseResult.data);
+      res.json({ 
+        success: true, 
+        message: "User updated successfully",
+        user: updatedUser
+      });
+    } catch (error: any) {
+      console.error("Admin update user error:", error);
+      res.status(500).json({ error: "Failed to update user" });
+    }
+  });
+
+  // Admin: Set exact credit balance for a user
+  const setCreditsSchema = z.object({
+    credits: z.number().min(0),
+  });
+
+  app.patch("/api/admin/users/:userId/credits", isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin || !admin.isAdmin) {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+      
+      const { userId } = req.params;
+      const parseResult = setCreditsSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data",
+          details: parseResult.error.errors.map(e => e.message).join(", ")
+        });
+      }
+      
+      const existingUser = await storage.getUser(userId);
+      if (!existingUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const updatedUser = await storage.setUserCredits(userId, parseResult.data.credits);
+      res.json({ 
+        success: true, 
+        message: `Credits set to ${parseResult.data.credits}`,
+        user: updatedUser
+      });
+    } catch (error: any) {
+      console.error("Admin set credits error:", error);
+      res.status(500).json({ error: "Failed to set credits" });
+    }
+  });
+
+  // Admin: Delete a user
+  app.delete("/api/admin/users/:userId", isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin || !admin.isAdmin) {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+      
+      const { userId } = req.params;
+      
+      // Prevent admin from deleting themselves
+      if (userId === adminId) {
+        return res.status(400).json({ error: "Cannot delete your own account" });
+      }
+      
+      // Check if user exists before deletion
+      const existingUser = await storage.getUser(userId);
+      if (!existingUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      await storage.deleteUser(userId);
+      
+      // Verify deletion was successful
+      const verifyDeleted = await storage.getUser(userId);
+      if (verifyDeleted) {
+        return res.status(500).json({ error: "Failed to delete user" });
+      }
+      
+      res.json({ 
+        success: true, 
+        message: `User ${existingUser.email || userId} deleted successfully`
+      });
+    } catch (error: any) {
+      console.error("Admin delete user error:", error);
+      res.status(500).json({ error: "Failed to delete user" });
+    }
+  });
+
   // Admin: Gift credits to user or guest token
   const giftCreditsSchema = z.object({
     targetType: z.enum(["user", "guest"]),

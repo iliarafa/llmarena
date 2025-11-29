@@ -7,8 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Search, Gift, User, Key, Coins, UserPlus } from "lucide-react";
+import { ArrowLeft, Search, Gift, User, Key, Coins, UserPlus, Pencil, Trash2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "wouter";
 import type { User as UserType, GuestToken } from "@shared/schema";
@@ -28,6 +30,17 @@ export default function Admin() {
   const [newUserLastName, setNewUserLastName] = useState("");
   const [newUserCredits, setNewUserCredits] = useState("");
   const [newUserIsAdmin, setNewUserIsAdmin] = useState(false);
+  
+  // Edit user modal state
+  const [editingUser, setEditingUser] = useState<UserType | null>(null);
+  const [editEmail, setEditEmail] = useState("");
+  const [editFirstName, setEditFirstName] = useState("");
+  const [editLastName, setEditLastName] = useState("");
+  const [editCredits, setEditCredits] = useState("");
+  const [editIsAdmin, setEditIsAdmin] = useState(false);
+  
+  // Delete confirmation state
+  const [deletingUser, setDeletingUser] = useState<UserType | null>(null);
 
   const { data: users, isLoading: usersLoading, refetch: refetchUsers } = useQuery<UserType[]>({
     queryKey: ["/api/admin/users", userSearch],
@@ -105,6 +118,169 @@ export default function Admin() {
       });
     },
   });
+
+  const updateUserMutation = useMutation({
+    mutationFn: async ({ userId, data }: { userId: string; data: { email?: string; firstName?: string | null; lastName?: string | null; isAdmin?: boolean } }) => {
+      const res = await apiRequest("PATCH", `/api/admin/users/${userId}`, data);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to update user");
+      }
+      return res.json();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update user",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const setCreditsUserMutation = useMutation({
+    mutationFn: async ({ userId, credits }: { userId: string; credits: number }) => {
+      const res = await apiRequest("PATCH", `/api/admin/users/${userId}/credits`, { credits });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to set credits");
+      }
+      return res.json();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to set credits",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const res = await apiRequest("DELETE", `/api/admin/users/${userId}`);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to delete user");
+      }
+      return res.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "User Deleted",
+        description: data.message,
+      });
+      setDeletingUser(null);
+      setSelectedUser(null);
+      refetchUsers();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete user",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const openEditModal = (u: UserType) => {
+    setEditingUser(u);
+    setEditEmail(u.email || "");
+    setEditFirstName(u.firstName || "");
+    setEditLastName(u.lastName || "");
+    setEditCredits(parseFloat(u.creditBalance).toFixed(2));
+    setEditIsAdmin(u.isAdmin || false);
+  };
+
+  const handleUpdateUser = async () => {
+    if (!editingUser) return;
+    
+    const userId = editingUser.id;
+    const currentEmail = editingUser.email || "";
+    const currentFirstName = editingUser.firstName || "";
+    const currentLastName = editingUser.lastName || "";
+    const currentIsAdmin = editingUser.isAdmin || false;
+    const currentCredits = parseFloat(editingUser.creditBalance);
+    
+    const newCreditsValue = parseFloat(editCredits);
+    const creditsChanged = !isNaN(newCreditsValue) && Math.abs(newCreditsValue - currentCredits) > 0.001;
+    
+    const emailChanged = editEmail.trim() !== currentEmail;
+    const firstNameChanged = editFirstName.trim() !== currentFirstName;
+    const lastNameChanged = editLastName.trim() !== currentLastName;
+    const adminChanged = editIsAdmin !== currentIsAdmin;
+    const profileChanged = emailChanged || firstNameChanged || lastNameChanged || adminChanged;
+    
+    if (!profileChanged && !creditsChanged) {
+      setEditingUser(null);
+      return;
+    }
+    
+    const closeModalAndRefresh = () => {
+      setEditingUser(null);
+      refetchUsers();
+    };
+    
+    if (profileChanged && creditsChanged) {
+      updateUserMutation.mutate({
+        userId,
+        data: {
+          email: editEmail.trim() || undefined,
+          firstName: editFirstName.trim() || null,
+          lastName: editLastName.trim() || null,
+          isAdmin: editIsAdmin,
+        },
+      }, {
+        onSuccess: (profileData) => {
+          toast({
+            title: "User Updated",
+            description: profileData.message,
+          });
+          setCreditsUserMutation.mutate({ userId, credits: newCreditsValue }, {
+            onSuccess: (creditsData) => {
+              toast({
+                title: "Credits Updated", 
+                description: creditsData.message,
+              });
+              closeModalAndRefresh();
+            },
+          });
+        },
+      });
+    } else if (profileChanged) {
+      updateUserMutation.mutate({
+        userId,
+        data: {
+          email: editEmail.trim() || undefined,
+          firstName: editFirstName.trim() || null,
+          lastName: editLastName.trim() || null,
+          isAdmin: editIsAdmin,
+        },
+      }, {
+        onSuccess: (data) => {
+          toast({
+            title: "User Updated",
+            description: data.message,
+          });
+          closeModalAndRefresh();
+        },
+      });
+    } else if (creditsChanged) {
+      setCreditsUserMutation.mutate({ userId, credits: newCreditsValue }, {
+        onSuccess: (data) => {
+          toast({
+            title: "Credits Updated",
+            description: data.message,
+          });
+          closeModalAndRefresh();
+        },
+      });
+    }
+  };
+
+  const handleDeleteUser = () => {
+    if (!deletingUser) return;
+    deleteUserMutation.mutate(deletingUser.id);
+  };
 
   const handleCreateUser = (e: React.FormEvent) => {
     e.preventDefault();
@@ -450,11 +626,38 @@ export default function Admin() {
                               <p className="text-sm text-muted-foreground">{u.email || "No email"}</p>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="font-semibold">{Math.floor(parseFloat(u.creditBalance))} credits</p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(u.createdAt).toLocaleDateString()}
-                            </p>
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              <p className="font-semibold">{Math.floor(parseFloat(u.creditBalance))} credits</p>
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(u.createdAt).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openEditModal(u);
+                                }}
+                                data-testid={`button-edit-user-${u.id}`}
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDeletingUser(u);
+                                }}
+                                disabled={u.id === user?.id}
+                                data-testid={`button-delete-user-${u.id}`}
+                              >
+                                <Trash2 className="w-4 h-4 text-destructive" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -528,6 +731,105 @@ export default function Admin() {
           </Tabs>
         </div>
       </main>
+
+      {/* Edit User Modal */}
+      <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription>
+              Update user details and credit balance.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-email">Email</Label>
+              <Input
+                id="edit-email"
+                type="email"
+                value={editEmail}
+                onChange={(e) => setEditEmail(e.target.value)}
+                data-testid="input-edit-email"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-firstname">First Name</Label>
+                <Input
+                  id="edit-firstname"
+                  value={editFirstName}
+                  onChange={(e) => setEditFirstName(e.target.value)}
+                  data-testid="input-edit-firstname"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-lastname">Last Name</Label>
+                <Input
+                  id="edit-lastname"
+                  value={editLastName}
+                  onChange={(e) => setEditLastName(e.target.value)}
+                  data-testid="input-edit-lastname"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-credits">Credits</Label>
+              <Input
+                id="edit-credits"
+                type="number"
+                min="0"
+                value={editCredits}
+                onChange={(e) => setEditCredits(e.target.value)}
+                data-testid="input-edit-credits"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="edit-admin"
+                checked={editIsAdmin}
+                onCheckedChange={(checked) => setEditIsAdmin(checked === true)}
+                data-testid="checkbox-edit-admin"
+              />
+              <Label htmlFor="edit-admin" className="text-sm font-normal">Admin privileges</Label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingUser(null)} data-testid="button-cancel-edit">
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleUpdateUser} 
+              disabled={updateUserMutation.isPending || setCreditsUserMutation.isPending}
+              data-testid="button-save-user"
+            >
+              {updateUserMutation.isPending || setCreditsUserMutation.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingUser} onOpenChange={(open) => !open && setDeletingUser(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete {deletingUser?.email || "this user"}? This action cannot be undone. 
+              All their data will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteUser}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              data-testid="button-confirm-delete"
+            >
+              {deleteUserMutation.isPending ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

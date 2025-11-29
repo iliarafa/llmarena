@@ -24,6 +24,9 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUserCredits(userId: string, newBalance: string): Promise<void>;
+  updateUser(userId: string, data: { email?: string; firstName?: string | null; lastName?: string | null; isAdmin?: boolean }): Promise<User>;
+  setUserCredits(userId: string, credits: number): Promise<User>;
+  deleteUser(userId: string): Promise<void>;
   
   // Guest token operations
   createGuestToken(token: InsertGuestToken): Promise<GuestToken>;
@@ -85,6 +88,37 @@ export class DbStorage implements IStorage {
     await db.update(users)
       .set({ creditBalance: newBalance })
       .where(eq(users.id, userId));
+  }
+
+  async updateUser(userId: string, data: { email?: string; firstName?: string | null; lastName?: string | null; isAdmin?: boolean }): Promise<User> {
+    const updateData: any = { updatedAt: new Date() };
+    if (data.email !== undefined) updateData.email = data.email;
+    if (data.firstName !== undefined) updateData.firstName = data.firstName;
+    if (data.lastName !== undefined) updateData.lastName = data.lastName;
+    if (data.isAdmin !== undefined) updateData.isAdmin = data.isAdmin;
+    
+    await db.update(users)
+      .set(updateData)
+      .where(eq(users.id, userId));
+    
+    const updated = await this.getUser(userId);
+    if (!updated) throw new Error("User not found");
+    return updated;
+  }
+
+  async setUserCredits(userId: string, credits: number): Promise<User> {
+    const newBalance = credits.toFixed(2);
+    await db.update(users)
+      .set({ creditBalance: newBalance })
+      .where(eq(users.id, userId));
+    
+    const updated = await this.getUser(userId);
+    if (!updated) throw new Error("User not found");
+    return updated;
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    await db.delete(users).where(eq(users.id, userId));
   }
 
   // Guest token operations
