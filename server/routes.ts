@@ -24,9 +24,9 @@ const compareRequestSchema = z.object({
 
 const checkoutRequestSchema = z.object({
   credits: z.union([
-    z.literal(20),
+    z.literal(25),
     z.literal(100),
-    z.literal(500),
+    z.literal(300),
     z.literal(1000),
   ]),
 });
@@ -289,18 +289,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!parseResult.success) {
         return res.status(400).json({ 
           error: "Invalid credit amount",
-          message: "Please select a valid credit tier (20, 100, 500, or 1000)",
+          message: "Please select a valid credit tier (25, 100, 300, or 1000)",
         });
       }
       
       const { credits } = parseResult.data;
       
-      // Define credit tiers with pricing
+      // Define credit tiers with pricing (amounts in cents)
       const creditTiers: Record<number, { amount: number; name: string }> = {
-        20: { amount: 250, name: "Starter Pack - 20 Credits" },
-        100: { amount: 1000, name: "Popular Pack - 100 Credits" },
-        500: { amount: 4000, name: "Pro Pack - 500 Credits" },
-        1000: { amount: 7000, name: "Ultimate Pack - 1000 Credits" },
+        25: { amount: 300, name: "Starter Pack - 25 Credits" },
+        100: { amount: 1000, name: "Challenger Pack - 100 Credits" },
+        300: { amount: 2500, name: "Pro Pack - 300 Credits" },
+        1000: { amount: 5000, name: "Ultimate Pack - 1000 Credits" },
       };
       
       const tier = creditTiers[credits];
@@ -386,7 +386,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const creditsToAdd = parseInt(credits);
         
         // Validate credits amount is a valid tier
-        if (![20, 100, 500, 1000].includes(creditsToAdd)) {
+        if (![25, 100, 300, 1000].includes(creditsToAdd)) {
           console.error(`Invalid credits amount in metadata: ${creditsToAdd}`);
           return res.status(400).json({ error: "Invalid credits amount" });
         }
