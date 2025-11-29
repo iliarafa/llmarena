@@ -306,3 +306,37 @@
 .fade-in-animation {
   animation: fadeIn 200ms ease-out;
 }
+
+/* Pulsing green dot animation for secure session indicator */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+}
+
+.pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
+/* Dissolve/blur animation for "Wipe Session" effect */
+@keyframes dissolve {
+  0% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(8px);
+    transform: scale(0.95);
+  }
+}
+
+.dissolve-out {
+  animation: dissolve 300ms ease-out forwards;
+}

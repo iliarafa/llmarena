@@ -1,6 +1,7 @@
+import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Crown, EyeOff } from "lucide-react";
+import { Crown, EyeOff, Trash2, ShieldCheck } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -65,6 +66,9 @@ export default function ModelSelector({
   blindModeEnabled,
   onBlindModeToggle,
 }: ModelSelectorProps) {
+  const [isWiping, setIsWiping] = useState(false);
+  const modelGridRef = useRef<HTMLDivElement>(null);
+
   const handleToggle = (modelId: ModelId) => {
     if (selectedModels.includes(modelId)) {
       onSelectionChange(selectedModels.filter(id => id !== modelId));
@@ -77,8 +81,15 @@ export default function ModelSelector({
     onSelectionChange(AVAILABLE_MODELS.map(m => m.id));
   };
 
-  const handleClearAll = () => {
-    onSelectionChange([]);
+  const handleWipe = () => {
+    if (selectedModels.length === 0) return;
+    
+    setIsWiping(true);
+    
+    setTimeout(() => {
+      onSelectionChange([]);
+      setIsWiping(false);
+    }, 300);
   };
 
   const allSelected = selectedModels.length === AVAILABLE_MODELS.length;
@@ -100,17 +111,21 @@ export default function ModelSelector({
           </button>
           <span className="text-gray-300 dark:text-gray-600">|</span>
           <button
-            onClick={handleClearAll}
-            disabled={selectedModels.length === 0}
-            className="text-xs text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            data-testid="button-clear-all"
+            onClick={handleWipe}
+            disabled={selectedModels.length === 0 || isWiping}
+            className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 dark:hover:text-red-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            data-testid="button-wipe-session"
           >
-            Clear
+            <Trash2 className="w-3 h-3" />
+            Wipe
           </button>
         </div>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div 
+        ref={modelGridRef}
+        className={`grid grid-cols-2 md:grid-cols-4 gap-3 transition-all ${isWiping ? 'dissolve-out' : ''}`}
+      >
         {AVAILABLE_MODELS.map((model) => {
           const Icon = model.icon;
           const isSelected = selectedModels.includes(model.id);
@@ -149,24 +164,32 @@ export default function ModelSelector({
       </div>
 
       <div className="flex flex-wrap items-center gap-4 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-600' : 'text-gray-400'}`} />
-            <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-              Caesar
-            </Label>
-            {caesarEnabled && (
-              <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs px-2 py-0.5 rounded-full font-mono">
-                +3
-              </span>
-            )}
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-600' : 'text-gray-400'}`} />
+              <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                Caesar
+              </Label>
+              {caesarEnabled && (
+                <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs px-2 py-0.5 rounded-full font-mono">
+                  +3
+                </span>
+              )}
+            </div>
+            <Switch
+              id="caesar-toggle"
+              checked={caesarEnabled}
+              onCheckedChange={onCaesarToggle}
+              data-testid="checkbox-input-caesar"
+            />
           </div>
-          <Switch
-            id="caesar-toggle"
-            checked={caesarEnabled}
-            onCheckedChange={onCaesarToggle}
-            data-testid="checkbox-input-caesar"
-          />
+          {caesarEnabled && (
+            <div className="flex items-center gap-1 text-[10px] text-gray-400 dark:text-gray-500" data-testid="text-caesar-privacy">
+              <ShieldCheck className="w-3 h-3 flex-shrink-0" />
+              <span>One-time API evaluation. Immediately discarded. No training.</span>
+            </div>
+          )}
         </div>
 
         {caesarEnabled && (

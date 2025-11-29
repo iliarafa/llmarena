@@ -13,7 +13,12 @@ import { saveBattle, type Battle } from "@/lib/battleHistory";
 import { generatePDF, downloadMarkdown, downloadJSON } from "@/lib/reportExporter";
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History, Shield } from "lucide-react";
+import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History, Shield, Lock } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Fisher-Yates shuffle algorithm for randomizing model display order in blind mode
 function shuffleArray<T>(array: T[]): T[] {
@@ -407,6 +412,28 @@ export default function Home() {
             <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
               <Coins className="w-4 h-4" />
               <span data-testid="text-header-credits">{creditBalance.toFixed(0)} credits</span>
+              
+              <span className="text-gray-300 dark:text-gray-600 mx-1">|</span>
+              
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    type="button"
+                    className="flex items-center gap-1.5 cursor-help focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-sm" 
+                    data-testid="badge-secure-session"
+                    aria-label="Session security information"
+                  >
+                    <div className="relative flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 pulse-slow" />
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">E2E Encrypted <span className="hidden lg:inline">• No Logs</span></span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs">
+                  <p className="text-xs">Your session exists only in RAM. Closing this tab wipes all data instantly.</p>
+                </TooltipContent>
+              </Tooltip>
+              
               <Link href="/purchase">
                 <Button variant="ghost" size="sm" className="h-8 text-[#383838] dark:text-[#d4d4d4]" data-testid="button-header-buy-credits">
                   Buy Credits
@@ -414,9 +441,27 @@ export default function Home() {
               </Link>
             </div>
             
-            <div className="flex md:hidden items-center gap-1 text-xs text-muted-foreground">
-              <Coins className="w-3.5 h-3.5" />
-              <span data-testid="text-header-credits-mobile">{creditBalance.toFixed(0)}</span>
+            <div className="flex md:hidden items-center gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Coins className="w-3.5 h-3.5" />
+                <span data-testid="text-header-credits-mobile">{creditBalance.toFixed(0)}</span>
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    type="button"
+                    className="flex items-center gap-1 cursor-help focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-sm" 
+                    data-testid="badge-secure-session-mobile"
+                    aria-label="Session security information"
+                  >
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-slow" />
+                    <Lock className="w-3 h-3 text-gray-400" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs">
+                  <p className="text-xs">E2E Encrypted • No Logs. Session exists only in RAM.</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
             
             <DropdownMenu>
