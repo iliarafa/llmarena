@@ -18,7 +18,7 @@ const FEATURES: Feature[] = [
   {
     id: "compare",
     icon: Zap,
-    title: "Compare 4 Models",
+    title: "Compare Models",
     description: "See responses from GPT-4o, Claude Sonnet, Gemini Flash, and Grok side-by-side. Compare how different AI models approach the same prompt and find the best response for your needs.",
   },
   {
@@ -311,7 +311,7 @@ export default function Landing() {
                 <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
                   <Zap className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Compare 4 Models</h3>
+                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Compare Models</h3>
               </div>
               <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                 See responses from GPT-4o, Claude Sonnet, Gemini Flash, and Grok side-by-side
