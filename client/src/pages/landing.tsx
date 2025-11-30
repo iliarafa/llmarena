@@ -353,7 +353,7 @@ export default function Landing() {
           >
             <Sparkles className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Pay As You Go</h3>
+              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform text-[14px]">Pay As You Go</h3>
               <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">No subscriptions. Buy credits starting at $2.50. Credits never expire.</p>
             </div>
           </div>
