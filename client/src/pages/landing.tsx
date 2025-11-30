@@ -337,7 +337,7 @@ export default function Landing() {
         {/* Desktop Feature List - Premium Borderless Typographic List */}
         <div className="hidden md:flex flex-col max-w-2xl mx-auto">
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4 pt-[12px] pb-[12px]"
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4 pt-[12px] pb-[12px] px-[12px]"
             data-testid="feature-tile-compare"
           >
             <Zap className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
