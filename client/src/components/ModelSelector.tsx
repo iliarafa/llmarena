@@ -184,94 +184,98 @@ export default function ModelSelector({
         })}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
-        <div className="flex flex-col items-start gap-3">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
+        <div className="relative w-full md:w-auto flex flex-row items-center justify-between py-3 md:py-0 border-b md:border-0 border-gray-100 dark:border-gray-800">
           <div className="flex items-center gap-2">
             <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-500' : 'text-gray-400'}`} />
             <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer -ml-1 ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Caesar
             </Label>
-            <Switch
-              id="caesar-toggle"
-              checked={caesarEnabled}
-              onCheckedChange={onCaesarToggle}
-              activeLabel="+3"
-              activeColor="amber"
-              data-testid="checkbox-input-caesar"
-            />
           </div>
+          <Switch
+            id="caesar-toggle"
+            checked={caesarEnabled}
+            onCheckedChange={onCaesarToggle}
+            activeLabel="+3"
+            activeColor="amber"
+            data-testid="checkbox-input-caesar"
+          />
           {caesarEnabled && (
-            <Select
-              value={caesarJudgeModel}
-              onValueChange={(value) => onCaesarJudgeChange(value as JudgeModelId)}
-            >
-              <SelectTrigger 
-                className="w-full text-xs font-medium bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 h-8 outline-none focus:ring-1 focus:ring-black dark:focus:ring-white animate-in fade-in slide-in-from-top-1 duration-200" 
-                data-testid="select-caesar-judge"
+            <div className="absolute top-full left-0 mt-2 z-20 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl rounded-xl p-1 animate-in fade-in slide-in-from-top-1 duration-200">
+              <Select
+                value={caesarJudgeModel}
+                onValueChange={(value) => onCaesarJudgeChange(value as JudgeModelId)}
               >
-                <SelectValue placeholder="Select judge" />
-              </SelectTrigger>
-              <SelectContent>
-                {JUDGE_MODELS.map((judge) => (
-                  <SelectItem key={judge.id} value={judge.id} data-testid={`option-judge-${judge.id}`}>
-                    {judge.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <SelectTrigger 
+                  className="w-full text-xs font-medium border-0 bg-transparent h-8 px-2" 
+                  data-testid="select-caesar-judge"
+                >
+                  <SelectValue placeholder="Select judge" />
+                </SelectTrigger>
+                <SelectContent>
+                  {JUDGE_MODELS.map((judge) => (
+                    <SelectItem key={judge.id} value={judge.id} data-testid={`option-judge-${judge.id}`}>
+                      {judge.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           )}
         </div>
 
-        <div className="flex flex-col items-start gap-3">
+        <div className="relative w-full md:w-auto flex flex-row items-center justify-between py-3 md:py-0 border-b md:border-0 border-gray-100 dark:border-gray-800">
           <div className="flex items-center gap-2">
             <Sword className={`h-4 w-4 ${maximusEnabled ? 'text-[#800020]' : 'text-gray-400'}`} />
             <Label htmlFor="maximus-toggle" className={`text-sm font-medium cursor-pointer -ml-1 ${maximusEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Maximus
             </Label>
-            <Switch
-              id="maximus-toggle"
-              checked={maximusEnabled}
-              onCheckedChange={onMaximusToggle}
-              activeLabel="+5"
-              activeColor="burgundy"
-              data-testid="checkbox-input-maximus"
-            />
           </div>
+          <Switch
+            id="maximus-toggle"
+            checked={maximusEnabled}
+            onCheckedChange={onMaximusToggle}
+            activeLabel="+5"
+            activeColor="burgundy"
+            data-testid="checkbox-input-maximus"
+          />
           {maximusEnabled && (
-            <Select
-              value={maximusEngineModel}
-              onValueChange={(value) => onMaximusEngineChange(value as MaximusModelId)}
-            >
-              <SelectTrigger 
-                className="w-full text-xs font-medium bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 h-8 outline-none focus:ring-1 focus:ring-black dark:focus:ring-white animate-in fade-in slide-in-from-top-1 duration-200" 
-                data-testid="select-maximus-engine"
+            <div className="absolute top-full left-0 mt-2 z-20 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl rounded-xl p-1 animate-in fade-in slide-in-from-top-1 duration-200">
+              <Select
+                value={maximusEngineModel}
+                onValueChange={(value) => onMaximusEngineChange(value as MaximusModelId)}
               >
-                <SelectValue placeholder="Select engine" />
-              </SelectTrigger>
-              <SelectContent>
-                {MAXIMUS_MODELS.map((engine) => (
-                  <SelectItem key={engine.id} value={engine.id} data-testid={`option-maximus-${engine.id}`}>
-                    {engine.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <SelectTrigger 
+                  className="w-full text-xs font-medium border-0 bg-transparent h-8 px-2" 
+                  data-testid="select-maximus-engine"
+                >
+                  <SelectValue placeholder="Select engine" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MAXIMUS_MODELS.map((engine) => (
+                    <SelectItem key={engine.id} value={engine.id} data-testid={`option-maximus-${engine.id}`}>
+                      {engine.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           )}
         </div>
 
-        <div className="flex flex-col items-start justify-center">
+        <div className="w-full md:w-auto flex flex-row items-center justify-between py-3 md:py-0">
           <div className="flex items-center gap-2">
             <EyeOff className={`h-4 w-4 ${blindModeEnabled ? 'text-purple-600' : 'text-gray-400'}`} />
             <Label htmlFor="blind-toggle" className={`text-sm font-medium cursor-pointer -ml-1 ${blindModeEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Blind
             </Label>
-            <Switch
-              id="blind-toggle"
-              checked={blindModeEnabled}
-              onCheckedChange={onBlindModeToggle}
-              data-testid="checkbox-input-blind-mode"
-            />
           </div>
+          <Switch
+            id="blind-toggle"
+            checked={blindModeEnabled}
+            onCheckedChange={onBlindModeToggle}
+            data-testid="checkbox-input-blind-mode"
+          />
         </div>
       </div>
     </div>
