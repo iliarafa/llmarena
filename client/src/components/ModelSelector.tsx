@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Crown, EyeOff, Trash2, ShieldCheck, Sword } from "lucide-react";
+import { Crown, EyeOff, Trash2, Sword } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -184,112 +184,55 @@ export default function ModelSelector({
         })}
       </div>
 
-      <div className="flex flex-wrap items-center gap-4 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-600' : 'text-gray-400'}`} />
-              <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-                Caesar
-              </Label>
-              {caesarEnabled && (
-                <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs px-2 py-0.5 rounded-full font-mono">
-                  +3
-                </span>
-              )}
-            </div>
-            <Switch
-              id="caesar-toggle"
-              checked={caesarEnabled}
-              onCheckedChange={onCaesarToggle}
-              data-testid="checkbox-input-caesar"
-            />
+      <div className="flex flex-col gap-3 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-600' : 'text-gray-400'}`} />
+            <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+              Caesar
+            </Label>
+            {caesarEnabled && (
+              <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs px-2 py-0.5 rounded-full font-mono">
+                +3
+              </span>
+            )}
           </div>
-          {caesarEnabled && (
-            <div className="flex items-center gap-1 text-[10px] text-gray-400 dark:text-gray-500" data-testid="text-caesar-privacy">
-              <ShieldCheck className="w-3 h-3 flex-shrink-0" />
-              <span>One-time API evaluation. Immediately discarded. No training.</span>
-            </div>
-          )}
-        </div>
 
-        {caesarEnabled && (
-          <div className="flex items-center gap-2 pl-4 border-l border-gray-200 dark:border-gray-700">
-            <span className="text-xs text-gray-400">Judge:</span>
-            <Select
-              value={caesarJudgeModel}
-              onValueChange={(value) => onCaesarJudgeChange(value as JudgeModelId)}
-            >
-              <SelectTrigger className="h-8 w-[140px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-caesar-judge">
-                <SelectValue placeholder="Select judge" />
-              </SelectTrigger>
-              <SelectContent>
-                {JUDGE_MODELS.map((judge) => (
-                  <SelectItem key={judge.id} value={judge.id} data-testid={`option-judge-${judge.id}`}>
-                    {judge.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-2">
+            <Sword className={`h-4 w-4 ${maximusEnabled ? 'text-amber-600' : 'text-gray-400'}`} />
+            <Label htmlFor="maximus-toggle" className={`text-sm font-medium cursor-pointer ${maximusEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+              Maximus
+            </Label>
+            {maximusEnabled && (
+              <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 text-xs px-2 py-0.5 rounded-full font-mono">
+                +5
+              </span>
+            )}
           </div>
-        )}
 
-        <div className="flex flex-col gap-1.5 pl-4 border-l border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Sword className={`h-4 w-4 ${maximusEnabled ? 'text-amber-600' : 'text-gray-400'}`} />
-              <Label htmlFor="maximus-toggle" className={`text-sm font-medium cursor-pointer ${maximusEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-                Maximus
-              </Label>
-              {maximusEnabled && (
-                <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 text-xs px-2 py-0.5 rounded-full font-mono">
-                  +5
-                </span>
-              )}
-            </div>
-            <Switch
-              id="maximus-toggle"
-              checked={maximusEnabled}
-              onCheckedChange={onMaximusToggle}
-              data-testid="checkbox-input-maximus"
-            />
-          </div>
-          {maximusEnabled && (
-            <div className="flex items-center gap-1 text-[10px] text-gray-400 dark:text-gray-500" data-testid="text-maximus-description">
-              <ShieldCheck className="w-3 h-3 flex-shrink-0" />
-              <span>The Ultimate Champion. Distills the best insights from all 4 models.</span>
-            </div>
-          )}
-        </div>
-
-        {maximusEnabled && (
-          <div className="flex items-center gap-2 pl-4 border-l border-gray-200 dark:border-gray-700">
-            <span className="text-xs text-gray-400">Maximus Engine:</span>
-            <Select
-              value={maximusEngineModel}
-              onValueChange={(value) => onMaximusEngineChange(value as MaximusModelId)}
-            >
-              <SelectTrigger className="h-8 w-[160px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-maximus-engine">
-                <SelectValue placeholder="Select engine" />
-              </SelectTrigger>
-              <SelectContent>
-                {MAXIMUS_MODELS.map((engine) => (
-                  <SelectItem key={engine.id} value={engine.id} data-testid={`option-maximus-${engine.id}`}>
-                    {engine.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-
-        <div className="flex items-center gap-3 ml-auto">
           <div className="flex items-center gap-2">
             <EyeOff className={`h-4 w-4 ${blindModeEnabled ? 'text-purple-600' : 'text-gray-400'}`} />
             <Label htmlFor="blind-toggle" className={`text-sm font-medium cursor-pointer ${blindModeEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Blind
             </Label>
           </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <Switch
+            id="caesar-toggle"
+            checked={caesarEnabled}
+            onCheckedChange={onCaesarToggle}
+            data-testid="checkbox-input-caesar"
+          />
+
+          <Switch
+            id="maximus-toggle"
+            checked={maximusEnabled}
+            onCheckedChange={onMaximusToggle}
+            data-testid="checkbox-input-maximus"
+          />
+
           <Switch
             id="blind-toggle"
             checked={blindModeEnabled}
@@ -297,6 +240,52 @@ export default function ModelSelector({
             data-testid="checkbox-input-blind-mode"
           />
         </div>
+
+        {(caesarEnabled || maximusEnabled) && (
+          <div className="flex items-center gap-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+            {caesarEnabled && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">Judge:</span>
+                <Select
+                  value={caesarJudgeModel}
+                  onValueChange={(value) => onCaesarJudgeChange(value as JudgeModelId)}
+                >
+                  <SelectTrigger className="h-7 w-[130px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-caesar-judge">
+                    <SelectValue placeholder="Select judge" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {JUDGE_MODELS.map((judge) => (
+                      <SelectItem key={judge.id} value={judge.id} data-testid={`option-judge-${judge.id}`}>
+                        {judge.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {maximusEnabled && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">Engine:</span>
+                <Select
+                  value={maximusEngineModel}
+                  onValueChange={(value) => onMaximusEngineChange(value as MaximusModelId)}
+                >
+                  <SelectTrigger className="h-7 w-[130px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-maximus-engine">
+                    <SelectValue placeholder="Select engine" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MAXIMUS_MODELS.map((engine) => (
+                      <SelectItem key={engine.id} value={engine.id} data-testid={`option-maximus-${engine.id}`}>
+                        {engine.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
