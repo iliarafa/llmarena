@@ -332,7 +332,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-[13px]">True unbiased evaluation. Model identities are hidden and scrambled using Fisher-Yates shuffling.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Model identities are hidden and scrambled using Fisher-Yates shuffling.</p>
             </div>
           </div>
 
