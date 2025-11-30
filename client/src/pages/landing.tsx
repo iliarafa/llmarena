@@ -319,7 +319,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">True Privacy</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Zero data logging. Your prompts and responses vanish from RAM instantly when the session ends.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Your prompts and responses vanish from RAM instantly when the session ends.</p>
             </div>
           </div>
 
