@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 import { GoogleGenAI } from "@google/genai";
 import { buildCaesarPrompt, type CaesarResponse, type CaesarVerdict, type JudgeModelId } from "./prompts/caesarPrompt";
+import { buildFusionPrompt, type FusionResponse, type FusionModelId } from "./prompts/fusionPrompt";
 
 // Initialize all LLM clients using Replit AI Integrations
 // These use AI integrations which don't require API keys and are billed to your credits
@@ -303,6 +304,93 @@ export async function generateCaesarVerdict(
       generationTime: Date.now() - startTime,
       judgeModel: judgeModel,
       modelMapping,
+    };
+  }
+}
+
+export async function generateFusion(
+  userPrompt: string,
+  modelResponses: LLMResponse[],
+  fusionModel: FusionModelId
+): Promise<FusionResponse> {
+  const startTime = Date.now();
+  
+  // Filter out errored responses and build the prompt
+  const validResponses = modelResponses
+    .filter(r => r.response && !r.error)
+    .map(r => ({
+      modelId: r.modelId,
+      modelName: MODEL_NAMES[r.modelId] || r.modelId,
+      response: r.response!,
+    }));
+  
+  if (validResponses.length < 2) {
+    return {
+      error: "Need at least 2 valid responses to synthesize",
+      fusionModel: fusionModel,
+    };
+  }
+  
+  const fusionPrompt = buildFusionPrompt(userPrompt, validResponses);
+  
+  try {
+    let responseText = "";
+    let tokenCount: number | undefined;
+    
+    switch (fusionModel) {
+      case "claude-3-5-sonnet":
+        const claudeResponse = await anthropic.messages.create({
+          model: "claude-3-5-sonnet-20241022",
+          max_tokens: 4096,
+          messages: [{ role: "user", content: fusionPrompt }],
+        });
+        const claudeContent = claudeResponse.content[0];
+        responseText = claudeContent.type === "text" ? claudeContent.text : "";
+        tokenCount = claudeResponse.usage?.output_tokens;
+        break;
+        
+      case "gpt-4o":
+        const openaiResponse = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [{ role: "user", content: fusionPrompt }],
+          max_tokens: 4096,
+        });
+        responseText = openaiResponse.choices[0]?.message?.content || "";
+        tokenCount = openaiResponse.usage?.completion_tokens;
+        break;
+        
+      case "gemini-flash":
+        const geminiResult = await gemini.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: [{ role: "user", parts: [{ text: fusionPrompt }] }],
+        });
+        responseText = geminiResult.text || "";
+        tokenCount = geminiResult.candidates?.[0]?.tokenCount;
+        break;
+        
+      case "grok":
+        const grokResponse = await openrouter.chat.completions.create({
+          model: "x-ai/grok-2-1212",
+          messages: [{ role: "user", content: fusionPrompt }],
+          max_tokens: 4096,
+        });
+        responseText = grokResponse.choices[0]?.message?.content || "";
+        tokenCount = grokResponse.usage?.completion_tokens;
+        break;
+    }
+    
+    return {
+      synthesis: responseText,
+      generationTime: Date.now() - startTime,
+      fusionModel: fusionModel,
+      tokenCount,
+    };
+  } catch (error: any) {
+    console.error("Fusion generation error:", error);
+    return {
+      error: error.message || "Failed to generate synthesis",
+      generationTime: Date.now() - startTime,
+      fusionModel: fusionModel,
     };
   }
 }

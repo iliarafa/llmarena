@@ -340,3 +340,18 @@
 .dissolve-out {
   animation: dissolve 300ms ease-out forwards;
 }
+
+/* Slow gradient animation for Fusion card premium border */
+@keyframes gradient-slow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-slow {
+  background-size: 200% 200%;
+  animation: gradient-slow 3s ease infinite;
+}

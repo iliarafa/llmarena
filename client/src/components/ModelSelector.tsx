@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Crown, EyeOff, Trash2, ShieldCheck } from "lucide-react";
+import { Crown, EyeOff, Trash2, ShieldCheck, FlaskConical } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -16,6 +16,7 @@ import claudeLogo from "@assets/claude-color_1764386516580.png";
 
 export type ModelId = "gpt-4o" | "claude-sonnet" | "gemini-flash" | "grok";
 export type JudgeModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
+export type FusionModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
 
 export interface Model {
   id: ModelId;
@@ -45,6 +46,18 @@ export const JUDGE_MODELS: JudgeModel[] = [
   { id: "grok", name: "Grok-2" },
 ];
 
+export interface FusionModel {
+  id: FusionModelId;
+  name: string;
+}
+
+export const FUSION_MODELS: FusionModel[] = [
+  { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet" },
+  { id: "gpt-4o", name: "GPT-4o" },
+  { id: "gemini-flash", name: "Gemini Flash" },
+  { id: "grok", name: "Grok-2" },
+];
+
 interface ModelSelectorProps {
   selectedModels: ModelId[];
   onSelectionChange: (models: ModelId[]) => void;
@@ -54,6 +67,10 @@ interface ModelSelectorProps {
   onCaesarJudgeChange: (model: JudgeModelId) => void;
   blindModeEnabled: boolean;
   onBlindModeToggle: (enabled: boolean) => void;
+  fusionEnabled: boolean;
+  onFusionToggle: (enabled: boolean) => void;
+  fusionEngineModel: FusionModelId;
+  onFusionEngineChange: (model: FusionModelId) => void;
 }
 
 export default function ModelSelector({ 
@@ -65,6 +82,10 @@ export default function ModelSelector({
   onCaesarJudgeChange,
   blindModeEnabled,
   onBlindModeToggle,
+  fusionEnabled,
+  onFusionToggle,
+  fusionEngineModel,
+  onFusionEngineChange,
 }: ModelSelectorProps) {
   const [isWiping, setIsWiping] = useState(false);
   const modelGridRef = useRef<HTMLDivElement>(null);
@@ -206,6 +227,55 @@ export default function ModelSelector({
                 {JUDGE_MODELS.map((judge) => (
                   <SelectItem key={judge.id} value={judge.id} data-testid={`option-judge-${judge.id}`}>
                     {judge.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-1.5 pl-4 border-l border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <FlaskConical className={`h-4 w-4 ${fusionEnabled ? 'text-indigo-600' : 'text-gray-400'}`} />
+              <Label htmlFor="fusion-toggle" className={`text-sm font-medium cursor-pointer ${fusionEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                Fusion
+              </Label>
+              {fusionEnabled && (
+                <span className="bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 text-xs px-2 py-0.5 rounded-full font-mono">
+                  +5
+                </span>
+              )}
+            </div>
+            <Switch
+              id="fusion-toggle"
+              checked={fusionEnabled}
+              onCheckedChange={onFusionToggle}
+              data-testid="checkbox-input-fusion"
+            />
+          </div>
+          {fusionEnabled && (
+            <div className="flex items-center gap-1 text-[10px] text-gray-400 dark:text-gray-500" data-testid="text-fusion-privacy">
+              <ShieldCheck className="w-3 h-3 flex-shrink-0" />
+              <span>Synthesizes best insights. One-time API call.</span>
+            </div>
+          )}
+        </div>
+
+        {fusionEnabled && (
+          <div className="flex items-center gap-2 pl-4 border-l border-gray-200 dark:border-gray-700">
+            <span className="text-xs text-gray-400">Engine:</span>
+            <Select
+              value={fusionEngineModel}
+              onValueChange={(value) => onFusionEngineChange(value as FusionModelId)}
+            >
+              <SelectTrigger className="h-8 w-[140px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-fusion-engine">
+                <SelectValue placeholder="Select engine" />
+              </SelectTrigger>
+              <SelectContent>
+                {FUSION_MODELS.map((engine) => (
+                  <SelectItem key={engine.id} value={engine.id} data-testid={`option-engine-${engine.id}`}>
+                    {engine.name}
                   </SelectItem>
                 ))}
               </SelectContent>

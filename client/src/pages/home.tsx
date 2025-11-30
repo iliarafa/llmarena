@@ -1,8 +1,9 @@
 import { useState } from "react";
-import ModelSelector, { AVAILABLE_MODELS, type ModelId, type JudgeModelId, type Model } from "@/components/ModelSelector";
+import ModelSelector, { AVAILABLE_MODELS, type ModelId, type JudgeModelId, type FusionModelId, type Model } from "@/components/ModelSelector";
 import PromptInput from "@/components/PromptInput";
 import ComparisonGrid, { type ModelResponse } from "@/components/ComparisonGrid";
 import CaesarCard, { type CaesarResponse } from "@/components/CaesarCard";
+import FusionCard, { type FusionResponse } from "@/components/FusionCard";
 import HistorySidebar from "@/components/HistorySidebar";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -56,6 +57,10 @@ export default function Home() {
   const [caesarLoading, setCaesarLoading] = useState(false);
   const [blindModeEnabled, setBlindModeEnabled] = useState(false);
   const [blindModeRevealed, setBlindModeRevealed] = useState(false);
+  const [fusionEnabled, setFusionEnabled] = useState(false);
+  const [fusionEngineModel, setFusionEngineModel] = useState<FusionModelId>("claude-3-5-sonnet");
+  const [fusionResponse, setFusionResponse] = useState<FusionResponse | undefined>();
+  const [fusionLoading, setFusionLoading] = useState(false);
   const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0);
   const [displayOrder, setDisplayOrder] = useState<Model[]>([]); // Randomized model order for blind mode
   const { toast } = useToast();
@@ -66,10 +71,11 @@ export default function Home() {
   
   const isGuest = !isAuthenticated && !!localStorage.getItem("guestToken");
   
-  // Calculate credit cost: 1 credit per model + 3 for Caesar
+  // Calculate credit cost: 1 credit per model + 3 for Caesar + 5 for Fusion
   const baseCreditCost = selectedModels.length;
   const caesarCost = caesarEnabled ? 3 : 0;
-  const creditCost = baseCreditCost + caesarCost;
+  const fusionCost = fusionEnabled ? 5 : 0;
+  const creditCost = baseCreditCost + caesarCost + fusionCost;
 
   // Create model name mapping for Caesar card
   const modelNames: { [modelId: string]: string } = {};
@@ -127,10 +133,21 @@ export default function Home() {
       setCaesarLoading(true);
       setCaesarResponse(undefined);
     }
+    
+    // Set Fusion to loading if enabled
+    if (fusionEnabled) {
+      setFusionLoading(true);
+      setFusionResponse(undefined);
+    }
+
+    const features = [];
+    if (caesarEnabled) features.push('Caesar judging');
+    if (fusionEnabled) features.push('Fusion synthesis');
+    const featuresDesc = features.length > 0 ? ` + ${features.join(' + ')}` : '';
 
     toast({
       title: "Generating responses",
-      description: `Comparing across ${selectedModels.length} model${selectedModels.length > 1 ? 's' : ''}${caesarEnabled ? ' + Caesar judging' : ''}`
+      description: `Comparing across ${selectedModels.length} model${selectedModels.length > 1 ? 's' : ''}${featuresDesc}`
     });
 
     try {
@@ -139,6 +156,8 @@ export default function Home() {
         modelIds: selectedModels,
         caesarEnabled,
         caesarJudgeModel: caesarEnabled ? caesarJudgeModel : undefined,
+        fusionEnabled,
+        fusionEngineModel: fusionEnabled ? fusionEngineModel : undefined,
       });
 
       if (res.status === 402) {
@@ -151,6 +170,7 @@ export default function Home() {
           }))
         );
         setCaesarLoading(false);
+        setFusionLoading(false);
         
         toast({
           title: "Insufficient Credits",
@@ -176,6 +196,12 @@ export default function Home() {
         }
       }
       setCaesarLoading(false);
+      
+      // Set Fusion response if present
+      if (result.fusion) {
+        setFusionResponse(result.fusion);
+      }
+      setFusionLoading(false);
       
       // Invalidate credit balance queries to refresh the displayed balance
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -236,6 +262,7 @@ export default function Home() {
         }))
       );
       setCaesarLoading(false);
+      setFusionLoading(false);
 
       toast({
         title: "Error",
@@ -525,6 +552,10 @@ export default function Home() {
             onCaesarJudgeChange={setCaesarJudgeModel}
             blindModeEnabled={blindModeEnabled}
             onBlindModeToggle={setBlindModeEnabled}
+            fusionEnabled={fusionEnabled}
+            onFusionToggle={setFusionEnabled}
+            fusionEngineModel={fusionEngineModel}
+            onFusionEngineChange={setFusionEngineModel}
           />
           
           <div className="hidden md:block">
@@ -637,6 +668,15 @@ export default function Home() {
               </div>
             )}
           </div>
+          
+          {(fusionEnabled || fusionResponse) && (
+            <div className="mt-6">
+              <FusionCard 
+                fusionResponse={fusionResponse}
+                isLoading={fusionLoading}
+              />
+            </div>
+          )}
         </div>
       </main>
       
