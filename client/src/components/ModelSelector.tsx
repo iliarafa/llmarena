@@ -242,7 +242,7 @@ export default function ModelSelector({
         </div>
 
         {(caesarEnabled || maximusEnabled) && (
-          <div className="flex items-center gap-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+          <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-gray-100 dark:border-gray-800">
             {caesarEnabled && (
               <div className="flex items-center gap-2">
                 <span className="text-xs text-gray-400">Judge:</span>
@@ -250,8 +250,8 @@ export default function ModelSelector({
                   value={caesarJudgeModel}
                   onValueChange={(value) => onCaesarJudgeChange(value as JudgeModelId)}
                 >
-                  <SelectTrigger className="h-7 w-[130px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-caesar-judge">
-                    <SelectValue placeholder="Select judge" />
+                  <SelectTrigger className="h-7 w-[120px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-caesar-judge">
+                    <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
                     {JUDGE_MODELS.map((judge) => (
@@ -271,8 +271,8 @@ export default function ModelSelector({
                   value={maximusEngineModel}
                   onValueChange={(value) => onMaximusEngineChange(value as MaximusModelId)}
                 >
-                  <SelectTrigger className="h-7 w-[130px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-maximus-engine">
-                    <SelectValue placeholder="Select engine" />
+                  <SelectTrigger className="h-7 w-[120px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-maximus-engine">
+                    <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
                     {MAXIMUS_MODELS.map((engine) => (
