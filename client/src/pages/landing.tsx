@@ -273,7 +273,7 @@ export default function Landing() {
           >
             <Zap className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Compare Models</h3>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-sky-500 transition-all duration-300 ease-out">Compare Models</h3>
               <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Run GPT-4o, Claude, Gemini and Grok side by side to find the best answer.</p>
             </div>
           </div>
@@ -284,7 +284,7 @@ export default function Landing() {
           >
             <Sparkles className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Pay As You Go</h3>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-emerald-600 transition-all duration-300 ease-out">Pay As You Go</h3>
               <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">No subscriptions. Buy credits starting at $2.50. Credits never expire.</p>
             </div>
           </div>
@@ -295,7 +295,7 @@ export default function Landing() {
           >
             <Shield className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">True Privacy</h3>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-rose-600 transition-all duration-300 ease-out">True Privacy</h3>
               <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Your prompts and responses vanish from RAM instantly when the session ends.</p>
             </div>
           </div>
@@ -306,7 +306,7 @@ export default function Landing() {
           >
             <Eye className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Blind Mode</h3>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-violet-600 transition-all duration-300 ease-out">Blind Mode</h3>
               <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Model identities are hidden and scrambled using Fisher-Yates shuffling.</p>
             </div>
           </div>
@@ -317,7 +317,7 @@ export default function Landing() {
           >
             <Crown className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Caesar</h3>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-amber-500 transition-all duration-300 ease-out">Caesar</h3>
               <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Delivers objective verdicts and identifies factual divergences with Hallucination Alerts.</p>
             </div>
           </div>
@@ -328,7 +328,7 @@ export default function Landing() {
           >
             <Sword className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Maximus</h3>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-[#800020] transition-all duration-300 ease-out">Maximus</h3>
               <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Synthesizes the best insights from all 4 models into one perfect response.</p>
             </div>
           </div>
@@ -342,7 +342,7 @@ export default function Landing() {
           >
             <Zap className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform text-[14px]">Compare Models</h3>
+              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-sky-500 transition-all duration-300 ease-out text-[14px]">Compare Models</h3>
               <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Run GPT-4o, Claude, Gemini and Grok side by side to find the best answer.</p>
             </div>
           </div>
@@ -353,7 +353,7 @@ export default function Landing() {
           >
             <Sparkles className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform text-[14px]">Pay As You Go</h3>
+              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-emerald-600 transition-all duration-300 ease-out text-[14px]">Pay As You Go</h3>
               <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">No subscriptions. Buy credits starting at $3.00. Credits never expire.</p>
             </div>
           </div>
@@ -364,7 +364,7 @@ export default function Landing() {
           >
             <Shield className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform text-[14px]">True Privacy</h3>
+              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-rose-600 transition-all duration-300 ease-out text-[14px]">True Privacy</h3>
               <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Your prompts and responses vanish from RAM instantly when the session ends.</p>
             </div>
           </div>
@@ -375,7 +375,7 @@ export default function Landing() {
           >
             <Eye className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform text-[14px]">Blind Mode</h3>
+              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-violet-600 transition-all duration-300 ease-out text-[14px]">Blind Mode</h3>
               <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Model identities are hidden and scrambled using Fisher-Yates shuffling.</p>
             </div>
           </div>
@@ -386,7 +386,7 @@ export default function Landing() {
           >
             <Crown className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform text-[14px]">Caesar</h3>
+              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-amber-500 transition-all duration-300 ease-out text-[14px]">Caesar</h3>
               <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Delivers objective verdicts and identifies factual divergences with Hallucination Alerts.</p>
             </div>
           </div>
@@ -397,7 +397,7 @@ export default function Landing() {
           >
             <Sword className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform text-[14px] pt-[0px] pb-[0px]">Maximus</h3>
+              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-[#800020] transition-all duration-300 ease-out text-[14px]">Maximus</h3>
               <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Synthesizes the best insights from all 4 models into one perfect response.</p>
             </div>
           </div>
