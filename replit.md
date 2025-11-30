@@ -1,7 +1,7 @@
 # LLM Comparison Platform with Prepaid Credits
 
 ## Overview
-This project is a privacy-first, pay-per-use LLM model comparison platform. It enables users to submit a single prompt and simultaneously view responses from multiple AI models (GPT-4o, Claude Sonnet 4, Gemini Flash, Grok). The platform operates in two modes: Guest Mode for anonymous use with secure tokens and credit purchases, and Authenticated Mode via Replit Auth for users who wish to preserve credits across devices. The core business model is pay-per-use with prepaid credits, not subscription-based, offering various credit packs. A unique feature includes the Caesar Judge, an AI-powered evaluation system for response comparison.
+This project is a privacy-first, pay-per-use LLM model comparison platform. It enables users to submit a single prompt and simultaneously view responses from multiple AI models (GPT-4o, Claude Sonnet 4, Gemini Flash, Grok). The platform operates in two modes: Guest Mode for anonymous use with secure tokens and credit purchases, and Authenticated Mode via Replit Auth for users who wish to preserve credits across devices. The core business model is pay-per-use with prepaid credits, not subscription-based, offering various credit packs. Key features include the Caesar Judge (an AI-powered evaluation system for response comparison) and Maximus (the ultimate champion that synthesizes the best insights from all model responses).
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -23,6 +23,7 @@ The platform is designed with a core principle of zero data collection regarding
     - **Purchase Page**: Stripe integration for credit pack purchases.
     - **Comparison Tools**: ModelSelector, PromptInput with credit counter, ComparisonGrid, ComparisonCard (with copy, export, session-only rating, generation time, token count).
     - **CaesarCard**: Displays AI judge verdicts (winner, confidence, verdict, reasoning, score breakdown).
+    - **MaximusCard**: Displays the ultimate synthesized answer from Maximus with gold/amber styling, Sword icon, and "The Ultimate Truth" branding.
     - **Authentication Hooks**: `useAuth`, `useCreditBalance`, `useAccountLinking`.
     - **Session-Only Features**: Client-side export (JSON/Markdown) and 5-star rating system, not persisted to the database.
     - **Blind Mode**: Toggles model names to "Contender A/B" until revealed by user vote or Caesar verdict.
