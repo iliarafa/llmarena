@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, LucideIcon, Sword } from "lucide-react";
+import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, LucideIcon, Sword, Layers, ChevronRight, X } from "lucide-react";
 import { Link } from "wouter";
 import llmFightImage from "@assets/Gemini_Generated_Image_d61xiad61xiad61x.png";
 
@@ -69,9 +69,43 @@ const FEATURES: Feature[] = [
   },
 ];
 
+function BattleModesContent() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div 
+        className="group relative pl-6"
+        data-testid="battle-mode-blind"
+      >
+        <Eye className="absolute left-0 top-[2px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+        <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-violet-600 transition-colors duration-300 ease-out">Blind Mode</h3>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Unbiased evaluation. Identities scrambled using <span className="font-bold text-gray-900 dark:text-white">Fisher-Yates shuffling</span>.</p>
+      </div>
+
+      <div 
+        className="group relative pl-6"
+        data-testid="battle-mode-caesar"
+      >
+        <Crown className="absolute left-0 top-[2px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+        <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors duration-300 ease-out">Caesar</h3>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">AI Arbiter. Detection of factual divergences with <span className="font-bold text-gray-900 dark:text-white">Hallucination Alerts</span>.</p>
+      </div>
+
+      <div 
+        className="group relative pl-6"
+        data-testid="battle-mode-maximus"
+      >
+        <Sword className="absolute left-0 top-[2px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+        <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-[#800020] transition-colors duration-300 ease-out">Maximus</h3>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">The Champion. <span className="font-bold text-gray-900 dark:text-white">Synthesizes</span> best insights into one <span className="font-bold text-gray-900 dark:text-white">perfect response</span>.</p>
+      </div>
+    </div>
+  );
+}
+
 export default function Landing() {
   const [guestToken, setGuestToken] = useState<string | null>(null);
   const [isCreatingToken, setIsCreatingToken] = useState(false);
+  const [isBattleModesOpen, setIsBattleModesOpen] = useState(false);
   const { toast } = useToast();
 
   const handleCreateGuestToken = async () => {
@@ -265,8 +299,9 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Mobile Feature List - Premium Borderless Typographic List with Hanging Icons */}
+        {/* Mobile Feature List - 4 Items with Progressive Disclosure */}
         <div className="my-8 md:hidden flex flex-col max-w-2xl mx-auto px-4">
+          {/* 1. Compare Models */}
           <div 
             className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-compare"
@@ -276,6 +311,21 @@ export default function Landing() {
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run <span className="font-bold text-gray-900 dark:text-white">GPT-4o</span>, <span className="font-bold text-gray-900 dark:text-white">Claude</span>, <span className="font-bold text-gray-900 dark:text-white">Gemini</span>, and <span className="font-bold text-gray-900 dark:text-white">Grok</span> side by side.</p>
           </div>
 
+          {/* 2. Battle Modes - Interactive */}
+          <button 
+            onClick={() => setIsBattleModesOpen(true)}
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5 text-left w-full flex items-center justify-between"
+            data-testid="feature-list-battle-modes"
+          >
+            <div className="flex-1">
+              <Layers className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+              <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors duration-300 ease-out">Battle Modes</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Advanced configuration. Configure <span className="font-bold text-gray-900 dark:text-white">Blind Mode</span>, <span className="font-bold text-gray-900 dark:text-white">Caesar</span>, and <span className="font-bold text-gray-900 dark:text-white">Maximus</span>.</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors shrink-0 ml-4" />
+          </button>
+
+          {/* 3. Pay As You Go */}
           <div 
             className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-paygo"
@@ -285,45 +335,20 @@ export default function Landing() {
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">No subscriptions. Credits starting at <span className="font-bold text-gray-900 dark:text-white">$3.00</span>. They <span className="font-bold text-gray-900 dark:text-white">never expire</span>.</p>
           </div>
 
+          {/* 4. True Privacy */}
           <div 
-            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4"
             data-testid="feature-list-privacy"
           >
             <Shield className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-rose-600 transition-colors duration-300 ease-out">True Privacy</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from <span className="font-bold text-gray-900 dark:text-white">RAM instantly</span> when session ends.</p>
           </div>
-
-          <div 
-            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
-            data-testid="feature-list-blind"
-          >
-            <Eye className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-violet-600 transition-colors duration-300 ease-out">Blind Mode</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Unbiased evaluation. Identities scrambled using <span className="font-bold text-gray-900 dark:text-white">Fisher-Yates shuffling</span>.</p>
-          </div>
-
-          <div 
-            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
-            data-testid="feature-list-caesar"
-          >
-            <Crown className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors duration-300 ease-out">Caesar</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">AI Arbiter. Detection of factual divergences with <span className="font-bold text-gray-900 dark:text-white">Hallucination Alerts</span>.</p>
-          </div>
-
-          <div 
-            className="group relative pl-6 py-4"
-            data-testid="feature-list-maximus"
-          >
-            <Sword className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-[#800020] transition-colors duration-300 ease-out">Maximus</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">The Champion. <span className="font-bold text-gray-900 dark:text-white">Synthesizes</span> best insights into one <span className="font-bold text-gray-900 dark:text-white">perfect response</span>.</p>
-          </div>
         </div>
 
-        {/* Desktop Feature List - Premium Borderless Typographic List with Hanging Icons */}
+        {/* Desktop Feature List - 4 Items with Progressive Disclosure */}
         <div className="hidden md:flex flex-col max-w-2xl mx-auto pl-6">
+          {/* 1. Compare Models */}
           <div 
             className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-compare"
@@ -333,6 +358,21 @@ export default function Landing() {
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run <span className="font-bold text-gray-900 dark:text-white">GPT-4o</span>, <span className="font-bold text-gray-900 dark:text-white">Claude</span>, <span className="font-bold text-gray-900 dark:text-white">Gemini</span>, and <span className="font-bold text-gray-900 dark:text-white">Grok</span> side by side.</p>
           </div>
 
+          {/* 2. Battle Modes - Interactive */}
+          <button 
+            onClick={() => setIsBattleModesOpen(true)}
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5 text-left w-full flex items-center justify-between cursor-pointer"
+            data-testid="feature-tile-battle-modes"
+          >
+            <div className="flex-1">
+              <Layers className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+              <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors duration-300 ease-out">Battle Modes</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Advanced configuration. Configure <span className="font-bold text-gray-900 dark:text-white">Blind Mode</span>, <span className="font-bold text-gray-900 dark:text-white">Caesar</span>, and <span className="font-bold text-gray-900 dark:text-white">Maximus</span>.</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors shrink-0 ml-4" />
+          </button>
+
+          {/* 3. Pay As You Go */}
           <div 
             className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-paygo"
@@ -342,43 +382,73 @@ export default function Landing() {
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">No subscriptions. Credits starting at <span className="font-bold text-gray-900 dark:text-white">$3.00</span>. They <span className="font-bold text-gray-900 dark:text-white">never expire</span>.</p>
           </div>
 
+          {/* 4. True Privacy */}
           <div 
-            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4"
             data-testid="feature-tile-privacy"
           >
             <Shield className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-rose-600 transition-colors duration-300 ease-out">True Privacy</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from <span className="font-bold text-gray-900 dark:text-white">RAM instantly</span> when session ends.</p>
           </div>
-
-          <div 
-            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
-            data-testid="feature-tile-blind"
-          >
-            <Eye className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-violet-600 transition-colors duration-300 ease-out">Blind Mode</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Unbiased evaluation. Identities scrambled using <span className="font-bold text-gray-900 dark:text-white">Fisher-Yates shuffling</span>.</p>
-          </div>
-
-          <div 
-            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
-            data-testid="feature-tile-caesar"
-          >
-            <Crown className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors duration-300 ease-out">Caesar</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">AI Arbiter. Detection of factual divergences with <span className="font-bold text-gray-900 dark:text-white">Hallucination Alerts</span>.</p>
-          </div>
-
-          <div 
-            className="group relative pl-6 py-4"
-            data-testid="feature-tile-maximus"
-          >
-            <Sword className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-[#800020] transition-colors duration-300 ease-out">Maximus</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">The Champion. <span className="font-bold text-gray-900 dark:text-white">Synthesizes</span> best insights into one <span className="font-bold text-gray-900 dark:text-white">perfect response</span>.</p>
-          </div>
         </div>
       </div>
+
+      {/* Mobile Bottom Sheet */}
+      {isBattleModesOpen && (
+        <>
+          <div 
+            className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            onClick={() => setIsBattleModesOpen(false)}
+            data-testid="battle-modes-overlay-mobile"
+          />
+          <div 
+            className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-2xl z-50 p-6 animate-in slide-in-from-bottom duration-300"
+            data-testid="battle-modes-sheet-mobile"
+          >
+            <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-6" />
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-sm font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white">Battle Modes</h2>
+              <button 
+                onClick={() => setIsBattleModesOpen(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                data-testid="button-close-battle-modes-mobile"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <BattleModesContent />
+          </div>
+        </>
+      )}
+
+      {/* Desktop Glass Modal */}
+      {isBattleModesOpen && (
+        <>
+          <div 
+            className="hidden md:block fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            onClick={() => setIsBattleModesOpen(false)}
+            data-testid="battle-modes-overlay-desktop"
+          />
+          <div 
+            className="hidden md:block fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl z-50 p-8 w-full max-w-md shadow-2xl border border-black/5 dark:border-white/10 animate-in zoom-in-95 duration-200"
+            data-testid="battle-modes-modal-desktop"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-sm font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white">Battle Modes</h2>
+              <button 
+                onClick={() => setIsBattleModesOpen(false)}
+                className="p-2 -mr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                data-testid="button-close-battle-modes-desktop"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <BattleModesContent />
+          </div>
+        </>
+      )}
+
       <footer className="mt-auto py-6 md:py-8 border-t border-gray-200 dark:border-gray-800 text-center">
         <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">v 1.0</p>
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">This Whole World LLC — November 2025</p>
