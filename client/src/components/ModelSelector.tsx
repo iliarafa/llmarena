@@ -187,7 +187,7 @@ export default function ModelSelector({
       <div className="flex flex-col gap-3 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-emerald-600' : 'text-gray-400'}`} />
+            <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-500' : 'text-gray-400'}`} />
             <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Caesar
             </Label>
@@ -196,12 +196,13 @@ export default function ModelSelector({
               checked={caesarEnabled}
               onCheckedChange={onCaesarToggle}
               activeLabel="+3"
+              activeColor="amber"
               data-testid="checkbox-input-caesar"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <Sword className={`h-4 w-4 ${maximusEnabled ? 'text-emerald-600' : 'text-gray-400'}`} />
+            <Sword className={`h-4 w-4 ${maximusEnabled ? 'text-[#800020]' : 'text-gray-400'}`} />
             <Label htmlFor="maximus-toggle" className={`text-sm font-medium cursor-pointer ${maximusEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Maximus
             </Label>
@@ -210,6 +211,7 @@ export default function ModelSelector({
               checked={maximusEnabled}
               onCheckedChange={onMaximusToggle}
               activeLabel="+5"
+              activeColor="burgundy"
               data-testid="checkbox-input-maximus"
             />
           </div>
