@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, X, LucideIcon, Sword } from "lucide-react";
+import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, LucideIcon, Sword } from "lucide-react";
 import { Link } from "wouter";
 import llmFightImage from "@assets/Gemini_Generated_Image_d61xiad61xiad61x.png";
 
@@ -72,7 +72,6 @@ const FEATURES: Feature[] = [
 export default function Landing() {
   const [guestToken, setGuestToken] = useState<string | null>(null);
   const [isCreatingToken, setIsCreatingToken] = useState(false);
-  const [selectedFeature, setSelectedFeature] = useState<Feature | null>(null);
   const { toast } = useToast();
 
   const handleCreateGuestToken = async () => {
@@ -113,14 +112,6 @@ export default function Landing() {
 
   const handleSignIn = () => {
     window.location.href = "/api/login";
-  };
-
-  const handleFeatureClick = (feature: Feature) => {
-    setSelectedFeature(feature);
-  };
-
-  const closeDrawer = () => {
-    setSelectedFeature(null);
   };
 
   return (
@@ -291,56 +282,135 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="my-8 md:my-0 space-y-3 md:space-y-5">
+        {/* Mobile Feature List - Static vertical stack */}
+        <div className="my-8 md:hidden flex flex-col gap-3">
+          <div 
+            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+            data-testid="feature-list-compare"
+          >
+            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
+              <Zap className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Compare Models</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Run 4 frontier models side-by-side to find the best answer.</p>
+            </div>
+          </div>
+
+          <div 
+            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+            data-testid="feature-list-paygo"
+          >
+            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
+              <Sparkles className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Pay As You Go</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">No subscriptions. Buy credits starting at $2.50. Never expire.</p>
+            </div>
+          </div>
+
+          <div 
+            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+            data-testid="feature-list-privacy"
+          >
+            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
+              <Shield className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">True Privacy</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Zero data logging. Your prompts vanish when the session ends.</p>
+            </div>
+          </div>
+
+          <div 
+            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+            data-testid="feature-list-blind"
+          >
+            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
+              <Eye className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Remove bias by hiding model names until you vote on the winner.</p>
+            </div>
+          </div>
+
+          <div 
+            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+            data-testid="feature-list-caesar"
+          >
+            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
+              <Crown className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Caesar</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">AI Judge. Get an objective score and verdict on who won the battle.</p>
+            </div>
+          </div>
+
+          <div 
+            className="bg-white dark:bg-gray-900 border border-gray-900 dark:border-gray-100 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-700 dark:hover:border-gray-300 transition-colors"
+            data-testid="feature-list-maximus"
+          >
+            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
+              <Sword className="w-5 h-5 text-gray-900 dark:text-gray-100" strokeWidth={2} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Maximus</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">The Champion. Synthesizes the best insights from all models into one perfect answer.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Feature Grid */}
+        <div className="hidden md:block space-y-5">
           {/* Row 1: Compare Models | Pay As You Go */}
-          <div className="grid grid-cols-2 gap-3 md:gap-5">
+          <div className="grid grid-cols-2 gap-5">
             <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
-              onClick={() => handleFeatureClick(FEATURES[0])}
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
               data-testid="feature-tile-compare"
             >
-              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Zap className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Zap className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Compare Models</h3>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Compare Models</h3>
               </div>
-              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                 See responses from GPT-4o, Claude Sonnet, Gemini Flash, and Grok side-by-side
               </p>
             </div>
 
             <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
-              onClick={() => handleFeatureClick(FEATURES[1])}
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
               data-testid="feature-tile-paygo"
             >
-              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Sparkles className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Pay As You Go</h3>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Pay As You Go</h3>
               </div>
-              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                 Buy credits when you need them. No monthly subscription or commitments.
               </p>
             </div>
           </div>
 
           {/* Row 2: True Privacy | Blind Mode */}
-          <div className="grid grid-cols-2 gap-3 md:gap-5">
+          <div className="grid grid-cols-2 gap-5">
             <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
-              onClick={() => handleFeatureClick(FEATURES[2])}
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
               data-testid="feature-tile-privacy"
             >
-              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Shield className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Shield className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">True Privacy</h3>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">True Privacy</h3>
               </div>
-              <div className="hidden md:block space-y-2">
+              <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
                   <p className="text-sm text-gray-500 dark:text-gray-400">Zero data collection</p>
@@ -357,52 +427,49 @@ export default function Landing() {
             </div>
 
             <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
-              onClick={() => handleFeatureClick(FEATURES[4])}
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
               data-testid="feature-tile-blind"
             >
-              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Eye className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Eye className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
               </div>
-              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                 Evaluate responses without bias. Model names are hidden until you vote or reveal results.
               </p>
             </div>
           </div>
 
           {/* Row 3: Caesar | Maximus */}
-          <div className="grid grid-cols-2 gap-3 md:gap-5">
+          <div className="grid grid-cols-2 gap-5">
             <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
-              onClick={() => handleFeatureClick(FEATURES[3])}
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
               data-testid="feature-tile-caesar"
             >
-              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Crown className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Crown className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Caesar</h3>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Caesar</h3>
               </div>
-              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                 Let an AI arbiter analyze and score responses across accuracy, clarity, creativity, and safety.
               </p>
             </div>
 
             <div 
-              className="bg-white dark:bg-gray-900 border border-gray-900 dark:border-gray-100 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-700 dark:hover:border-gray-300 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
-              onClick={() => handleFeatureClick(FEATURES[5])}
+              className="bg-white dark:bg-gray-900 border border-gray-900 dark:border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-700 dark:hover:border-gray-300 transition-all duration-200"
               data-testid="feature-tile-maximus"
             >
-              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Sword className="w-4 h-4 md:w-5 md:h-5 text-gray-900 dark:text-gray-100" strokeWidth={2} />
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Sword className="w-5 h-5 text-gray-900 dark:text-gray-100" strokeWidth={2} />
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Maximus</h3>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Maximus</h3>
               </div>
-              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                 The ultimate synthesizer. Distills the best insights from all 4 models into one perfect response.
               </p>
             </div>
@@ -415,49 +482,6 @@ export default function Landing() {
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">This Whole World LLC — November 2025</p>
       </footer>
 
-      {selectedFeature && (
-        <>
-          <div 
-            className="md:hidden fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity"
-            onClick={closeDrawer}
-            data-testid="drawer-backdrop"
-          />
-          <div 
-            className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 rounded-t-2xl shadow-[0_-5px_20px_rgba(0,0,0,0.1)] transform transition-transform duration-300 ease-out"
-            data-testid="feature-drawer"
-          >
-            <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto my-3" />
-            
-            <div className="px-6 pb-8">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800">
-                    <selectedFeature.icon className="w-6 h-6 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                    {selectedFeature.title}
-                  </h3>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={closeDrawer}
-                  className="text-gray-400"
-                  data-testid="button-close-drawer"
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-              
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                {selectedFeature.description}
-              </p>
-              
-              {selectedFeature.extraContent}
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 }
