@@ -351,115 +351,71 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Desktop Feature Grid */}
-        <div className="hidden md:block space-y-5">
-          {/* Row 1: Compare Models | Pay As You Go */}
-          <div className="grid grid-cols-2 gap-5">
-            <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
-              data-testid="feature-tile-compare"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Zap className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Compare Models</h3>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                See responses from GPT-4o, Claude Sonnet, Gemini Flash, and Grok side-by-side
-              </p>
-            </div>
-
-            <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
-              data-testid="feature-tile-paygo"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Sparkles className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Pay As You Go</h3>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                Buy credits when you need them. No monthly subscription or commitments.
-              </p>
+        {/* Desktop Feature List - Premium Borderless Typographic List */}
+        <div className="hidden md:flex flex-col max-w-2xl mx-auto">
+          <div 
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
+            data-testid="feature-tile-compare"
+          >
+            <Zap className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
+            <div>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Compare Models</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Run GPT-4o, Claude, Gemini and Grok side by side to find the best answer.</p>
             </div>
           </div>
 
-          {/* Row 2: True Privacy | Blind Mode */}
-          <div className="grid grid-cols-2 gap-5">
-            <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
-              data-testid="feature-tile-privacy"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Shield className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white">True Privacy</h3>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Zero data collection</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Prompts never stored</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Complete anonymity</p>
-                </div>
-              </div>
-            </div>
-
-            <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
-              data-testid="feature-tile-blind"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Eye className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                Evaluate responses without bias. Model names are hidden until you vote or reveal results.
-              </p>
+          <div 
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
+            data-testid="feature-tile-paygo"
+          >
+            <Sparkles className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
+            <div>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Pay As You Go</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">No subscriptions. Buy credits starting at $2.50. Credits never expire.</p>
             </div>
           </div>
 
-          {/* Row 3: Caesar | Maximus */}
-          <div className="grid grid-cols-2 gap-5">
-            <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200"
-              data-testid="feature-tile-caesar"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Crown className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Caesar</h3>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                Let an AI arbiter analyze and score responses across accuracy, clarity, creativity, and safety.
-              </p>
+          <div 
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
+            data-testid="feature-tile-privacy"
+          >
+            <Shield className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
+            <div>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">True Privacy</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Your prompts and responses vanish from RAM instantly when the session ends.</p>
             </div>
+          </div>
 
-            <div 
-              className="bg-white dark:bg-gray-900 border border-gray-900 dark:border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-700 dark:hover:border-gray-300 transition-all duration-200"
-              data-testid="feature-tile-maximus"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Sword className="w-5 h-5 text-gray-900 dark:text-gray-100" strokeWidth={2} />
-                </div>
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Maximus</h3>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                The ultimate synthesizer. Distills the best insights from all 4 models into one perfect response.
-              </p>
+          <div 
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
+            data-testid="feature-tile-blind"
+          >
+            <Eye className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
+            <div>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Blind Mode</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Model identities are hidden and scrambled using Fisher-Yates shuffling.</p>
+            </div>
+          </div>
+
+          <div 
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
+            data-testid="feature-tile-caesar"
+          >
+            <Crown className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
+            <div>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Caesar</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Delivers objective verdicts and identifies factual divergences with Hallucination Alerts.</p>
+            </div>
+          </div>
+
+          <div 
+            className="group py-6 flex flex-row items-start gap-4"
+            data-testid="feature-tile-maximus"
+          >
+            <Sword className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
+            <div>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Maximus</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Synthesizes the best insights from all 4 models into one perfect response.</p>
             </div>
           </div>
         </div>
