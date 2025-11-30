@@ -1,0 +1,49 @@
+Refine the Landing Page to be ultra-compact, borderless, and typographically rich.
+
+1. The 'Auth' Section (Top):
+
+Remove Borders: completely remove the white background/borders/shadows from the 'Try as Guest' and 'Sign In' containers.
+
+Layout: Make this a clean 2-column grid (grid-cols-2 gap-8) centered on the page.
+
+Typography:
+
+Headers: text-sm font-bold uppercase tracking-wide text-gray-900.
+
+Subtext: text-xs text-gray-500 mb-4.
+
+Buttons: Keep the buttons full-width within their columns, but reduce their height slightly (py-2 text-sm) to feel more compact.
+
+2. The Feature List (Bottom):
+
+Layout: Keep the single column, but align it perfectly with the 2-column grid above (max-w-3xl mx-auto).
+
+Density: Drastically reduce vertical padding (py-3 per item). This should feel like a tight list, not a loose collection.
+
+Typography:
+
+Titles: text-sm font-bold uppercase tracking-wider text-gray-900.
+
+Descriptions: text-xs text-gray-500 font-normal.
+
+Icons: Make them smaller (w-4 h-4) and aligned with the cap height of the title.
+
+3. Rich Text Highlighting (The 'Medium Weight' Keywords):
+
+Inside the descriptions, use a darker, medium-weight font (font-medium text-gray-700) for specific keywords to make them pop.
+
+Update the content to exactly this HTML structure:
+
+Compare Models: Run <span class="font-medium text-gray-900">GPT-4o, Claude, Gemini, and Grok</span> side by side.
+
+Pay As You Go: No subscriptions. Buy credits starting at <span class="font-medium text-gray-900">$2.50</span>. Credits <span class="font-medium text-gray-900">never expire</span>.
+
+True Privacy: Zero logs. Data vanishes from <span class="font-medium text-gray-900">RAM instantly</span> when session ends.
+
+Blind Mode: Unbiased evaluation. Identities scrambled using <span class="font-medium text-gray-900">Fisher-Yates shuffling</span>.
+
+Caesar: AI Arbiter. Detection of factual divergences with <span class="font-medium text-gray-900">Hallucination Alerts</span>.
+
+Maximus: The Champion. <span class="font-medium text-gray-900">Synthesizes</span> best insights into one <span class="font-medium text-gray-900">perfect response</span>.
+
+Goal: A seamless flow where the Auth buttons and Feature List feel like one cohesive, high-density instrument panel.

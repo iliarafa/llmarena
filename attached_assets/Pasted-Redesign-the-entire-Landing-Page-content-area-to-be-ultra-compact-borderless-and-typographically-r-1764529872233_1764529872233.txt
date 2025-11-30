@@ -1,0 +1,61 @@
+Redesign the entire Landing Page content area to be ultra-compact, borderless, and typographically rich. Apply this 'Spec Sheet' aesthetic seamlessly across Desktop and Mobile.
+
+1. The 'Auth' Section (Top):
+
+Remove Borders: Completely remove the white background cards, borders, and shadows from the 'Try as Guest' and 'Sign In' areas. They should sit directly on the page background.
+
+Responsive Layout:
+
+Desktop: grid grid-cols-2 gap-12 (Wide, symmetrical spacing).
+
+Mobile: flex flex-col gap-8 (Stacked vertically).
+
+Typography:
+
+Headers: text-sm font-bold uppercase tracking-widest text-gray-900.
+
+Subtext: text-xs text-gray-500 mt-1 mb-3.
+
+Buttons:
+
+'Create Guest Token': Full width, black, h-10 text-sm font-medium rounded-md.
+
+'Sign In': Full width, border border-gray-300, h-10 text-sm font-medium rounded-md hover:bg-gray-50.
+
+2. The Feature List (Bottom):
+
+Container: Single column, centered (max-w-2xl mx-auto).
+
+Spacing:
+
+Desktop: mt-16 space-y-5 (Distinct separation).
+
+Mobile: mt-12 space-y-6 (Slightly more breathing room for touch).
+
+Item Layout: flex flex-row items-start gap-4.
+
+Icons: w-4 h-4 text-black mt-0.5 shrink-0 (Aligned with the Title's cap height).
+
+3. Typography & Rich Text (The Content):
+
+Titles: text-sm font-bold uppercase tracking-wider text-gray-900.
+
+Descriptions: text-sm text-gray-500 font-normal leading-relaxed (Legible size on both mobile and desktop).
+
+Highlighting: Use <span class="font-medium text-gray-900"> to highlight key value props.
+
+4. The Content (Use this exact HTML):
+
+Compare Models Run <span class="font-medium text-gray-900">GPT-4o, Claude, Gemini, and Grok</span> side by side.
+
+Pay As You Go No subscriptions. Credits starting at <span class="font-medium text-gray-900">$2.50</span>. They <span class="font-medium text-gray-900">never expire</span>.
+
+True Privacy Zero logs. Data vanishes from <span class="font-medium text-gray-900">RAM instantly</span> when session ends.
+
+Blind Mode Unbiased evaluation. Identities scrambled using <span class="font-medium text-gray-900">Fisher-Yates shuffling</span>.
+
+Caesar AI Arbiter. Detection of factual divergences with <span class="font-medium text-gray-900">Hallucination Alerts</span>.
+
+Maximus The Champion. <span class="font-medium text-gray-900">Synthesizes</span> best insights into one <span class="font-medium text-gray-900">perfect response</span>.
+
+Goal: A stark, high-confidence interface. No boxes, just strict alignment and typographic hierarchy.

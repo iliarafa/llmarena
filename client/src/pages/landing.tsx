@@ -205,80 +205,63 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="hidden md:grid md:grid-cols-2 md:gap-5 mb-6 md:mb-8">
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 md:p-6 shadow-sm flex flex-col">
-            <div className="mb-3 md:mb-4">
-              <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-1" data-testid="text-try-guest-title">
-                Try as Guest
-              </h3>
-              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
-                No sign-up required. Get a secure token and buy credits anonymously.
-              </p>
-            </div>
-            <div className="flex-1 flex flex-col justify-end">
-              {!guestToken ? (
-                <Button 
-                  onClick={handleCreateGuestToken}
-                  disabled={isCreatingToken}
-                  className="w-full font-medium bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
-                  size="lg"
-                  data-testid="button-create-guest-token"
-                >
-                  {isCreatingToken ? "Creating..." : "Create Guest Token"}
-                </Button>
-              ) : (
-                <div className="space-y-3">
-                  <div className="p-3 md:p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 font-medium">Your Guest Token:</p>
-                    <div className="flex items-center gap-2">
-                      <code className="flex-1 text-xs break-all font-mono text-gray-700 dark:text-gray-300" data-testid="text-guest-token">
-                        {guestToken}
-                      </code>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleCopyToken}
-                        className="border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        data-testid="button-copy-token"
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                    Guest token auto-saves in your browser for sign-up-free access.
-                  </p>
-                  <Button
-                    onClick={() => window.location.href = "/"}
-                    className="w-full font-medium bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
-                    data-testid="button-continue-guest"
+        {/* Auth Section - Borderless Typographic */}
+        <div className="hidden md:grid md:grid-cols-2 md:gap-12 max-w-2xl mx-auto mb-6">
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 dark:text-white" data-testid="text-try-guest-title">
+              Try as Guest
+            </h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">
+              No sign-up required. Get a secure token and buy credits anonymously.
+            </p>
+            {!guestToken ? (
+              <button 
+                onClick={handleCreateGuestToken}
+                disabled={isCreatingToken}
+                className="w-full h-10 text-sm font-medium rounded-md bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors"
+                data-testid="button-create-guest-token"
+              >
+                {isCreatingToken ? "Creating..." : "Create Guest Token"}
+              </button>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 text-xs break-all font-mono text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-2 py-1.5 rounded" data-testid="text-guest-token">
+                    {guestToken}
+                  </code>
+                  <button
+                    onClick={handleCopyToken}
+                    className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    data-testid="button-copy-token"
                   >
-                    Continue to Arena
-                  </Button>
+                    <Copy className="w-4 h-4" />
+                  </button>
                 </div>
-              )}
-            </div>
+                <button
+                  onClick={() => window.location.href = "/"}
+                  className="w-full h-10 text-sm font-medium rounded-md bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors"
+                  data-testid="button-continue-guest"
+                >
+                  Continue to Arena
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 md:p-6 shadow-sm flex flex-col">
-            <div className="mb-3 md:mb-4">
-              <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-1" data-testid="text-sign-in-title">
-                Sign In
-              </h3>
-              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
-                Create an account with Google, Apple, GitHub, or email to preserve your credits across devices.
-              </p>
-            </div>
-            <div className="flex-1 flex flex-col justify-end">
-              <Button 
-                onClick={handleSignIn}
-                className="w-full font-medium bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
-                size="lg"
-                data-testid="button-sign-in"
-              >
-                Sign In / Create Account
-              </Button>
-            </div>
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 dark:text-white" data-testid="text-sign-in-title">
+              Sign In
+            </h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">
+              Preserve your credits across devices with Google, Apple, GitHub, or email.
+            </p>
+            <button 
+              onClick={handleSignIn}
+              className="w-full h-10 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-900 dark:text-white transition-colors"
+              data-testid="button-sign-in"
+            >
+              Sign In / Create Account
+            </button>
           </div>
         </div>
 
