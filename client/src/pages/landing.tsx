@@ -293,7 +293,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Compare Models</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Run GPT-4o, Claude, Gemini, Grok side by side to find the best answer.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Run GPT-4o, Claude, Gemini and Grok side by side to find the best answer.</p>
             </div>
           </div>
 
