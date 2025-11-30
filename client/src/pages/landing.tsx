@@ -245,7 +245,7 @@ export default function Landing() {
           >
             <Zap className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out">Compare Models</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run <span className="font-bold text-gray-900 dark:text-white">GPT-4o</span>, <span className="font-bold text-gray-900 dark:text-white">Claude</span>, <span className="font-bold text-gray-900 dark:text-white">Gemini</span>, and <span className="font-bold text-gray-900 dark:text-white">Grok</span> side by side.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run GPT-4o, Claude, Gemini, and Grok side by side.</p>
           </div>
 
           {/* 2. Battle Modes - Interactive */}
@@ -257,7 +257,7 @@ export default function Landing() {
             <div className="flex-1">
               <Layers className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
               <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors duration-300 ease-out">Battle Modes</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Advanced configuration. Configure <span className="font-bold text-gray-900 dark:text-white">Blind Mode</span>, <span className="font-bold text-gray-900 dark:text-white">Caesar</span>, and <span className="font-bold text-gray-900 dark:text-white">Maximus</span>.</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Advanced configuration. Configure Blind Mode, Caesar, and Maximus.</p>
             </div>
             <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors shrink-0 ml-4" />
           </button>
@@ -269,7 +269,7 @@ export default function Landing() {
           >
             <Sparkles className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors duration-300 ease-out">Pay As You Go</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">No subscriptions. Credits starting at <span className="font-bold text-gray-900 dark:text-white">$3.00</span>. They <span className="font-bold text-gray-900 dark:text-white">never expire</span>.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">No subscriptions. Credits starting at $3.00. They never expire.</p>
           </div>
 
           {/* 4. True Privacy */}
@@ -279,7 +279,7 @@ export default function Landing() {
           >
             <Shield className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-rose-600 transition-colors duration-300 ease-out">True Privacy</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from <span className="font-bold text-gray-900 dark:text-white">RAM instantly</span> when session ends.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from RAM instantly when session ends.</p>
           </div>
         </div>
 
@@ -292,7 +292,7 @@ export default function Landing() {
           >
             <Zap className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out">Compare Models</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run <span className="font-bold text-gray-900 dark:text-white">GPT-4o</span>, <span className="font-bold text-gray-900 dark:text-white">Claude</span>, <span className="font-bold text-gray-900 dark:text-white">Gemini</span>, and <span className="font-bold text-gray-900 dark:text-white">Grok</span> side by side.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run GPT-4o, Claude, Gemini, and Grok side by side.</p>
           </div>
 
           {/* 2. Battle Modes - Interactive */}
@@ -304,7 +304,7 @@ export default function Landing() {
             <div className="flex-1">
               <Layers className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
               <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors duration-300 ease-out">Battle Modes</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Advanced configuration. Configure <span className="font-bold text-gray-900 dark:text-white">Blind Mode</span>, <span className="font-bold text-gray-900 dark:text-white">Caesar</span>, and <span className="font-bold text-gray-900 dark:text-white">Maximus</span>.</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Advanced configuration. Configure Blind Mode, Caesar, and Maximus.</p>
             </div>
             <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors shrink-0 ml-4" />
           </button>
@@ -316,7 +316,7 @@ export default function Landing() {
           >
             <Sparkles className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors duration-300 ease-out">Pay As You Go</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">No subscriptions. Credits starting at <span className="font-bold text-gray-900 dark:text-white">$3.00</span>. They <span className="font-bold text-gray-900 dark:text-white">never expire</span>.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">No subscriptions. Credits starting at $3.00. They never expire.</p>
           </div>
 
           {/* 4. True Privacy */}
@@ -326,7 +326,7 @@ export default function Landing() {
           >
             <Shield className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-rose-600 transition-colors duration-300 ease-out">True Privacy</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from <span className="text-gray-900 dark:text-white font-medium">RAM instantly</span> when session ends.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from RAM instantly when session ends.</p>
           </div>
         </div>
       </div>
