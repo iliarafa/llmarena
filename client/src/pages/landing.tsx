@@ -206,12 +206,12 @@ export default function Landing() {
         </div>
 
         {/* Auth Section - Borderless Typographic */}
-        <div className="hidden md:grid md:grid-cols-2 md:gap-12 max-w-2xl mx-auto mb-6">
+        <div className="hidden md:grid md:grid-cols-2 md:gap-12 max-w-2xl mx-auto mb-8 pl-6">
           <div>
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white" data-testid="text-try-guest-title">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3" data-testid="text-try-guest-title">
               Try as Guest
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
               No sign-up required. Get a secure token and buy credits anonymously.
             </p>
             {!guestToken ? (
@@ -249,10 +249,10 @@ export default function Landing() {
           </div>
 
           <div>
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white" data-testid="text-sign-in-title">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3" data-testid="text-sign-in-title">
               Sign In
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
               Preserve your credits across devices with Google, Apple, GitHub, or email.
             </p>
             <button 
@@ -266,114 +266,114 @@ export default function Landing() {
         </div>
 
         {/* Mobile Feature List - Premium Borderless Typographic List with Hanging Icons */}
-        <div className="my-8 md:hidden flex flex-col max-w-2xl mx-auto">
+        <div className="my-8 md:hidden flex flex-col max-w-2xl mx-auto px-4">
           <div 
-            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-compare"
           >
-            <Zap className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Zap className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out">Compare Models</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run <span className="font-bold text-gray-900 dark:text-white">GPT-4o</span>, <span className="font-bold text-gray-900 dark:text-white">Claude</span>, <span className="font-bold text-gray-900 dark:text-white">Gemini</span>, and <span className="font-bold text-gray-900 dark:text-white">Grok</span> side by side.</p>
           </div>
 
           <div 
-            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-paygo"
           >
-            <Sparkles className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Sparkles className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors duration-300 ease-out">Pay As You Go</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">No subscriptions. Credits starting at <span className="font-bold text-gray-900 dark:text-white">$3.00</span>. They <span className="font-bold text-gray-900 dark:text-white">never expire</span>.</p>
           </div>
 
           <div 
-            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-privacy"
           >
-            <Shield className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Shield className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-rose-600 transition-colors duration-300 ease-out">True Privacy</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from <span className="font-bold text-gray-900 dark:text-white">RAM instantly</span> when session ends.</p>
           </div>
 
           <div 
-            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-blind"
           >
-            <Eye className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Eye className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-violet-600 transition-colors duration-300 ease-out">Blind Mode</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Unbiased evaluation. Identities scrambled using <span className="font-bold text-gray-900 dark:text-white">Fisher-Yates shuffling</span>.</p>
           </div>
 
           <div 
-            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-caesar"
           >
-            <Crown className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Crown className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors duration-300 ease-out">Caesar</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">AI Arbiter. Detection of factual divergences with <span className="font-bold text-gray-900 dark:text-white">Hallucination Alerts</span>.</p>
           </div>
 
           <div 
-            className="group relative pl-8 py-4"
+            className="group relative pl-6 py-4"
             data-testid="feature-list-maximus"
           >
-            <Sword className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Sword className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-[#800020] transition-colors duration-300 ease-out">Maximus</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">The Champion. <span className="font-bold text-gray-900 dark:text-white">Synthesizes</span> best insights into one <span className="font-bold text-gray-900 dark:text-white">perfect response</span>.</p>
           </div>
         </div>
 
         {/* Desktop Feature List - Premium Borderless Typographic List with Hanging Icons */}
-        <div className="hidden md:flex flex-col max-w-2xl mx-auto">
+        <div className="hidden md:flex flex-col max-w-2xl mx-auto pl-6">
           <div 
-            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-compare"
           >
-            <Zap className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Zap className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out">Compare Models</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run <span className="font-bold text-gray-900 dark:text-white">GPT-4o</span>, <span className="font-bold text-gray-900 dark:text-white">Claude</span>, <span className="font-bold text-gray-900 dark:text-white">Gemini</span>, and <span className="font-bold text-gray-900 dark:text-white">Grok</span> side by side.</p>
           </div>
 
           <div 
-            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-paygo"
           >
-            <Sparkles className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Sparkles className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors duration-300 ease-out">Pay As You Go</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">No subscriptions. Credits starting at <span className="font-bold text-gray-900 dark:text-white">$3.00</span>. They <span className="font-bold text-gray-900 dark:text-white">never expire</span>.</p>
           </div>
 
           <div 
-            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-privacy"
           >
-            <Shield className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Shield className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-rose-600 transition-colors duration-300 ease-out">True Privacy</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from <span className="font-bold text-gray-900 dark:text-white">RAM instantly</span> when session ends.</p>
           </div>
 
           <div 
-            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-blind"
           >
-            <Eye className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Eye className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-violet-600 transition-colors duration-300 ease-out">Blind Mode</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Unbiased evaluation. Identities scrambled using <span className="font-bold text-gray-900 dark:text-white">Fisher-Yates shuffling</span>.</p>
           </div>
 
           <div 
-            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
+            className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-caesar"
           >
-            <Crown className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Crown className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors duration-300 ease-out">Caesar</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">AI Arbiter. Detection of factual divergences with <span className="font-bold text-gray-900 dark:text-white">Hallucination Alerts</span>.</p>
           </div>
 
           <div 
-            className="group relative pl-8 py-4"
+            className="group relative pl-6 py-4"
             data-testid="feature-tile-maximus"
           >
-            <Sword className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <Sword className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-[#800020] transition-colors duration-300 ease-out">Maximus</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">The Champion. <span className="font-bold text-gray-900 dark:text-white">Synthesizes</span> best insights into one <span className="font-bold text-gray-900 dark:text-white">perfect response</span>.</p>
           </div>
