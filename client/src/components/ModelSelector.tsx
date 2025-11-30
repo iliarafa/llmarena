@@ -188,7 +188,7 @@ export default function ModelSelector({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-500' : 'text-gray-400'}`} />
-            <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+            <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer -ml-1 ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Caesar
             </Label>
             <Switch
@@ -203,7 +203,7 @@ export default function ModelSelector({
 
           <div className="flex items-center gap-2">
             <Sword className={`h-4 w-4 ${maximusEnabled ? 'text-[#800020]' : 'text-gray-400'}`} />
-            <Label htmlFor="maximus-toggle" className={`text-sm font-medium cursor-pointer ${maximusEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+            <Label htmlFor="maximus-toggle" className={`text-sm font-medium cursor-pointer -ml-1 ${maximusEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Maximus
             </Label>
             <Switch
@@ -218,7 +218,7 @@ export default function ModelSelector({
 
           <div className="flex items-center gap-2">
             <EyeOff className={`h-4 w-4 ${blindModeEnabled ? 'text-purple-600' : 'text-gray-400'}`} />
-            <Label htmlFor="blind-toggle" className={`text-sm font-medium cursor-pointer ${blindModeEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+            <Label htmlFor="blind-toggle" className={`text-sm font-medium cursor-pointer -ml-1 ${blindModeEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Blind
             </Label>
             <Switch
