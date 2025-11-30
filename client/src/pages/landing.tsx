@@ -293,7 +293,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Compare Models</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Run 4 frontier models side-by-side to find the best answer.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Run 4 frontier models side-by-side (GPT-4o, Claude, Gemini, Grok) to find the best answer.</p>
             </div>
           </div>
 
@@ -306,7 +306,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Pay As You Go</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">No subscriptions. Buy credits starting at $3.00. Never expire.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">No subscriptions. Buy credits starting at $2.50. Credits never expire.</p>
             </div>
           </div>
 
@@ -319,7 +319,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">True Privacy</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Zero data logging. Your prompts vanish when the session ends.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Zero data logging. Your prompts and responses vanish from RAM instantly when the session ends.</p>
             </div>
           </div>
 
@@ -332,7 +332,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Remove bias by hiding model names until you vote on the winner.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">True unbiased evaluation. Model identities are hidden and scrambled using Fisher-Yates shuffling.</p>
             </div>
           </div>
 
@@ -345,7 +345,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Caesar</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Get an objective score and verdict on who won the battle.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">AI Arbiter. Delivers objective verdicts and identifies factual divergences with Hallucination Alerts.</p>
             </div>
           </div>
 
@@ -358,7 +358,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Maximus</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Synthesizes the best insights from all models into one perfect answer.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">The Champion. Synthesizes the best insights from all 4 models into one perfect response.</p>
             </div>
           </div>
         </div>
