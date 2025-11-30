@@ -1,9 +1,9 @@
 import { useState } from "react";
-import ModelSelector, { AVAILABLE_MODELS, type ModelId, type JudgeModelId, type FusionModelId, type Model } from "@/components/ModelSelector";
+import ModelSelector, { AVAILABLE_MODELS, type ModelId, type JudgeModelId, type MaximusModelId, type Model } from "@/components/ModelSelector";
 import PromptInput from "@/components/PromptInput";
 import ComparisonGrid, { type ModelResponse } from "@/components/ComparisonGrid";
 import CaesarCard, { type CaesarResponse } from "@/components/CaesarCard";
-import FusionCard, { type FusionResponse } from "@/components/FusionCard";
+import MaximusCard, { type MaximusResponse } from "@/components/MaximusCard";
 import HistorySidebar from "@/components/HistorySidebar";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -57,10 +57,10 @@ export default function Home() {
   const [caesarLoading, setCaesarLoading] = useState(false);
   const [blindModeEnabled, setBlindModeEnabled] = useState(false);
   const [blindModeRevealed, setBlindModeRevealed] = useState(false);
-  const [fusionEnabled, setFusionEnabled] = useState(false);
-  const [fusionEngineModel, setFusionEngineModel] = useState<FusionModelId>("claude-3-5-sonnet");
-  const [fusionResponse, setFusionResponse] = useState<FusionResponse | undefined>();
-  const [fusionLoading, setFusionLoading] = useState(false);
+  const [maximusEnabled, setMaximusEnabled] = useState(false);
+  const [maximusEngineModel, setMaximusEngineModel] = useState<MaximusModelId>("claude-3-5-sonnet");
+  const [maximusResponse, setMaximusResponse] = useState<MaximusResponse | undefined>();
+  const [maximusLoading, setMaximusLoading] = useState(false);
   const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0);
   const [displayOrder, setDisplayOrder] = useState<Model[]>([]); // Randomized model order for blind mode
   const { toast } = useToast();
@@ -71,11 +71,11 @@ export default function Home() {
   
   const isGuest = !isAuthenticated && !!localStorage.getItem("guestToken");
   
-  // Calculate credit cost: 1 credit per model + 3 for Caesar + 5 for Fusion
+  // Calculate credit cost: 1 credit per model + 3 for Caesar + 5 for Maximus
   const baseCreditCost = selectedModels.length;
   const caesarCost = caesarEnabled ? 3 : 0;
-  const fusionCost = fusionEnabled ? 5 : 0;
-  const creditCost = baseCreditCost + caesarCost + fusionCost;
+  const maximusCost = maximusEnabled ? 5 : 0;
+  const creditCost = baseCreditCost + caesarCost + maximusCost;
 
   // Create model name mapping for Caesar card
   const modelNames: { [modelId: string]: string } = {};
@@ -134,15 +134,15 @@ export default function Home() {
       setCaesarResponse(undefined);
     }
     
-    // Set Fusion to loading if enabled
-    if (fusionEnabled) {
-      setFusionLoading(true);
-      setFusionResponse(undefined);
+    // Set Maximus to loading if enabled
+    if (maximusEnabled) {
+      setMaximusLoading(true);
+      setMaximusResponse(undefined);
     }
 
     const features = [];
     if (caesarEnabled) features.push('Caesar judging');
-    if (fusionEnabled) features.push('Fusion synthesis');
+    if (maximusEnabled) features.push('Maximus synthesis');
     const featuresDesc = features.length > 0 ? ` + ${features.join(' + ')}` : '';
 
     toast({
@@ -156,8 +156,8 @@ export default function Home() {
         modelIds: selectedModels,
         caesarEnabled,
         caesarJudgeModel: caesarEnabled ? caesarJudgeModel : undefined,
-        fusionEnabled,
-        fusionEngineModel: fusionEnabled ? fusionEngineModel : undefined,
+        maximusEnabled,
+        maximusEngineModel: maximusEnabled ? maximusEngineModel : undefined,
       });
 
       if (res.status === 402) {
@@ -170,7 +170,7 @@ export default function Home() {
           }))
         );
         setCaesarLoading(false);
-        setFusionLoading(false);
+        setMaximusLoading(false);
         
         toast({
           title: "Insufficient Credits",
@@ -197,11 +197,11 @@ export default function Home() {
       }
       setCaesarLoading(false);
       
-      // Set Fusion response if present
-      if (result.fusion) {
-        setFusionResponse(result.fusion);
+      // Set Maximus response if present
+      if (result.maximus) {
+        setMaximusResponse(result.maximus);
       }
-      setFusionLoading(false);
+      setMaximusLoading(false);
       
       // Invalidate credit balance queries to refresh the displayed balance
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -262,7 +262,7 @@ export default function Home() {
         }))
       );
       setCaesarLoading(false);
-      setFusionLoading(false);
+      setMaximusLoading(false);
 
       toast({
         title: "Error",
@@ -552,10 +552,10 @@ export default function Home() {
             onCaesarJudgeChange={setCaesarJudgeModel}
             blindModeEnabled={blindModeEnabled}
             onBlindModeToggle={setBlindModeEnabled}
-            fusionEnabled={fusionEnabled}
-            onFusionToggle={setFusionEnabled}
-            fusionEngineModel={fusionEngineModel}
-            onFusionEngineChange={setFusionEngineModel}
+            maximusEnabled={maximusEnabled}
+            onMaximusToggle={setMaximusEnabled}
+            maximusEngineModel={maximusEngineModel}
+            onMaximusEngineChange={setMaximusEngineModel}
           />
           
           <div className="hidden md:block">
@@ -669,11 +669,11 @@ export default function Home() {
             )}
           </div>
           
-          {(fusionEnabled || fusionResponse) && (
+          {(maximusEnabled || maximusResponse) && (
             <div className="mt-6">
-              <FusionCard 
-                fusionResponse={fusionResponse}
-                isLoading={fusionLoading}
+              <MaximusCard 
+                maximusResponse={maximusResponse}
+                isLoading={maximusLoading}
               />
             </div>
           )}

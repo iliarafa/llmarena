@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { generateComparisons, generateCaesarVerdict, generateFusion } from "./llm";
+import { generateComparisons, generateCaesarVerdict, generateMaximus } from "./llm";
 import { z } from "zod";
 import { randomBytes } from "crypto";
 import { setupAuth, isAuthenticated } from "./replitAuth";
@@ -20,8 +20,8 @@ const compareRequestSchema = z.object({
   modelIds: z.array(z.enum(["gpt-4o", "claude-sonnet", "gemini-flash", "grok"])).min(1),
   caesarEnabled: z.boolean().optional(),
   caesarJudgeModel: z.enum(["claude-3-5-sonnet", "gpt-4o", "gemini-flash", "grok"]).optional(),
-  fusionEnabled: z.boolean().optional(),
-  fusionEngineModel: z.enum(["claude-3-5-sonnet", "gpt-4o", "gemini-flash", "grok"]).optional(),
+  maximusEnabled: z.boolean().optional(),
+  maximusEngineModel: z.enum(["claude-3-5-sonnet", "gpt-4o", "gemini-flash", "grok"]).optional(),
 });
 
 const checkoutRequestSchema = z.object({
@@ -208,7 +208,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Protected comparison endpoint with credit checking
   app.post("/api/compare", requireAuth, async (req, res) => {
     try {
-      const { prompt, modelIds, caesarEnabled, caesarJudgeModel, fusionEnabled, fusionEngineModel } = compareRequestSchema.parse(req.body);
+      const { prompt, modelIds, caesarEnabled, caesarJudgeModel, maximusEnabled, maximusEngineModel } = compareRequestSchema.parse(req.body);
       
       // Calculate credit cost based on tiered pricing
       const modelCount = modelIds.length;
@@ -227,10 +227,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Add Caesar cost if enabled (+3 credits) and Fusion cost if enabled (+5 credits)
+      // Add Caesar cost if enabled (+3 credits) and Maximus cost if enabled (+5 credits)
       const caesarCost = caesarEnabled ? 3 : 0;
-      const fusionCost = fusionEnabled ? 5 : 0;
-      const creditCost = baseCreditCost + caesarCost + fusionCost;
+      const maximusCost = maximusEnabled ? 5 : 0;
+      const creditCost = baseCreditCost + caesarCost + maximusCost;
       
       // Check credit balance
       const creditBalance = parseFloat(getCreditBalance(req));
@@ -252,7 +252,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Calculate actual costs based on what we can actually generate
       let actualCaesarCost = 0;
-      let actualFusionCost = 0;
+      let actualMaximusCost = 0;
       
       // Generate Caesar verdict if enabled and we have at least 2 valid responses
       let caesar = undefined;
@@ -263,17 +263,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Generate Fusion synthesis if enabled and we have at least 2 valid responses
-      let fusion = undefined;
-      if (fusionEnabled && fusionEngineModel && validResponseCount >= 2) {
-        fusion = await generateFusion(prompt, responses, fusionEngineModel);
-        if (!fusion.error) {
-          actualFusionCost = 5;
+      // Generate Maximus synthesis if enabled and we have at least 2 valid responses
+      let maximus = undefined;
+      if (maximusEnabled && maximusEngineModel && validResponseCount >= 2) {
+        maximus = await generateMaximus(prompt, responses, maximusEngineModel);
+        if (!maximus.error) {
+          actualMaximusCost = 5;
         }
       }
       
       // Calculate actual credit cost (base + successful optional features)
-      const actualCreditCost = baseCreditCost + actualCaesarCost + actualFusionCost;
+      const actualCreditCost = baseCreditCost + actualCaesarCost + actualMaximusCost;
       
       // Deduct credits after successful comparison
       const newBalance = (creditBalance - actualCreditCost).toFixed(2);
@@ -288,7 +288,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         responses,
         caesar,
-        fusion,
+        maximus,
         creditsUsed: actualCreditCost,
         creditsRemaining: newBalance,
       });
