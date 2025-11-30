@@ -185,7 +185,7 @@ export default function ModelSelector({
       </div>
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full p-4 gap-0 md:gap-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
-        <div className="w-full md:w-auto flex flex-row items-center justify-between py-3 md:py-0 border-b md:border-0 border-gray-100 dark:border-gray-800">
+        <div className="w-full md:w-auto flex flex-row items-center justify-between py-3 md:py-0">
           <div className="flex items-center gap-2">
             <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-500' : 'text-gray-400'}`} />
             <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer -ml-1 ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
@@ -222,7 +222,7 @@ export default function ModelSelector({
           />
         </div>
 
-        <div className="w-full md:w-auto flex flex-row items-center justify-between py-3 md:py-0 border-b md:border-0 border-gray-100 dark:border-gray-800">
+        <div className="w-full md:w-auto flex flex-row items-center justify-between py-3 md:py-0">
           <div className="flex items-center gap-2">
             <Sword className={`h-4 w-4 ${maximusEnabled ? 'text-[#800020]' : 'text-gray-400'}`} />
             <Label htmlFor="maximus-toggle" className={`text-sm font-medium cursor-pointer -ml-1 ${maximusEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
