@@ -345,7 +345,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Caesar</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">AI Judge. Get an objective score and verdict on who won the battle.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Get an objective score and verdict on who won the battle.</p>
             </div>
           </div>
 
@@ -476,12 +476,10 @@ export default function Landing() {
           </div>
         </div>
       </div>
-
       <footer className="mt-auto py-6 md:py-8 border-t border-gray-200 dark:border-gray-800 text-center">
         <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">v 1.0</p>
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">This Whole World LLC — November 2025</p>
       </footer>
-
     </div>
   );
 }
