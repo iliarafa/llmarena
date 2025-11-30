@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, X, LucideIcon, BookOpen } from "lucide-react";
+import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, X, LucideIcon, BookOpen, Sword } from "lucide-react";
 import { Link } from "wouter";
 import llmFightImage from "@assets/Gemini_Generated_Image_d61xiad61xiad61x.png";
 
