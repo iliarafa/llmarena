@@ -2,72 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, LucideIcon, Sword, Layers, ChevronRight, X } from "lucide-react";
+import { Copy, Sparkles, Zap, Shield, Crown, Eye, Sword, Layers, ChevronRight, X } from "lucide-react";
 import { Link } from "wouter";
 import llmFightImage from "@assets/Gemini_Generated_Image_d61xiad61xiad61x.png";
-
-interface Feature {
-  id: string;
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  extraContent?: React.ReactNode;
-}
-
-const FEATURES: Feature[] = [
-  {
-    id: "compare",
-    icon: Zap,
-    title: "Compare Models",
-    description: "See responses from GPT-4o, Claude Sonnet, Gemini Flash, and Grok side-by-side. Compare how different AI models approach the same prompt and find the best response for your needs.",
-  },
-  {
-    id: "paygo",
-    icon: Sparkles,
-    title: "Pay As You Go",
-    description: "Buy credits when you need them. No monthly subscription or commitments. Start with as few as 50 credits and top up anytime.",
-  },
-  {
-    id: "privacy",
-    icon: Shield,
-    title: "True Privacy",
-    description: "Your data stays yours. We never store your prompts, never log your responses, and never collect personal information. Complete anonymity guaranteed.",
-    extraContent: (
-      <div className="space-y-2 mt-4">
-        <div className="flex items-center gap-2">
-          <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
-          <p className="text-sm text-gray-600 dark:text-gray-400">Zero data collection</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
-          <p className="text-sm text-gray-600 dark:text-gray-400">Prompts never stored</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Check className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" strokeWidth={2.5} />
-          <p className="text-sm text-gray-600 dark:text-gray-400">Complete anonymity</p>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "caesar",
-    icon: Crown,
-    title: "Caesar",
-    description: "Let an AI arbiter analyze and score responses across accuracy, clarity, creativity, and safety. Get an unbiased verdict on which model performed best for your specific prompt.",
-  },
-  {
-    id: "blind",
-    icon: Eye,
-    title: "Blind Mode",
-    description: "Evaluate responses without bias. Model names are hidden until you vote or reveal results. Make your choice based purely on quality, not brand recognition.",
-  },
-  {
-    id: "maximus",
-    icon: Sword,
-    title: "Maximus",
-    description: "The ultimate synthesizer. Distills the best insights from all 4 models into one perfect response.",
-  },
-];
 
 function BattleModesContent() {
   return (

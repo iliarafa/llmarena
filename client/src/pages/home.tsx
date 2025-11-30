@@ -71,8 +71,16 @@ export default function Home() {
   
   const isGuest = !isAuthenticated && !!localStorage.getItem("guestToken");
   
-  // Calculate credit cost: 1 credit per model + 3 for Caesar + 5 for Maximus
-  const baseCreditCost = selectedModels.length;
+  // Calculate credit cost using tiered pricing (matches backend)
+  // 1 model = 3 credits, 2 models = 5 credits, 3 models = 7 credits, 4 models = 10 credits
+  const creditCostMap: Record<number, number> = {
+    0: 0,
+    1: 3,
+    2: 5,
+    3: 7,
+    4: 10,
+  };
+  const baseCreditCost = creditCostMap[selectedModels.length] || 0;
   const caesarCost = caesarEnabled ? 3 : 0;
   const maximusCost = maximusEnabled ? 5 : 0;
   const creditCost = baseCreditCost + caesarCost + maximusCost;
