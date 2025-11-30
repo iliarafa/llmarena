@@ -282,83 +282,71 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Mobile Feature List - Static vertical stack */}
-        <div className="my-8 md:hidden flex flex-col gap-3">
+        {/* Mobile Feature List - Premium Borderless Typographic List */}
+        <div className="my-8 md:hidden flex flex-col max-w-2xl mx-auto">
           <div 
-            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
             data-testid="feature-list-compare"
           >
-            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
-              <Zap className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-            </div>
+            <Zap className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">Compare Models</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Run GPT-4o, Claude, Gemini and Grok side by side to find the best answer.</p>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Compare Models</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Run GPT-4o, Claude, Gemini and Grok side by side to find the best answer.</p>
             </div>
           </div>
 
           <div 
-            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
             data-testid="feature-list-paygo"
           >
-            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
-              <Sparkles className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-            </div>
+            <Sparkles className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">Pay As You Go</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-[13px]">No subscriptions. Buy credits starting at $3.00. Credits never expire.</p>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Pay As You Go</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">No subscriptions. Buy credits starting at $2.50. Credits never expire.</p>
             </div>
           </div>
 
           <div 
-            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
             data-testid="feature-list-privacy"
           >
-            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
-              <Shield className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-            </div>
+            <Shield className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">True Privacy</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Your prompts and responses vanish from RAM instantly when the session ends.</p>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">True Privacy</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Your prompts and responses vanish from RAM instantly when the session ends.</p>
             </div>
           </div>
 
           <div 
-            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
             data-testid="feature-list-blind"
           >
-            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
-              <Eye className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-            </div>
+            <Eye className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Model identities are hidden and scrambled using Fisher-Yates shuffling.</p>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Blind Mode</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Model identities are hidden and scrambled using Fisher-Yates shuffling.</p>
             </div>
           </div>
 
           <div 
-            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
             data-testid="feature-list-caesar"
           >
-            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
-              <Crown className="w-5 h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
-            </div>
+            <Crown className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">Caesar</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Delivers objective verdicts and identifies factual divergences with Hallucination Alerts.</p>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Caesar</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Delivers objective verdicts and identifies factual divergences with Hallucination Alerts.</p>
             </div>
           </div>
 
           <div 
-            className="bg-white dark:bg-gray-900 border border-gray-900 dark:border-gray-100 rounded-xl p-4 flex flex-row items-start gap-4 hover:border-gray-700 dark:hover:border-gray-300 transition-colors"
+            className="group py-6 flex flex-row items-start gap-4"
             data-testid="feature-list-maximus"
           >
-            <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg shrink-0">
-              <Sword className="w-5 h-5 text-gray-900 dark:text-gray-100" strokeWidth={2} />
-            </div>
+            <Sword className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">Maximus</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Synthesizes the best insights from all 4 models into one perfect response.</p>
+              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform">Maximus</h3>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Synthesizes the best insights from all 4 models into one perfect response.</p>
             </div>
           </div>
         </div>
