@@ -398,7 +398,7 @@ export default function Landing() {
             <Sword className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
             <div>
               <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 transition-transform text-[14px] pt-[0px] pb-[0px]">Maximus</h3>
-              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Synthesizes the best insights from all 4 models into one perfect response.</p>
+              <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Synthesizes the best insights from all 4 models into one perfect response.</p>
             </div>
           </div>
         </div>
