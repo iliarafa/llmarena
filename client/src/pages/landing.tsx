@@ -345,7 +345,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Caesar</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-[13px]">AI Arbiter. Delivers objective verdicts and identifies factual divergences with Hallucination Alerts.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-[13px]">Delivers objective verdicts and identifies factual divergences with Hallucination Alerts.</p>
             </div>
           </div>
 
