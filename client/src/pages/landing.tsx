@@ -306,7 +306,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Pay As You Go</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">No subscriptions. Buy credits starting at $2.50. Credits never expire.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-[13px]">No subscriptions. Buy credits starting at $3.00. Credits never expire.</p>
             </div>
           </div>
 
