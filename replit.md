@@ -69,6 +69,17 @@ The platform is designed with a core principle of zero data collection regarding
 ### Payment Processing
 - Stripe for credit purchases (configured for live mode with webhooks).
 
+### Credit Pricing Model
+- **Tiered model pricing** (synchronized between frontend and backend):
+  - 1 model = 3 credits
+  - 2 models = 5 credits
+  - 3 models = 7 credits
+  - 4 models = 10 credits
+- **Add-ons**:
+  - Caesar Judge: +3 credits
+  - Maximus: +5 credits
+- Pricing logic defined in `server/routes.ts` (backend) and `client/src/pages/home.tsx` (frontend display). Keep these synchronized.
+
 ### UI Components
 - Radix UI primitives
 - Shadcn/ui component library
