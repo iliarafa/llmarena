@@ -208,7 +208,7 @@ export default function Landing() {
         {/* Auth Section - Borderless Typographic */}
         <div className="hidden md:grid md:grid-cols-2 md:gap-12 max-w-2xl mx-auto mb-6">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 dark:text-white" data-testid="text-try-guest-title">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white" data-testid="text-try-guest-title">
               Try as Guest
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">
@@ -249,7 +249,7 @@ export default function Landing() {
           </div>
 
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 dark:text-white" data-testid="text-sign-in-title">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white" data-testid="text-sign-in-title">
               Sign In
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">
@@ -265,141 +265,117 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Mobile Feature List - Premium Borderless Typographic List */}
+        {/* Mobile Feature List - Premium Borderless Typographic List with Hanging Icons */}
         <div className="my-8 md:hidden flex flex-col max-w-2xl mx-auto">
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
+            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-compare"
           >
-            <Zap className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-sky-500 transition-all duration-300 ease-out">Compare Models</h3>
-              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Run GPT-4o, Claude, Gemini and Grok side by side to find the best answer.</p>
-            </div>
+            <Zap className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out">Compare Models</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run <span className="font-bold text-gray-900 dark:text-white">GPT-4o</span>, <span className="font-bold text-gray-900 dark:text-white">Claude</span>, <span className="font-bold text-gray-900 dark:text-white">Gemini</span>, and <span className="font-bold text-gray-900 dark:text-white">Grok</span> side by side.</p>
           </div>
 
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
+            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-paygo"
           >
-            <Sparkles className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-emerald-600 transition-all duration-300 ease-out">Pay As You Go</h3>
-              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">No subscriptions. Buy credits starting at $2.50. Credits never expire.</p>
-            </div>
+            <Sparkles className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors duration-300 ease-out">Pay As You Go</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">No subscriptions. Credits starting at <span className="font-bold text-gray-900 dark:text-white">$3.00</span>. They <span className="font-bold text-gray-900 dark:text-white">never expire</span>.</p>
           </div>
 
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
+            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-privacy"
           >
-            <Shield className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-rose-600 transition-all duration-300 ease-out">True Privacy</h3>
-              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Your prompts and responses vanish from RAM instantly when the session ends.</p>
-            </div>
+            <Shield className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-rose-600 transition-colors duration-300 ease-out">True Privacy</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from <span className="font-bold text-gray-900 dark:text-white">RAM instantly</span> when session ends.</p>
           </div>
 
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
+            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-blind"
           >
-            <Eye className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-violet-600 transition-all duration-300 ease-out">Blind Mode</h3>
-              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Model identities are hidden and scrambled using Fisher-Yates shuffling.</p>
-            </div>
+            <Eye className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-violet-600 transition-colors duration-300 ease-out">Blind Mode</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Unbiased evaluation. Identities scrambled using <span className="font-bold text-gray-900 dark:text-white">Fisher-Yates shuffling</span>.</p>
           </div>
 
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4"
+            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-list-caesar"
           >
-            <Crown className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-amber-500 transition-all duration-300 ease-out">Caesar</h3>
-              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Delivers objective verdicts and identifies factual divergences with Hallucination Alerts.</p>
-            </div>
+            <Crown className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors duration-300 ease-out">Caesar</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">AI Arbiter. Detection of factual divergences with <span className="font-bold text-gray-900 dark:text-white">Hallucination Alerts</span>.</p>
           </div>
 
           <div 
-            className="group py-6 flex flex-row items-start gap-4"
+            className="group relative pl-8 py-4"
             data-testid="feature-list-maximus"
           >
-            <Sword className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-[#800020] transition-all duration-300 ease-out">Maximus</h3>
-              <p className="text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mt-1">Synthesizes the best insights from all 4 models into one perfect response.</p>
-            </div>
+            <Sword className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-[#800020] transition-colors duration-300 ease-out">Maximus</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">The Champion. <span className="font-bold text-gray-900 dark:text-white">Synthesizes</span> best insights into one <span className="font-bold text-gray-900 dark:text-white">perfect response</span>.</p>
           </div>
         </div>
 
-        {/* Desktop Feature List - Premium Borderless Typographic List */}
+        {/* Desktop Feature List - Premium Borderless Typographic List with Hanging Icons */}
         <div className="hidden md:flex flex-col max-w-2xl mx-auto">
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4 px-[12px] pl-[0px] pr-[0px] pt-[12px] pb-[12px]"
+            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-compare"
           >
-            <Zap className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-sky-500 transition-all duration-300 ease-out text-[14px]">Compare Models</h3>
-              <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Run GPT-4o, Claude, Gemini and Grok side by side to find the best answer.</p>
-            </div>
+            <Zap className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out">Compare Models</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run <span className="font-bold text-gray-900 dark:text-white">GPT-4o</span>, <span className="font-bold text-gray-900 dark:text-white">Claude</span>, <span className="font-bold text-gray-900 dark:text-white">Gemini</span>, and <span className="font-bold text-gray-900 dark:text-white">Grok</span> side by side.</p>
           </div>
 
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4 pt-[12px] pb-[12px]"
+            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-paygo"
           >
-            <Sparkles className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-emerald-600 transition-all duration-300 ease-out text-[14px]">Pay As You Go</h3>
-              <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">No subscriptions. Buy credits starting at $3.00. Credits never expire.</p>
-            </div>
+            <Sparkles className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors duration-300 ease-out">Pay As You Go</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">No subscriptions. Credits starting at <span className="font-bold text-gray-900 dark:text-white">$3.00</span>. They <span className="font-bold text-gray-900 dark:text-white">never expire</span>.</p>
           </div>
 
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4 pt-[12px] pb-[12px]"
+            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-privacy"
           >
-            <Shield className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-rose-600 transition-all duration-300 ease-out text-[14px]">True Privacy</h3>
-              <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Your prompts and responses vanish from RAM instantly when the session ends.</p>
-            </div>
+            <Shield className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-rose-600 transition-colors duration-300 ease-out">True Privacy</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from <span className="font-bold text-gray-900 dark:text-white">RAM instantly</span> when session ends.</p>
           </div>
 
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4 pt-[12px] pb-[12px]"
+            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-blind"
           >
-            <Eye className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-violet-600 transition-all duration-300 ease-out text-[14px]">Blind Mode</h3>
-              <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Model identities are hidden and scrambled using Fisher-Yates shuffling.</p>
-            </div>
+            <Eye className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-violet-600 transition-colors duration-300 ease-out">Blind Mode</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Unbiased evaluation. Identities scrambled using <span className="font-bold text-gray-900 dark:text-white">Fisher-Yates shuffling</span>.</p>
           </div>
 
           <div 
-            className="group py-6 border-b border-gray-100 dark:border-gray-800 flex flex-row items-start gap-4 pt-[12px] pb-[12px]"
+            className="group relative pl-8 py-4 border-b border-black/5 dark:border-white/5"
             data-testid="feature-tile-caesar"
           >
-            <Crown className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-amber-500 transition-all duration-300 ease-out text-[14px]">Caesar</h3>
-              <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Delivers objective verdicts and identifies factual divergences with Hallucination Alerts.</p>
-            </div>
+            <Crown className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors duration-300 ease-out">Caesar</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">AI Arbiter. Detection of factual divergences with <span className="font-bold text-gray-900 dark:text-white">Hallucination Alerts</span>.</p>
           </div>
 
           <div 
-            className="group py-6 flex flex-row items-start gap-4 pt-[12px] pb-[12px]"
+            className="group relative pl-8 py-4"
             data-testid="feature-tile-maximus"
           >
-            <Sword className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
-            <div>
-              <h3 className="font-black tracking-tight text-gray-900 dark:text-white uppercase group-hover:translate-x-1 group-hover:text-[#800020] transition-all duration-300 ease-out text-[14px]">Maximus</h3>
-              <p className="text-gray-500 dark:text-gray-400 font-medium mt-1 text-[12px]">Synthesizes the best insights from all 4 models into one perfect response.</p>
-            </div>
+            <Sword className="absolute left-0 top-4 w-5 h-5 text-gray-400 dark:text-gray-500" strokeWidth={2} />
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-[#800020] transition-colors duration-300 ease-out">Maximus</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">The Champion. <span className="font-bold text-gray-900 dark:text-white">Synthesizes</span> best insights into one <span className="font-bold text-gray-900 dark:text-white">perfect response</span>.</p>
           </div>
         </div>
       </div>
