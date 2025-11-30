@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, X, LucideIcon, BookOpen } from "lucide-react";
+import { Copy, Sparkles, Zap, Shield, Check, Crown, Eye, X, LucideIcon, Sword } from "lucide-react";
 import { Link } from "wouter";
 import llmFightImage from "@assets/Gemini_Generated_Image_d61xiad61xiad61x.png";
 
@@ -62,19 +62,10 @@ const FEATURES: Feature[] = [
     description: "Evaluate responses without bias. Model names are hidden until you vote or reveal results. Make your choice based purely on quality, not brand recognition.",
   },
   {
-    id: "notebook",
-    icon: BookOpen,
-    title: "Notebook",
-    description: "Keep notes locally on your device. Your notebook data stays in your browser and is never sent to our servers - consistent with our zero data collection policy.",
-    extraContent: (
-      <div className="mt-4">
-        <a href="/notebook">
-          <button className="w-full bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 text-white font-medium py-2.5 px-4 rounded-lg transition-colors">
-            Open Notebook
-          </button>
-        </a>
-      </div>
-    ),
+    id: "maximus",
+    icon: Sword,
+    title: "Maximus",
+    description: "The ultimate synthesizer. Distills the best insights from all 4 models into one perfect response.",
   },
 ];
 
@@ -300,8 +291,9 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="my-8 md:my-0">
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 mb-3 md:mb-5">
+        <div className="my-8 md:my-0 space-y-3 md:space-y-5">
+          {/* Row 1: Compare Models | Pay As You Go */}
+          <div className="grid grid-cols-2 gap-3 md:gap-5">
             <div 
               className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
               onClick={() => handleFeatureClick(FEATURES[0])}
@@ -333,7 +325,10 @@ export default function Landing() {
                 Buy credits when you need them. No monthly subscription or commitments.
               </p>
             </div>
+          </div>
 
+          {/* Row 2: True Privacy | Blind Mode */}
+          <div className="grid grid-cols-2 gap-3 md:gap-5">
             <div 
               className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
               onClick={() => handleFeatureClick(FEATURES[2])}
@@ -362,19 +357,23 @@ export default function Landing() {
             </div>
 
             <div 
-              className="md:hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer active:scale-[0.98]"
-              onClick={() => handleFeatureClick(FEATURES[5])}
-              data-testid="feature-tile-notebook"
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
+              onClick={() => handleFeatureClick(FEATURES[4])}
+              data-testid="feature-tile-blind"
             >
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <BookOpen className="w-4 h-4 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+              <div className="flex items-center gap-2 md:gap-3 md:mb-3">
+                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Eye className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
                 </div>
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Notebook</h3>
+                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
               </div>
+              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                Evaluate responses without bias. Model names are hidden until you vote or reveal results.
+              </p>
             </div>
           </div>
 
+          {/* Row 3: Caesar | Maximus */}
           <div className="grid grid-cols-2 gap-3 md:gap-5">
             <div 
               className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
@@ -393,18 +392,18 @@ export default function Landing() {
             </div>
 
             <div 
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
-              onClick={() => handleFeatureClick(FEATURES[4])}
-              data-testid="feature-tile-blind"
+              className="bg-white dark:bg-gray-900 border border-amber-300 dark:border-amber-600 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-amber-400 dark:hover:border-amber-500 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
+              onClick={() => handleFeatureClick(FEATURES[5])}
+              data-testid="feature-tile-maximus"
             >
               <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <Eye className="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300" strokeWidth={2} />
+                <div className="p-1.5 md:p-2 rounded-lg bg-amber-100 dark:bg-amber-900/50">
+                  <Sword className="w-4 h-4 md:w-5 md:h-5 text-amber-600 dark:text-amber-400" strokeWidth={2} />
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Blind Mode</h3>
+                <h3 className="text-sm md:text-base font-semibold text-amber-700 dark:text-amber-300">Maximus</h3>
               </div>
-              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                Evaluate responses without bias. Model names are hidden until you vote or reveal results.
+              <p className="hidden md:block text-sm text-amber-600/80 dark:text-amber-400/80 leading-relaxed">
+                The ultimate synthesizer. Distills the best insights from all 4 models into one perfect response.
               </p>
             </div>
           </div>
