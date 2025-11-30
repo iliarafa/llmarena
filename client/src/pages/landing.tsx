@@ -392,17 +392,17 @@ export default function Landing() {
             </div>
 
             <div 
-              className="bg-white dark:bg-gray-900 border border-amber-300 dark:border-amber-600 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-amber-400 dark:hover:border-amber-500 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
+              className="bg-white dark:bg-gray-900 border border-gray-900 dark:border-gray-100 rounded-xl p-3 md:p-6 shadow-sm hover:shadow-md hover:border-gray-700 dark:hover:border-gray-300 transition-all duration-200 cursor-pointer md:cursor-default active:scale-[0.98] md:active:scale-100"
               onClick={() => handleFeatureClick(FEATURES[5])}
               data-testid="feature-tile-maximus"
             >
               <div className="flex items-center gap-2 md:gap-3 md:mb-3">
-                <div className="p-1.5 md:p-2 rounded-lg bg-amber-100 dark:bg-amber-900/50">
-                  <Sword className="w-4 h-4 md:w-5 md:h-5 text-amber-600 dark:text-amber-400" strokeWidth={2} />
+                <div className="p-1.5 md:p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Sword className="w-4 h-4 md:w-5 md:h-5 text-gray-900 dark:text-gray-100" strokeWidth={2} />
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-amber-700 dark:text-amber-300">Maximus</h3>
+                <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Maximus</h3>
               </div>
-              <p className="hidden md:block text-sm text-amber-600/80 dark:text-amber-400/80 leading-relaxed">
+              <p className="hidden md:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                 The ultimate synthesizer. Distills the best insights from all 4 models into one perfect response.
               </p>
             </div>
