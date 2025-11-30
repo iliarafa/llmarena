@@ -392,7 +392,7 @@ export default function Landing() {
           </div>
 
           <div 
-            className="group py-6 flex flex-row items-start gap-4"
+            className="group py-6 flex flex-row items-start gap-4 pt-[12px] pb-[12px]"
             data-testid="feature-tile-maximus"
           >
             <Sword className="w-5 h-5 text-gray-900 dark:text-white shrink-0 mt-1" strokeWidth={2.5} />
