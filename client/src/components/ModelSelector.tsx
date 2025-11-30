@@ -187,27 +187,31 @@ export default function ModelSelector({
       <div className="flex flex-col gap-3 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-600' : 'text-gray-400'}`} />
+            <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-emerald-600' : 'text-gray-400'}`} />
             <Label htmlFor="caesar-toggle" className={`text-sm font-medium cursor-pointer ${caesarEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Caesar
             </Label>
-            {caesarEnabled && (
-              <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs px-2 py-0.5 rounded-full font-mono">
-                +3
-              </span>
-            )}
+            <Switch
+              id="caesar-toggle"
+              checked={caesarEnabled}
+              onCheckedChange={onCaesarToggle}
+              activeLabel="+3"
+              data-testid="checkbox-input-caesar"
+            />
           </div>
 
           <div className="flex items-center gap-2">
-            <Sword className={`h-4 w-4 ${maximusEnabled ? 'text-amber-600' : 'text-gray-400'}`} />
+            <Sword className={`h-4 w-4 ${maximusEnabled ? 'text-emerald-600' : 'text-gray-400'}`} />
             <Label htmlFor="maximus-toggle" className={`text-sm font-medium cursor-pointer ${maximusEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Maximus
             </Label>
-            {maximusEnabled && (
-              <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 text-xs px-2 py-0.5 rounded-full font-mono">
-                +5
-              </span>
-            )}
+            <Switch
+              id="maximus-toggle"
+              checked={maximusEnabled}
+              onCheckedChange={onMaximusToggle}
+              activeLabel="+5"
+              data-testid="checkbox-input-maximus"
+            />
           </div>
 
           <div className="flex items-center gap-2">
@@ -215,30 +219,13 @@ export default function ModelSelector({
             <Label htmlFor="blind-toggle" className={`text-sm font-medium cursor-pointer ${blindModeEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
               Blind
             </Label>
+            <Switch
+              id="blind-toggle"
+              checked={blindModeEnabled}
+              onCheckedChange={onBlindModeToggle}
+              data-testid="checkbox-input-blind-mode"
+            />
           </div>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <Switch
-            id="caesar-toggle"
-            checked={caesarEnabled}
-            onCheckedChange={onCaesarToggle}
-            data-testid="checkbox-input-caesar"
-          />
-
-          <Switch
-            id="maximus-toggle"
-            checked={maximusEnabled}
-            onCheckedChange={onMaximusToggle}
-            data-testid="checkbox-input-maximus"
-          />
-
-          <Switch
-            id="blind-toggle"
-            checked={blindModeEnabled}
-            onCheckedChange={onBlindModeToggle}
-            data-testid="checkbox-input-blind-mode"
-          />
         </div>
 
         {(caesarEnabled || maximusEnabled) && (
