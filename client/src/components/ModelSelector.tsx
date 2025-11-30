@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Crown, EyeOff, Trash2, ShieldCheck, FlaskConical } from "lucide-react";
+import { Crown, EyeOff, Trash2, ShieldCheck, Sword } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -16,7 +16,7 @@ import claudeLogo from "@assets/claude-color_1764386516580.png";
 
 export type ModelId = "gpt-4o" | "claude-sonnet" | "gemini-flash" | "grok";
 export type JudgeModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
-export type FusionModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
+export type MaximusModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
 
 export interface Model {
   id: ModelId;
@@ -46,12 +46,12 @@ export const JUDGE_MODELS: JudgeModel[] = [
   { id: "grok", name: "Grok-2" },
 ];
 
-export interface FusionModel {
-  id: FusionModelId;
+export interface MaximusModel {
+  id: MaximusModelId;
   name: string;
 }
 
-export const FUSION_MODELS: FusionModel[] = [
+export const MAXIMUS_MODELS: MaximusModel[] = [
   { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet" },
   { id: "gpt-4o", name: "GPT-4o" },
   { id: "gemini-flash", name: "Gemini Flash" },
@@ -67,10 +67,10 @@ interface ModelSelectorProps {
   onCaesarJudgeChange: (model: JudgeModelId) => void;
   blindModeEnabled: boolean;
   onBlindModeToggle: (enabled: boolean) => void;
-  fusionEnabled: boolean;
-  onFusionToggle: (enabled: boolean) => void;
-  fusionEngineModel: FusionModelId;
-  onFusionEngineChange: (model: FusionModelId) => void;
+  maximusEnabled: boolean;
+  onMaximusToggle: (enabled: boolean) => void;
+  maximusEngineModel: MaximusModelId;
+  onMaximusEngineChange: (model: MaximusModelId) => void;
 }
 
 export default function ModelSelector({ 
@@ -82,10 +82,10 @@ export default function ModelSelector({
   onCaesarJudgeChange,
   blindModeEnabled,
   onBlindModeToggle,
-  fusionEnabled,
-  onFusionToggle,
-  fusionEngineModel,
-  onFusionEngineChange,
+  maximusEnabled,
+  onMaximusToggle,
+  maximusEngineModel,
+  onMaximusEngineChange,
 }: ModelSelectorProps) {
   const [isWiping, setIsWiping] = useState(false);
   const modelGridRef = useRef<HTMLDivElement>(null);
@@ -237,44 +237,44 @@ export default function ModelSelector({
         <div className="flex flex-col gap-1.5 pl-4 border-l border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <FlaskConical className={`h-4 w-4 ${fusionEnabled ? 'text-indigo-600' : 'text-gray-400'}`} />
-              <Label htmlFor="fusion-toggle" className={`text-sm font-medium cursor-pointer ${fusionEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-                Fusion
+              <Sword className={`h-4 w-4 ${maximusEnabled ? 'text-amber-600' : 'text-gray-400'}`} />
+              <Label htmlFor="maximus-toggle" className={`text-sm font-medium cursor-pointer ${maximusEnabled ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                Maximus
               </Label>
-              {fusionEnabled && (
-                <span className="bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 text-xs px-2 py-0.5 rounded-full font-mono">
+              {maximusEnabled && (
+                <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 text-xs px-2 py-0.5 rounded-full font-mono">
                   +5
                 </span>
               )}
             </div>
             <Switch
-              id="fusion-toggle"
-              checked={fusionEnabled}
-              onCheckedChange={onFusionToggle}
-              data-testid="checkbox-input-fusion"
+              id="maximus-toggle"
+              checked={maximusEnabled}
+              onCheckedChange={onMaximusToggle}
+              data-testid="checkbox-input-maximus"
             />
           </div>
-          {fusionEnabled && (
-            <div className="flex items-center gap-1 text-[10px] text-gray-400 dark:text-gray-500" data-testid="text-fusion-privacy">
+          {maximusEnabled && (
+            <div className="flex items-center gap-1 text-[10px] text-gray-400 dark:text-gray-500" data-testid="text-maximus-description">
               <ShieldCheck className="w-3 h-3 flex-shrink-0" />
-              <span>Synthesizes best insights. One-time API call.</span>
+              <span>The Ultimate Champion. Distills the best insights from all 4 models.</span>
             </div>
           )}
         </div>
 
-        {fusionEnabled && (
+        {maximusEnabled && (
           <div className="flex items-center gap-2 pl-4 border-l border-gray-200 dark:border-gray-700">
-            <span className="text-xs text-gray-400">Engine:</span>
+            <span className="text-xs text-gray-400">Maximus Engine:</span>
             <Select
-              value={fusionEngineModel}
-              onValueChange={(value) => onFusionEngineChange(value as FusionModelId)}
+              value={maximusEngineModel}
+              onValueChange={(value) => onMaximusEngineChange(value as MaximusModelId)}
             >
-              <SelectTrigger className="h-8 w-[140px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-fusion-engine">
+              <SelectTrigger className="h-8 w-[160px] text-xs border-gray-200 dark:border-gray-700" data-testid="select-maximus-engine">
                 <SelectValue placeholder="Select engine" />
               </SelectTrigger>
               <SelectContent>
-                {FUSION_MODELS.map((engine) => (
-                  <SelectItem key={engine.id} value={engine.id} data-testid={`option-engine-${engine.id}`}>
+                {MAXIMUS_MODELS.map((engine) => (
+                  <SelectItem key={engine.id} value={engine.id} data-testid={`option-maximus-${engine.id}`}>
                     {engine.name}
                   </SelectItem>
                 ))}
