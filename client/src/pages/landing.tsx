@@ -78,7 +78,7 @@ function BattleModesContent() {
       >
         <Eye className="absolute left-0 top-[2px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
         <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-violet-600 transition-colors duration-300 ease-out">Blind Mode</h3>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Unbiased evaluation. Identities scrambled using <span className="font-bold text-gray-900 dark:text-white">Fisher-Yates shuffling</span>.</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Unbiased evaluation. Identities scrambled using <span className="text-gray-900 dark:text-white font-semibold">Fisher-Yates shuffling</span>.</p>
       </div>
 
       <div 
@@ -87,7 +87,7 @@ function BattleModesContent() {
       >
         <Crown className="absolute left-0 top-[2px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
         <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors duration-300 ease-out">Caesar</h3>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">AI Arbiter. Detection of factual divergences with <span className="font-bold text-gray-900 dark:text-white">Hallucination Alerts</span>.</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">AI Arbiter. Detection of factual divergences with <span className="text-gray-900 dark:text-white font-semibold">Hallucination Alerts</span>.</p>
       </div>
 
       <div 
@@ -96,7 +96,7 @@ function BattleModesContent() {
       >
         <Sword className="absolute left-0 top-[2px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
         <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-[#800020] transition-colors duration-300 ease-out">Maximus</h3>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">The Champion. <span className="font-bold text-gray-900 dark:text-white">Synthesizes</span> best insights into one <span className="font-bold text-gray-900 dark:text-white">perfect response</span>.</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">The Champion. <span className="text-gray-900 dark:text-white font-semibold">Synthesizes</span> best insights into one <span className="text-gray-900 dark:text-white font-semibold">perfect response</span>.</p>
       </div>
     </div>
   );
@@ -389,7 +389,7 @@ export default function Landing() {
           >
             <Shield className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-rose-600 transition-colors duration-300 ease-out">True Privacy</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from <span className="font-bold text-gray-900 dark:text-white">RAM instantly</span> when session ends.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Zero logs. Data vanishes from <span className="text-gray-900 dark:text-white font-medium">RAM instantly</span> when session ends.</p>
           </div>
         </div>
       </div>
