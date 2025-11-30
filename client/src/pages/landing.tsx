@@ -358,7 +358,7 @@ export default function Landing() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Maximus</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">The Champion. Synthesizes the best insights from all models into one perfect answer.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">Synthesizes the best insights from all models into one perfect answer.</p>
             </div>
           </div>
         </div>
