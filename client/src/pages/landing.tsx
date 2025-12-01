@@ -88,6 +88,9 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       <div className="flex-1 max-w-6xl mx-auto w-full px-4 md:px-6 py-8 md:py-16">
         <div className="text-center mb-6 md:mb-8">
           <h1 

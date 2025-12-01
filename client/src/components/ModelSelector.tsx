@@ -16,7 +16,7 @@ import claudeLogo from "@assets/claude-color_1764386516580.png";
 
 export type ModelId = "gpt-4o" | "claude-sonnet" | "gemini-flash" | "grok";
 export type JudgeModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
-export type MaximusModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
+export type MaximusModelId = "gpt-4o" | "gemini-flash" | "grok";
 
 export interface Model {
   id: ModelId;
@@ -52,7 +52,6 @@ export interface MaximusModel {
 }
 
 export const MAXIMUS_MODELS: MaximusModel[] = [
-  { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet" },
   { id: "gpt-4o", name: "GPT-4o" },
   { id: "gemini-flash", name: "Gemini Flash" },
   { id: "grok", name: "Grok-4" },

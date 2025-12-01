@@ -16,7 +16,7 @@ Output a single, definitive response that stands above the rest. Do not meta-com
 
 Write your forged answer directly:`;
 
-export type MaximusModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
+export type MaximusModelId = "gpt-4o" | "gemini-flash" | "grok";
 
 export interface MaximusResponse {
   synthesis?: string;

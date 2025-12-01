@@ -338,17 +338,6 @@ export async function generateMaximus(
     let tokenCount: number | undefined;
     
     switch (maximusModel) {
-      case "claude-3-5-sonnet":
-        const claudeResponse = await anthropic.messages.create({
-          model: "claude-3-5-sonnet-20241022",
-          max_tokens: 4096,
-          messages: [{ role: "user", content: maximusPrompt }],
-        });
-        const claudeContent = claudeResponse.content[0];
-        responseText = claudeContent.type === "text" ? claudeContent.text : "";
-        tokenCount = claudeResponse.usage?.output_tokens;
-        break;
-        
       case "gpt-4o":
         const openaiResponse = await openai.chat.completions.create({
           model: "gpt-4o",
