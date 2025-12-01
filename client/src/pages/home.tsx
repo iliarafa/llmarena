@@ -15,6 +15,7 @@ import { generatePDF, downloadMarkdown, downloadJSON } from "@/lib/reportExporte
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History, Shield, Lock } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeProvider";
 import {
   Tooltip,
   TooltipContent,
@@ -498,6 +499,8 @@ export default function Home() {
                 </TooltipContent>
               </Tooltip>
             </div>
+            
+            <ThemeToggle className="h-9 w-9" />
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

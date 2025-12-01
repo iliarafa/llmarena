@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Sparkles, Zap, Shield, Crown, Eye, Sword, Layers, ChevronRight, X } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeProvider";
 import { Link } from "wouter";
 import llmFightImage from "@assets/Gemini_Generated_Image_d61xiad61xiad61x.png";
 
@@ -385,7 +386,7 @@ export default function Landing() {
       )}
       <footer className="mt-auto py-6 md:py-8 border-t border-gray-200 dark:border-gray-800 text-center">
         <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">v 1.0</p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">This Whole World LLC — November 2025</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">This Whole World LLC — December 2025</p>
       </footer>
     </div>
   );
