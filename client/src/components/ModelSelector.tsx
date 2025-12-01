@@ -43,7 +43,7 @@ export const JUDGE_MODELS: JudgeModel[] = [
   { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet" },
   { id: "gpt-4o", name: "GPT-4o" },
   { id: "gemini-flash", name: "Gemini Flash" },
-  { id: "grok", name: "Grok-2" },
+  { id: "grok", name: "Grok-4" },
 ];
 
 export interface MaximusModel {
@@ -55,7 +55,7 @@ export const MAXIMUS_MODELS: MaximusModel[] = [
   { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet" },
   { id: "gpt-4o", name: "GPT-4o" },
   { id: "gemini-flash", name: "Gemini Flash" },
-  { id: "grok", name: "Grok-2" },
+  { id: "grok", name: "Grok-4" },
 ];
 
 interface ModelSelectorProps {

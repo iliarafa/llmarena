@@ -266,7 +266,7 @@ export async function generateCaesarVerdict(
         
       case "grok":
         const grokResponse = await openrouter.chat.completions.create({
-          model: "x-ai/grok-2-1212",
+          model: "x-ai/grok-4-fast",
           messages: [{ role: "user", content: caesarPrompt }],
           max_tokens: 2048,
         });
@@ -370,7 +370,7 @@ export async function generateMaximus(
         
       case "grok":
         const grokResponse = await openrouter.chat.completions.create({
-          model: "x-ai/grok-2-1212",
+          model: "x-ai/grok-4-fast",
           messages: [{ role: "user", content: maximusPrompt }],
           max_tokens: 4096,
         });
