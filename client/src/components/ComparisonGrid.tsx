@@ -53,31 +53,33 @@ export default function ComparisonGrid({
 
   const hasActiveFeatures = caesarEnabled || maximusEnabled || blindModeEnabled;
 
+  const FeatureDescriptions = () => hasActiveFeatures ? (
+    <div className="flex flex-wrap justify-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300" data-testid="feature-descriptions">
+      {caesarEnabled && (
+        <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-full" data-testid="feature-desc-caesar">
+          <Crown className="h-4 w-4 text-amber-500" />
+          <span className="text-sm text-amber-700 dark:text-amber-300">Evaluates responses and picks the winner</span>
+        </div>
+      )}
+      {maximusEnabled && (
+        <div className="flex items-center gap-2 px-4 py-2 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 rounded-full" data-testid="feature-desc-maximus">
+          <Sword className="h-4 w-4 text-[#800020]" />
+          <span className="text-sm text-rose-700 dark:text-rose-300">Synthesizes the best insights from all responses</span>
+        </div>
+      )}
+      {blindModeEnabled && (
+        <div className="flex items-center gap-2 px-4 py-2 bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-full" data-testid="feature-desc-blind">
+          <EyeOff className="h-4 w-4 text-purple-600" />
+          <span className="text-sm text-purple-700 dark:text-purple-300">Models hidden until you vote or reveal</span>
+        </div>
+      )}
+    </div>
+  ) : null;
+
   if (models.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 px-4 space-y-6">
-        {hasActiveFeatures && (
-          <div className="flex flex-wrap justify-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300" data-testid="feature-descriptions">
-            {caesarEnabled && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-full" data-testid="feature-desc-caesar">
-                <Crown className="h-4 w-4 text-amber-500" />
-                <span className="text-sm text-amber-700 dark:text-amber-300">Evaluates responses and picks the winner</span>
-              </div>
-            )}
-            {maximusEnabled && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 rounded-full" data-testid="feature-desc-maximus">
-                <Sword className="h-4 w-4 text-[#800020]" />
-                <span className="text-sm text-rose-700 dark:text-rose-300">Synthesizes the best insights from all responses</span>
-              </div>
-            )}
-            {blindModeEnabled && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-full" data-testid="feature-desc-blind">
-                <EyeOff className="h-4 w-4 text-purple-600" />
-                <span className="text-sm text-purple-700 dark:text-purple-300">Models hidden until you vote or reveal</span>
-              </div>
-            )}
-          </div>
-        )}
+        <FeatureDescriptions />
         <div className="text-center max-w-md">
           <p className="text-lg text-muted-foreground">
             Select models and enter a prompt to begin
@@ -95,6 +97,9 @@ export default function ComparisonGrid({
 
   return (
     <div className="space-y-3">
+      {/* Feature Descriptions */}
+      <FeatureDescriptions />
+
       {/* Mobile Segmented Control Switcher */}
       <div 
         className="md:hidden sticky top-12 z-40 py-2 px-4"
