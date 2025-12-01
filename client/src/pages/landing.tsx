@@ -291,7 +291,7 @@ export default function Landing() {
             data-testid="feature-tile-compare"
           >
             <Zap className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out">Compare Models</h3>
+            <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out text-[13px]">Compare Models</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run GPT-4o, Claude, Gemini, and Grok side by side.</p>
           </div>
 
