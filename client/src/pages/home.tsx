@@ -665,6 +665,8 @@ export default function Home() {
               blindModeRevealed={blindModeRevealed}
               onVote={handleVote}
               caesarResponse={caesarResponse}
+              caesarEnabled={caesarEnabled}
+              maximusEnabled={maximusEnabled}
             />
             {(caesarEnabled || caesarResponse) && (
               <div className="h-full min-h-full">
