@@ -105,7 +105,7 @@ export default function ComparisonGrid({
         className="md:hidden sticky top-12 z-40 py-2 px-4"
         data-testid="model-switcher-bar"
       >
-        <div className="bg-gray-100/90 dark:bg-gray-800/90 backdrop-blur-sm p-1 rounded-xl flex justify-between gap-1">
+        <div className="bg-gray-100/90 dark:bg-gray-800/90 backdrop-blur-sm p-1 flex justify-between gap-1">
           {models.map((model, index) => {
             const contenderLabel = CONTENDER_LABELS[index] || `${index + 1}`;
             const isActive = activeIndex === index;
