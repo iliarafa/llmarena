@@ -81,7 +81,7 @@ export default function ComparisonGrid({
       <div className="flex flex-col items-center justify-center py-12 px-4 space-y-6">
         <FeatureDescriptions />
         <div className="text-center max-w-md">
-          <p className="text-lg text-muted-foreground">
+          <p className="text-muted-foreground text-[14px] font-medium">
             Select models and enter a prompt to begin
           </p>
         </div>
