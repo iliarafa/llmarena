@@ -547,8 +547,8 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8 space-y-6 md:space-y-8 pb-28 md:pb-8">
-        <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6 space-y-4 md:space-y-6 pb-28 md:pb-8">
+        <div className="max-w-4xl mx-auto space-y-3 md:space-y-4">
           {isGuest && <GuestAccountBanner creditBalance={creditBalance} />}
           
           <ModelSelector 
@@ -580,7 +580,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="pt-8">
+        <div className="pt-2">
           {responses.some(r => r.response && !r.error) && (
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">Comparison Results</h2>

@@ -78,7 +78,7 @@ export default function ComparisonGrid({
 
   if (models.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 px-4 space-y-6">
+      <div className="flex flex-col items-center justify-center py-4 px-4">
         <FeatureDescriptions />
       </div>
     );
