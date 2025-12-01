@@ -220,7 +220,7 @@ export default function Landing() {
           </div>
 
           <div>
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3" data-testid="text-sign-in-title">
+            <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3 text-[15px]" data-testid="text-sign-in-title">
               Sign In
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
