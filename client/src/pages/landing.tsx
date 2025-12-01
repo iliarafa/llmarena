@@ -179,7 +179,7 @@ export default function Landing() {
         {/* Auth Section - Borderless Typographic */}
         <div className="hidden md:grid md:grid-cols-2 md:gap-12 max-w-2xl mx-auto mb-8 pl-6">
           <div>
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3" data-testid="text-try-guest-title">
+            <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3 text-[15px]" data-testid="text-try-guest-title">
               Try as Guest
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
@@ -330,7 +330,6 @@ export default function Landing() {
           </div>
         </div>
       </div>
-
       {/* Mobile Bottom Sheet */}
       {isBattleModesOpen && (
         <>
@@ -358,7 +357,6 @@ export default function Landing() {
           </div>
         </>
       )}
-
       {/* Desktop Glass Modal */}
       {isBattleModesOpen && (
         <>
@@ -385,7 +383,6 @@ export default function Landing() {
           </div>
         </>
       )}
-
       <footer className="mt-auto py-6 md:py-8 border-t border-gray-200 dark:border-gray-800 text-center">
         <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">v 1.0</p>
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">This Whole World LLC — November 2025</p>
