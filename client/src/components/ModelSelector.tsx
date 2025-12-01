@@ -158,7 +158,7 @@ export default function ModelSelector({
                 flex flex-col items-center justify-center gap-2 p-4 cursor-pointer transition-all
                 ${isSelected 
                   ? 'ring-2 ring-gray-900 dark:ring-white bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white' 
-                  : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                  : 'bg-white dark:bg-black text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }
               `}
               data-testid={`checkbox-model-${model.id}`}
@@ -183,7 +183,7 @@ export default function ModelSelector({
         })}
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full p-4 gap-0 md:gap-6 bg-white dark:bg-gray-900">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full p-4 gap-0 md:gap-6 bg-white dark:bg-black">
         <div className="w-full md:w-auto flex flex-row items-center justify-between py-3 md:py-0">
           <div className="flex items-center gap-2">
             <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-500' : 'text-gray-400'}`} />

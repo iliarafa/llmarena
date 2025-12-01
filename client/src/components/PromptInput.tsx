@@ -41,7 +41,7 @@ export default function PromptInput({
   if (isMobileFooter) {
     return (
       <div 
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 p-3 safe-area-inset-bottom"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 p-3 safe-area-inset-bottom"
         data-testid="mobile-input-footer"
       >
         <div className="flex items-center gap-2 max-w-7xl mx-auto">
@@ -51,7 +51,7 @@ export default function PromptInput({
               onChange={(e) => onChange(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={disabled ? "Select models..." : "Enter prompt..."}
-              className="min-h-[44px] max-h-24 py-2.5 px-3 text-base resize-none rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus-visible:ring-1 focus-visible:ring-gray-400"
+              className="min-h-[44px] max-h-24 py-2.5 px-3 text-base resize-none rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black focus-visible:ring-1 focus-visible:ring-gray-400"
               disabled={disabled || isLoading}
               rows={1}
               data-testid="input-prompt-mobile"
@@ -85,7 +85,7 @@ export default function PromptInput({
   }
 
   return (
-    <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-2xl shadow-md focus-within:ring-2 focus-within:ring-gray-200 dark:focus-within:ring-gray-700 focus-within:border-gray-900 dark:focus-within:border-gray-400 transition-all">
+    <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-2xl shadow-md focus-within:ring-2 focus-within:ring-gray-200 dark:focus-within:ring-gray-700 focus-within:border-gray-900 dark:focus-within:border-gray-400 transition-all">
       <div className="p-4 pb-0">
         <Textarea
           value={value}

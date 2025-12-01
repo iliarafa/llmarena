@@ -112,7 +112,7 @@ export default function ComparisonGrid({
                 onClick={() => setActiveIndex(index)}
                 className={`relative flex-1 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${
                   isActive
-                    ? 'bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm'
+                    ? 'bg-white dark:bg-black text-black dark:text-white shadow-sm'
                     : 'text-gray-500'
                 }`}
                 data-testid={`switcher-${model.id}`}

@@ -21,7 +21,7 @@ const compareRequestSchema = z.object({
   caesarEnabled: z.boolean().optional(),
   caesarJudgeModel: z.enum(["claude-3-5-sonnet", "gpt-4o", "gemini-flash", "grok"]).optional(),
   maximusEnabled: z.boolean().optional(),
-  maximusEngineModel: z.enum(["claude-3-5-sonnet", "gpt-4o", "gemini-flash", "grok"]).optional(),
+  maximusEngineModel: z.enum(["gpt-4o", "gemini-flash", "grok"]).optional(),
 });
 
 const checkoutRequestSchema = z.object({

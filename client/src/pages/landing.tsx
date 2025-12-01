@@ -87,7 +87,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50 dark:from-black dark:to-black">
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
@@ -343,7 +343,7 @@ export default function Landing() {
             data-testid="battle-modes-overlay-mobile"
           />
           <div 
-            className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-2xl z-50 p-6 animate-in slide-in-from-bottom duration-300"
+            className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-black rounded-t-2xl z-50 p-6 animate-in slide-in-from-bottom duration-300"
             data-testid="battle-modes-sheet-mobile"
           >
             <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-6" />
@@ -370,7 +370,7 @@ export default function Landing() {
             data-testid="battle-modes-overlay-desktop"
           />
           <div 
-            className="hidden md:block fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl z-50 p-8 w-full max-w-md shadow-2xl border border-black/5 dark:border-white/10 animate-in zoom-in-95 duration-200"
+            className="hidden md:block fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/95 dark:bg-black/95 backdrop-blur-xl rounded-2xl z-50 p-8 w-full max-w-md shadow-2xl border border-black/5 dark:border-white/10 animate-in zoom-in-95 duration-200"
             data-testid="battle-modes-modal-desktop"
           >
             <div className="flex items-center justify-between mb-8">

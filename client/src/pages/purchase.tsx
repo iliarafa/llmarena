@@ -83,8 +83,8 @@ export default function Purchase() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
-      <header className="sticky top-0 z-10 border-b bg-white/95 dark:bg-gray-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-gray-950/60">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-black dark:to-black">
+      <header className="sticky top-0 z-10 border-b bg-white/95 dark:bg-black/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-black/60">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/">
@@ -117,7 +117,7 @@ export default function Purchase() {
           {creditTiers.map((tier) => (
             <div
               key={tier.credits}
-              className={`bg-white dark:bg-gray-900 rounded-xl p-6 flex flex-col justify-between transition-all ${
+              className={`bg-white dark:bg-black rounded-xl p-6 flex flex-col justify-between transition-all ${
                 tier.popular 
                   ? "ring-2 ring-black dark:ring-white border-transparent relative" 
                   : "border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-md"
