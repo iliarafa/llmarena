@@ -218,6 +218,7 @@ export default function ModelSelector({
             onCheckedChange={onCaesarToggle}
             activeLabel="+3"
             activeColor="amber"
+            className="ml-4"
             data-testid="checkbox-input-caesar"
           />
         </div>
@@ -255,6 +256,7 @@ export default function ModelSelector({
             onCheckedChange={onMaximusToggle}
             activeLabel="+5"
             activeColor="burgundy"
+            className="ml-4"
             data-testid="checkbox-input-maximus"
           />
         </div>
@@ -270,6 +272,7 @@ export default function ModelSelector({
             id="blind-toggle"
             checked={blindModeEnabled}
             onCheckedChange={onBlindModeToggle}
+            className="ml-4"
             data-testid="checkbox-input-blind-mode"
           />
         </div>
