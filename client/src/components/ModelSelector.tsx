@@ -197,7 +197,7 @@ export default function ModelSelector({
                 onValueChange={(value) => onCaesarJudgeChange(value as JudgeModelId)}
               >
                 <SelectTrigger 
-                  className="h-7 w-[130px] text-xs font-medium bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg ml-2 animate-in fade-in slide-in-from-left-1 duration-200" 
+                  className="h-7 w-[130px] text-xs font-medium bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg ml-2 mr-3 animate-in fade-in slide-in-from-left-1 duration-200" 
                   data-testid="select-caesar-judge"
                 >
                   <SelectValue placeholder="Select judge" />
@@ -234,7 +234,7 @@ export default function ModelSelector({
                 onValueChange={(value) => onMaximusEngineChange(value as MaximusModelId)}
               >
                 <SelectTrigger 
-                  className="h-7 w-[130px] text-xs font-medium bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg ml-2 animate-in fade-in slide-in-from-left-1 duration-200" 
+                  className="h-7 w-[130px] text-xs font-medium bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg ml-2 mr-3 animate-in fade-in slide-in-from-left-1 duration-200" 
                   data-testid="select-maximus-engine"
                 >
                   <SelectValue placeholder="Select engine" />
