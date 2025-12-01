@@ -303,7 +303,7 @@ export default function Landing() {
           >
             <div className="flex-1">
               <Layers className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
-              <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors duration-300 ease-out">Battle Modes</h3>
+              <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors duration-300 ease-out text-[13px]">Battle Modes</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Advanced configuration. Configure Blind Mode, Caesar, and Maximus.</p>
             </div>
             <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors shrink-0 ml-4" />
