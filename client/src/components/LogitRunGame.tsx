@@ -149,12 +149,12 @@ export default function LogitRunGame() {
       <div className="max-w-2xl mx-auto p-4 space-y-4">
         {/* Mode Toggle on Finished Screen */}
         <div className="flex items-center justify-center">
-          <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-gray-900/50 border border-gray-800">
+          <div className="flex items-center gap-3 px-4 py-2 rounded-lg">
             <Label 
               htmlFor="math-mode-finished" 
               className={cn(
                 "text-xs font-mono uppercase tracking-wider cursor-pointer transition-colors",
-                !isMathMode ? "text-white" : "text-muted-foreground"
+                !isMathMode ? "text-foreground" : "text-muted-foreground"
               )}
             >
               Language
@@ -184,18 +184,18 @@ export default function LogitRunGame() {
           </div>
         </div>
 
-        <Card className="p-8 bg-black border-gray-800">
+        <Card className="p-8 bg-white dark:bg-black border-border dark:border-gray-800">
           <div className="text-center space-y-6">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-500/20 mb-4">
               <Trophy className="w-10 h-10 text-amber-400" />
             </div>
-            <h2 className="text-3xl font-bold text-white">
+            <h2 className="text-3xl font-bold text-foreground">
               {isMathMode ? "Math Mode Complete!" : "Game Complete!"}
             </h2>
             
             <div className="grid grid-cols-3 gap-4 py-6">
               <div className="text-center">
-                <div className="text-4xl font-bold text-white">{score}</div>
+                <div className="text-4xl font-bold text-foreground">{score}</div>
                 <div className="text-sm text-muted-foreground">Final Score</div>
               </div>
               <div className="text-center">
@@ -236,12 +236,12 @@ export default function LogitRunGame() {
     <div className="max-w-2xl mx-auto p-4 space-y-4">
       {/* Mode Toggle */}
       <div className="flex items-center justify-center">
-        <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-gray-900/50 border border-gray-800">
+        <div className="flex items-center gap-3 px-4 py-2 rounded-lg">
           <Label 
             htmlFor="math-mode" 
             className={cn(
               "text-xs font-mono uppercase tracking-wider cursor-pointer transition-colors",
-              !isMathMode ? "text-white" : "text-muted-foreground"
+              !isMathMode ? "text-foreground" : "text-muted-foreground"
             )}
           >
             Language
@@ -277,14 +277,14 @@ export default function LogitRunGame() {
           <div className="flex items-center gap-2">
             <Target className="w-4 h-4 text-muted-foreground" />
             <span className="text-muted-foreground">Level:</span>
-            <span className="font-mono font-bold text-white" data-testid="text-level">
+            <span className="font-mono font-bold text-foreground" data-testid="text-level">
               {currentIndex + 1}/{totalLevels}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-amber-400" />
             <span className="text-muted-foreground">Score:</span>
-            <span className="font-mono font-bold text-white" data-testid="text-score">{score}</span>
+            <span className="font-mono font-bold text-foreground" data-testid="text-score">{score}</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -295,7 +295,7 @@ export default function LogitRunGame() {
           <span className="text-muted-foreground">Streak:</span>
           <span className={cn(
             "font-mono font-bold",
-            streak > 0 ? "text-orange-500" : "text-white"
+            streak > 0 ? "text-orange-500" : "text-foreground"
           )} data-testid="text-streak">
             {streak}
           </span>
@@ -307,7 +307,7 @@ export default function LogitRunGame() {
 
       {/* Game Card */}
       <Card className={cn(
-        "relative overflow-hidden bg-black border-gray-800 transition-all duration-300",
+        "relative overflow-hidden bg-white dark:bg-black border-border dark:border-gray-800 transition-all duration-300",
         showFlash && isCorrect && "ring-2 ring-emerald-500/50",
         showFlash && isCorrect === false && "ring-2 ring-red-500/50"
       )}>
@@ -353,9 +353,9 @@ export default function LogitRunGame() {
 
           {/* Context Display */}
           <div className="py-4">
-            <p className="text-xl md:text-2xl font-mono text-white leading-relaxed" data-testid="text-context">
+            <p className="text-xl md:text-2xl font-mono text-foreground leading-relaxed" data-testid="text-context">
               {currentLevel.context}
-              <span className="inline-block ml-1 w-24 border-b-2 border-dashed border-gray-600" />
+              <span className="inline-block ml-1 w-24 border-b-2 border-dashed border-gray-400 dark:border-gray-600" />
             </p>
           </div>
 
@@ -368,7 +368,7 @@ export default function LogitRunGame() {
                 onChange={(e) => setGuess(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Enter your prediction..."
-                className="flex-1 bg-gray-900 border-gray-700 text-white font-mono text-lg h-12"
+                className="flex-1 bg-gray-100 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-foreground font-mono text-lg h-12"
                 data-testid="input-guess"
               />
               <Button 
@@ -455,7 +455,7 @@ export default function LogitRunGame() {
       {/* Instructions */}
       {gameState === "playing" && (
         <p className="text-center text-xs text-muted-foreground">
-          Predict the most likely next token. Press <kbd className="px-1.5 py-0.5 rounded bg-gray-800 text-gray-300 font-mono text-xs">Enter</kbd> to submit.
+          Predict the most likely next token. Press <kbd className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-mono text-xs">Enter</kbd> to submit.
         </p>
       )}
     </div>
