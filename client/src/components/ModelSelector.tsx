@@ -153,13 +153,10 @@ export default function ModelSelector({
           const getIconFilterClasses = () => {
             const isDarkLogo = model.id === 'gpt-4o' || model.id === 'grok';
             
-            if (isSelected) {
-              return 'opacity-100 dark:invert-0';
-            }
             if (isDarkLogo) {
-              return 'dark:grayscale dark:brightness-0 dark:invert dark:opacity-60 group-hover:dark:grayscale-0 group-hover:dark:brightness-100 group-hover:dark:opacity-100 group-hover:dark:invert-0';
+              return `dark:grayscale dark:brightness-0 dark:invert ${isSelected ? 'dark:opacity-100' : 'dark:opacity-60'} group-hover:dark:grayscale-0 group-hover:dark:brightness-100 group-hover:dark:opacity-100 group-hover:dark:invert-0`;
             }
-            return 'dark:grayscale dark:brightness-200 dark:contrast-200 dark:opacity-60 group-hover:dark:grayscale-0 group-hover:dark:brightness-100 group-hover:dark:contrast-100 group-hover:dark:opacity-100';
+            return `dark:grayscale dark:brightness-200 dark:contrast-200 ${isSelected ? 'dark:opacity-100' : 'dark:opacity-60'} group-hover:dark:grayscale-0 group-hover:dark:brightness-100 group-hover:dark:contrast-100 group-hover:dark:opacity-100`;
           };
           
           return (
