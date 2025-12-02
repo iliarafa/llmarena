@@ -150,31 +150,39 @@ export default function ModelSelector({
           const Icon = model.icon;
           const isSelected = selectedModels.includes(model.id);
           
+          const getIconFilterClasses = () => {
+            if (isSelected) {
+              return 'grayscale-0 brightness-100 contrast-100 opacity-100 dark:invert-0';
+            }
+            if (model.id === 'gpt-4o') {
+              return 'grayscale brightness-200 contrast-200 opacity-60 dark:brightness-0 dark:invert dark:contrast-100 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100 group-hover:dark:brightness-100 group-hover:dark:invert-0';
+            }
+            return 'grayscale brightness-200 contrast-200 opacity-60 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100';
+          };
+          
           return (
             <button
               key={model.id}
               onClick={() => handleToggle(model.id)}
               className={`
-                flex flex-col items-center justify-center gap-2 p-4 cursor-pointer transition-all
+                group flex flex-col items-center justify-center gap-3 p-4 cursor-pointer transition-all
                 ${isSelected 
-                  ? 'ring-2 ring-gray-900 dark:ring-white bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white' 
-                  : 'bg-white dark:bg-black text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                  ? 'ring-2 ring-gray-900 dark:ring-white bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-white' 
+                  : 'bg-white dark:bg-black text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/30'
                 }
               `}
               data-testid={`checkbox-model-${model.id}`}
             >
-              <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${isSelected ? 'bg-gray-200 dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-800'}`}>
-                {Icon ? (
-                  <Icon className={`h-5 w-5 ${isSelected ? model.color : 'text-gray-400 dark:text-gray-500'}`} />
-                ) : model.iconImage ? (
-                  <img 
-                    src={model.iconImage} 
-                    alt={model.name} 
-                    className={`object-contain ${isSelected ? '' : 'opacity-50'} ${model.id === 'gpt-4o' ? 'h-8 w-8' : 'h-6 w-6'}`} 
-                  />
-                ) : null}
-              </div>
-              <Label className={`text-sm font-medium cursor-pointer ${isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+              {Icon ? (
+                <Icon className={`h-8 w-8 transition-all duration-200 ${isSelected ? model.color : 'text-gray-400 dark:text-gray-500'}`} />
+              ) : model.iconImage ? (
+                <img 
+                  src={model.iconImage} 
+                  alt={model.name} 
+                  className={`object-contain transition-all duration-200 ${getIconFilterClasses()} ${model.id === 'gpt-4o' ? 'h-10 w-10' : 'h-8 w-8'}`} 
+                />
+              ) : null}
+              <Label className={`text-sm font-medium cursor-pointer transition-colors ${isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200'}`}>
                 <span className="hidden sm:inline">{model.shortName}</span>
                 <span className="sm:hidden">{model.shortName}</span>
               </Label>
