@@ -44,9 +44,9 @@ interface CaesarCardProps {
 export default function CaesarCard({ caesarResponse, isLoading, modelNames }: CaesarCardProps) {
   if (isLoading) {
     return (
-      <Card className="border-2 border-amber-500/50 bg-amber-50/5 h-full min-h-full flex flex-col">
+      <Card className="border-2 border-amber-500/50 bg-amber-50/5 dark:bg-amber-950/10 h-full min-h-full flex flex-col">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-amber-600">
+          <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
             <Crown className="h-5 w-5" />
             Caesar's Verdict
           </CardTitle>
@@ -67,15 +67,15 @@ export default function CaesarCard({ caesarResponse, isLoading, modelNames }: Ca
 
   if (caesarResponse.error) {
     return (
-      <Card className="border-2 border-red-500/50 bg-red-50/5 h-full min-h-full flex flex-col">
+      <Card className="border-2 border-red-500/50 bg-red-50/5 dark:bg-red-950/10 h-full min-h-full flex flex-col">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-red-600">
+          <CardTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
             <Crown className="h-5 w-5" />
             Caesar's Verdict
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col justify-center">
-          <p className="text-sm text-red-600">{caesarResponse.error}</p>
+          <p className="text-sm text-red-600 dark:text-red-400">{caesarResponse.error}</p>
         </CardContent>
       </Card>
     );

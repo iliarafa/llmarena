@@ -68,13 +68,13 @@ export default function MaximusCard({ maximusResponse, isLoading }: MaximusCardP
       <div className="rounded-xl border-2 border-red-400 bg-red-50/30 dark:bg-red-950/20" data-testid="maximus-card-error">
         <Card className="rounded-xl bg-transparent border-0">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-red-600">
+            <CardTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
               <Sword className="h-5 w-5" />
               MAXIMUS
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-red-600">{maximusResponse.error}</p>
+            <p className="text-sm text-red-600 dark:text-red-400">{maximusResponse.error}</p>
           </CardContent>
         </Card>
       </div>

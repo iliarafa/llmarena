@@ -211,7 +211,7 @@ export default function LogitRunGame() {
             <Button 
               onClick={() => initGame(isMathMode)}
               size="lg"
-              className="bg-white text-black hover:bg-gray-200"
+              className="bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:text-black dark:hover:bg-gray-200"
               data-testid="button-play-again"
             >
               <RotateCcw className="w-4 h-4 mr-2" />
@@ -374,7 +374,7 @@ export default function LogitRunGame() {
               <Button 
                 onClick={handleSubmit}
                 disabled={!guess.trim()}
-                className="h-12 px-6 bg-white text-black hover:bg-gray-200"
+                className="h-12 px-6 bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 data-testid="button-submit"
               >
                 Submit
@@ -441,7 +441,7 @@ export default function LogitRunGame() {
               {/* Next Button */}
               <Button 
                 onClick={handleNext}
-                className="w-full h-12 bg-white text-black hover:bg-gray-200"
+                className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 data-testid="button-next"
               >
                 {currentIndex >= totalLevels - 1 ? "See Results" : "Next Level"}
