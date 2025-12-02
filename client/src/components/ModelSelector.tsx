@@ -151,10 +151,12 @@ export default function ModelSelector({
           const isSelected = selectedModels.includes(model.id);
           
           const getIconFilterClasses = () => {
+            const isDarkLogo = model.id === 'gpt-4o' || model.id === 'grok';
+            
             if (isSelected) {
               return 'grayscale-0 brightness-100 contrast-100 opacity-100 dark:invert-0';
             }
-            if (model.id === 'gpt-4o') {
+            if (isDarkLogo) {
               return 'grayscale brightness-200 contrast-200 opacity-60 dark:brightness-0 dark:invert dark:contrast-100 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100 group-hover:dark:brightness-100 group-hover:dark:invert-0';
             }
             return 'grayscale brightness-200 contrast-200 opacity-60 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100';
