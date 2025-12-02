@@ -388,7 +388,7 @@ export default function Landing() {
         </>
       )}
       <footer className="mt-auto py-6 md:py-8 border-t border-gray-200 dark:border-gray-800 text-center">
-        <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">v 1.0</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">v 1.1</p>
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">This Whole World LLC — December 2025</p>
       </footer>
     </div>
