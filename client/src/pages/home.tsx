@@ -405,8 +405,8 @@ export default function Home() {
                       </Button>
                     </Link>
                     <Link href="/logit-run">
-                      <Button variant="ghost" className="w-full justify-start" data-testid="link-logit-run-mobile">
-                        <Gamepad2 className="w-4 h-4 mr-3" />
+                      <Button variant="ghost" className="w-full justify-start group" data-testid="link-logit-run-mobile">
+                        <Gamepad2 className="w-4 h-4 mr-3 transition-colors group-hover:text-purple-500" />
                         Logit Run
                       </Button>
                     </Link>
@@ -448,8 +448,8 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/logit-run">
-                <Button variant="ghost" size="sm" className="text-[#616161] dark:text-white" data-testid="link-logit-run">
-                  <Gamepad2 className="w-4 h-4 mr-2" />
+                <Button variant="ghost" size="sm" className="text-[#616161] dark:text-white group" data-testid="link-logit-run">
+                  <Gamepad2 className="w-4 h-4 mr-2 transition-colors group-hover:text-purple-500" />
                   Logit Run
                 </Button>
               </Link>
