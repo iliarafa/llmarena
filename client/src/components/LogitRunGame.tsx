@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { 
   BarChart, 
   Bar, 
@@ -21,9 +23,11 @@ import {
   Zap,
   CheckCircle2,
   XCircle,
-  Target
+  Target,
+  Calculator
 } from "lucide-react";
 import { GAME_LEVELS, CATEGORY_COLORS, type GameLevel } from "@/data/logitLevels";
+import { MATH_LEVELS, MATH_CATEGORY_COLORS } from "@/data/mathLevels";
 import { cn } from "@/lib/utils";
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -38,6 +42,7 @@ function shuffleArray<T>(array: T[]): T[] {
 type GameState = "playing" | "revealed" | "finished";
 
 export default function LogitRunGame() {
+  const [isMathMode, setIsMathMode] = useState(false);
   const [levels, setLevels] = useState<GameLevel[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -54,8 +59,9 @@ export default function LogitRunGame() {
   const totalLevels = levels.length;
   const progressPercent = totalLevels > 0 ? ((currentIndex + 1) / totalLevels) * 100 : 0;
 
-  const initGame = useCallback(() => {
-    setLevels(shuffleArray(GAME_LEVELS));
+  const initGame = useCallback((mathMode: boolean) => {
+    const dataset = mathMode ? MATH_LEVELS : GAME_LEVELS;
+    setLevels(shuffleArray(dataset));
     setCurrentIndex(0);
     setScore(0);
     setStreak(0);
@@ -68,8 +74,8 @@ export default function LogitRunGame() {
   }, []);
 
   useEffect(() => {
-    initGame();
-  }, [initGame]);
+    initGame(isMathMode);
+  }, [isMathMode, initGame]);
 
   useEffect(() => {
     if (gameState === "playing" && inputRef.current) {
@@ -123,6 +129,9 @@ export default function LogitRunGame() {
   };
 
   const getCategoryStyle = (category: string) => {
+    if (isMathMode) {
+      return MATH_CATEGORY_COLORS[category] || MATH_CATEGORY_COLORS["Arithmetic"];
+    }
     return CATEGORY_COLORS[category] || CATEGORY_COLORS["Idiom"];
   };
 
@@ -137,13 +146,52 @@ export default function LogitRunGame() {
   if (gameState === "finished") {
     const accuracy = totalLevels > 0 ? Math.round((correctCount / totalLevels) * 100) : 0;
     return (
-      <div className="max-w-2xl mx-auto p-4">
+      <div className="max-w-2xl mx-auto p-4 space-y-4">
+        {/* Mode Toggle on Finished Screen */}
+        <div className="flex items-center justify-center">
+          <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-gray-900/50 border border-gray-800">
+            <Label 
+              htmlFor="math-mode-finished" 
+              className={cn(
+                "text-xs font-mono uppercase tracking-wider cursor-pointer transition-colors",
+                !isMathMode ? "text-white" : "text-muted-foreground"
+              )}
+            >
+              Language
+            </Label>
+            <Switch
+              id="math-mode-finished"
+              checked={isMathMode}
+              onCheckedChange={setIsMathMode}
+              className="data-[state=checked]:bg-cyan-500 data-[state=unchecked]:bg-gray-700"
+              data-testid="switch-math-mode-finished"
+            />
+            <div className="flex items-center gap-1.5">
+              <Calculator className={cn(
+                "w-3.5 h-3.5 transition-colors",
+                isMathMode ? "text-cyan-400" : "text-muted-foreground"
+              )} />
+              <Label 
+                htmlFor="math-mode-finished" 
+                className={cn(
+                  "text-xs font-mono uppercase tracking-wider cursor-pointer transition-colors",
+                  isMathMode ? "text-cyan-400" : "text-muted-foreground"
+                )}
+              >
+                Math
+              </Label>
+            </div>
+          </div>
+        </div>
+
         <Card className="p-8 bg-black border-gray-800">
           <div className="text-center space-y-6">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-500/20 mb-4">
               <Trophy className="w-10 h-10 text-amber-400" />
             </div>
-            <h2 className="text-3xl font-bold text-white">Game Complete!</h2>
+            <h2 className="text-3xl font-bold text-white">
+              {isMathMode ? "Math Mode Complete!" : "Game Complete!"}
+            </h2>
             
             <div className="grid grid-cols-3 gap-4 py-6">
               <div className="text-center">
@@ -161,7 +209,7 @@ export default function LogitRunGame() {
             </div>
 
             <Button 
-              onClick={initGame}
+              onClick={() => initGame(isMathMode)}
               size="lg"
               className="bg-white text-black hover:bg-gray-200"
               data-testid="button-play-again"
@@ -186,6 +234,43 @@ export default function LogitRunGame() {
 
   return (
     <div className="max-w-2xl mx-auto p-4 space-y-4">
+      {/* Mode Toggle */}
+      <div className="flex items-center justify-center">
+        <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-gray-900/50 border border-gray-800">
+          <Label 
+            htmlFor="math-mode" 
+            className={cn(
+              "text-xs font-mono uppercase tracking-wider cursor-pointer transition-colors",
+              !isMathMode ? "text-white" : "text-muted-foreground"
+            )}
+          >
+            Language
+          </Label>
+          <Switch
+            id="math-mode"
+            checked={isMathMode}
+            onCheckedChange={setIsMathMode}
+            className="data-[state=checked]:bg-cyan-500 data-[state=unchecked]:bg-gray-700"
+            data-testid="switch-math-mode"
+          />
+          <div className="flex items-center gap-1.5">
+            <Calculator className={cn(
+              "w-3.5 h-3.5 transition-colors",
+              isMathMode ? "text-cyan-400" : "text-muted-foreground"
+            )} />
+            <Label 
+              htmlFor="math-mode" 
+              className={cn(
+                "text-xs font-mono uppercase tracking-wider cursor-pointer transition-colors",
+                isMathMode ? "text-cyan-400" : "text-muted-foreground"
+              )}
+            >
+              Math
+            </Label>
+          </div>
+        </div>
+      </div>
+
       {/* Header Stats */}
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-4">
