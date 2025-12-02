@@ -30,6 +30,7 @@ The platform is designed with a core principle of zero data collection regarding
     - **Battle History**: Stores the last 10 battles locally (localStorage) for privacy, allowing users to reload previous comparisons.
     - **Download Report**: Client-side PDF/Markdown/JSON generation for full comparison reports including all responses and Caesar verdict.
     - **Admin Panel** (`/admin`): Admin-only page for managing users and guest tokens, including gifting credits. Only visible to users with `isAdmin: true`.
+    - **LogitRunGame** (`/logit-run`): Educational minigame where users predict the most likely next token. Features 30 levels across 5 categories (Idiom, Code, Movie, Fact, Logic), shuffled on each playthrough. Tracks score, streak, and accuracy with visual bar chart showing token probability distributions.
 
 ### Backend Architecture
 - **Framework**: Express.js with TypeScript (ES modules, tsx for dev, esbuild for prod).

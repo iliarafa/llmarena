@@ -1,0 +1,417 @@
+export interface GameLevel {
+  id: number;
+  category: string;
+  context: string;
+  top_token: string;
+  logits: { token: string; probability: number }[];
+}
+
+export const GAME_LEVELS: GameLevel[] = [
+  // ===== COMMON IDIOMS (6 levels) =====
+  {
+    id: 1,
+    category: "Idiom",
+    context: "A penny for your...",
+    top_token: "thoughts",
+    logits: [
+      { token: "thoughts", probability: 0.92 },
+      { token: "opinion", probability: 0.04 },
+      { token: "mind", probability: 0.02 },
+      { token: "ideas", probability: 0.01 },
+      { token: "time", probability: 0.01 },
+    ],
+  },
+  {
+    id: 2,
+    category: "Idiom",
+    context: "Break a...",
+    top_token: "leg",
+    logits: [
+      { token: "leg", probability: 0.95 },
+      { token: "sweat", probability: 0.02 },
+      { token: "bone", probability: 0.01 },
+      { token: "rule", probability: 0.01 },
+      { token: "record", probability: 0.01 },
+    ],
+  },
+  {
+    id: 3,
+    category: "Idiom",
+    context: "The early bird catches the...",
+    top_token: "worm",
+    logits: [
+      { token: "worm", probability: 0.97 },
+      { token: "prey", probability: 0.01 },
+      { token: "fish", probability: 0.01 },
+      { token: "bug", probability: 0.005 },
+      { token: "sunrise", probability: 0.005 },
+    ],
+  },
+  {
+    id: 4,
+    category: "Idiom",
+    context: "Actions speak louder than...",
+    top_token: "words",
+    logits: [
+      { token: "words", probability: 0.98 },
+      { token: "speech", probability: 0.01 },
+      { token: "promises", probability: 0.005 },
+      { token: "talk", probability: 0.003 },
+      { token: "voice", probability: 0.002 },
+    ],
+  },
+  {
+    id: 5,
+    category: "Idiom",
+    context: "Don't count your chickens before they...",
+    top_token: "hatch",
+    logits: [
+      { token: "hatch", probability: 0.96 },
+      { token: "come", probability: 0.02 },
+      { token: "arrive", probability: 0.01 },
+      { token: "grow", probability: 0.005 },
+      { token: "mature", probability: 0.005 },
+    ],
+  },
+  {
+    id: 6,
+    category: "Idiom",
+    context: "When pigs...",
+    top_token: "fly",
+    logits: [
+      { token: "fly", probability: 0.94 },
+      { token: "can", probability: 0.03 },
+      { token: "learn", probability: 0.01 },
+      { token: "dance", probability: 0.01 },
+      { token: "sing", probability: 0.01 },
+    ],
+  },
+
+  // ===== CODING SYNTAX (6 levels) =====
+  {
+    id: 7,
+    category: "Code",
+    context: "console.",
+    top_token: "log",
+    logits: [
+      { token: "log", probability: 0.88 },
+      { token: "error", probability: 0.06 },
+      { token: "warn", probability: 0.03 },
+      { token: "info", probability: 0.02 },
+      { token: "debug", probability: 0.01 },
+    ],
+  },
+  {
+    id: 8,
+    category: "Code",
+    context: "def __init__(self,",
+    top_token: "name",
+    logits: [
+      { token: "name", probability: 0.35 },
+      { token: "value", probability: 0.25 },
+      { token: "id", probability: 0.18 },
+      { token: "data", probability: 0.12 },
+      { token: "config", probability: 0.10 },
+    ],
+  },
+  {
+    id: 9,
+    category: "Code",
+    context: "import React from '",
+    top_token: "react",
+    logits: [
+      { token: "react", probability: 0.97 },
+      { token: "React", probability: 0.02 },
+      { token: "./react", probability: 0.005 },
+      { token: "preact", probability: 0.003 },
+      { token: "solid", probability: 0.002 },
+    ],
+  },
+  {
+    id: 10,
+    category: "Code",
+    context: "git commit -m \"",
+    top_token: "fix",
+    logits: [
+      { token: "fix", probability: 0.32 },
+      { token: "add", probability: 0.28 },
+      { token: "update", probability: 0.22 },
+      { token: "initial", probability: 0.10 },
+      { token: "feat", probability: 0.08 },
+    ],
+  },
+  {
+    id: 11,
+    category: "Code",
+    context: "SELECT * FROM users WHERE",
+    top_token: "id",
+    logits: [
+      { token: "id", probability: 0.45 },
+      { token: "email", probability: 0.25 },
+      { token: "name", probability: 0.15 },
+      { token: "status", probability: 0.10 },
+      { token: "created_at", probability: 0.05 },
+    ],
+  },
+  {
+    id: 12,
+    category: "Code",
+    context: "async function fetch",
+    top_token: "Data",
+    logits: [
+      { token: "Data", probability: 0.42 },
+      { token: "User", probability: 0.25 },
+      { token: "Items", probability: 0.15 },
+      { token: "Results", probability: 0.10 },
+      { token: "API", probability: 0.08 },
+    ],
+  },
+
+  // ===== FAMOUS MOVIE QUOTES (6 levels) =====
+  {
+    id: 13,
+    category: "Movie",
+    context: "May the Force be with...",
+    top_token: "you",
+    logits: [
+      { token: "you", probability: 0.98 },
+      { token: "us", probability: 0.01 },
+      { token: "him", probability: 0.005 },
+      { token: "them", probability: 0.003 },
+      { token: "her", probability: 0.002 },
+    ],
+  },
+  {
+    id: 14,
+    category: "Movie",
+    context: "I'll be...",
+    top_token: "back",
+    logits: [
+      { token: "back", probability: 0.91 },
+      { token: "there", probability: 0.04 },
+      { token: "fine", probability: 0.02 },
+      { token: "waiting", probability: 0.02 },
+      { token: "gone", probability: 0.01 },
+    ],
+  },
+  {
+    id: 15,
+    category: "Movie",
+    context: "Here's looking at you,",
+    top_token: "kid",
+    logits: [
+      { token: "kid", probability: 0.96 },
+      { token: "baby", probability: 0.02 },
+      { token: "dear", probability: 0.01 },
+      { token: "pal", probability: 0.005 },
+      { token: "friend", probability: 0.005 },
+    ],
+  },
+  {
+    id: 16,
+    category: "Movie",
+    context: "To infinity and...",
+    top_token: "beyond",
+    logits: [
+      { token: "beyond", probability: 0.99 },
+      { token: "back", probability: 0.005 },
+      { token: "further", probability: 0.003 },
+      { token: "more", probability: 0.001 },
+      { token: "forever", probability: 0.001 },
+    ],
+  },
+  {
+    id: 17,
+    category: "Movie",
+    context: "You can't handle the...",
+    top_token: "truth",
+    logits: [
+      { token: "truth", probability: 0.97 },
+      { token: "pressure", probability: 0.01 },
+      { token: "reality", probability: 0.01 },
+      { token: "facts", probability: 0.005 },
+      { token: "stress", probability: 0.005 },
+    ],
+  },
+  {
+    id: 18,
+    category: "Movie",
+    context: "I see dead...",
+    top_token: "people",
+    logits: [
+      { token: "people", probability: 0.98 },
+      { token: "things", probability: 0.01 },
+      { token: "bodies", probability: 0.005 },
+      { token: "souls", probability: 0.003 },
+      { token: "ghosts", probability: 0.002 },
+    ],
+  },
+
+  // ===== GEOGRAPHY/FACT (6 levels) =====
+  {
+    id: 19,
+    category: "Fact",
+    context: "The capital of Japan is...",
+    top_token: "Tokyo",
+    logits: [
+      { token: "Tokyo", probability: 0.97 },
+      { token: "Kyoto", probability: 0.02 },
+      { token: "Osaka", probability: 0.005 },
+      { token: "Hiroshima", probability: 0.003 },
+      { token: "Nagoya", probability: 0.002 },
+    ],
+  },
+  {
+    id: 20,
+    category: "Fact",
+    context: "The largest planet in our solar system is...",
+    top_token: "Jupiter",
+    logits: [
+      { token: "Jupiter", probability: 0.96 },
+      { token: "Saturn", probability: 0.02 },
+      { token: "Neptune", probability: 0.01 },
+      { token: "Uranus", probability: 0.005 },
+      { token: "Mars", probability: 0.005 },
+    ],
+  },
+  {
+    id: 21,
+    category: "Fact",
+    context: "Water freezes at 0 degrees...",
+    top_token: "Celsius",
+    logits: [
+      { token: "Celsius", probability: 0.85 },
+      { token: "centigrade", probability: 0.08 },
+      { token: "C", probability: 0.04 },
+      { token: "Fahrenheit", probability: 0.02 },
+      { token: "Kelvin", probability: 0.01 },
+    ],
+  },
+  {
+    id: 22,
+    category: "Fact",
+    context: "The Great Wall of China is visible from...",
+    top_token: "space",
+    logits: [
+      { token: "space", probability: 0.75 },
+      { token: "orbit", probability: 0.12 },
+      { token: "the", probability: 0.08 },
+      { token: "afar", probability: 0.03 },
+      { token: "satellites", probability: 0.02 },
+    ],
+  },
+  {
+    id: 23,
+    category: "Fact",
+    context: "The Amazon River flows through South...",
+    top_token: "America",
+    logits: [
+      { token: "America", probability: 0.97 },
+      { token: "American", probability: 0.02 },
+      { token: "Brazil", probability: 0.005 },
+      { token: "countries", probability: 0.003 },
+      { token: "regions", probability: 0.002 },
+    ],
+  },
+  {
+    id: 24,
+    category: "Fact",
+    context: "The speed of light is approximately 300,000 kilometers per...",
+    top_token: "second",
+    logits: [
+      { token: "second", probability: 0.96 },
+      { token: "sec", probability: 0.02 },
+      { token: "hour", probability: 0.01 },
+      { token: "s", probability: 0.005 },
+      { token: "minute", probability: 0.005 },
+    ],
+  },
+
+  // ===== LOGIC/SEQUENCE (6 levels) =====
+  {
+    id: 25,
+    category: "Logic",
+    context: "Monday, Tuesday, Wednesday,",
+    top_token: "Thursday",
+    logits: [
+      { token: "Thursday", probability: 0.98 },
+      { token: "and", probability: 0.01 },
+      { token: "then", probability: 0.005 },
+      { token: "Friday", probability: 0.003 },
+      { token: "...", probability: 0.002 },
+    ],
+  },
+  {
+    id: 26,
+    category: "Logic",
+    context: "1, 2, 3, 4,",
+    top_token: "5",
+    logits: [
+      { token: "5", probability: 0.97 },
+      { token: "and", probability: 0.01 },
+      { token: "...", probability: 0.01 },
+      { token: "6", probability: 0.005 },
+      { token: "etc", probability: 0.005 },
+    ],
+  },
+  {
+    id: 27,
+    category: "Logic",
+    context: "January, February, March,",
+    top_token: "April",
+    logits: [
+      { token: "April", probability: 0.97 },
+      { token: "and", probability: 0.015 },
+      { token: "May", probability: 0.01 },
+      { token: "...", probability: 0.003 },
+      { token: "etc", probability: 0.002 },
+    ],
+  },
+  {
+    id: 28,
+    category: "Logic",
+    context: "Red, Orange, Yellow, Green, Blue,",
+    top_token: "Indigo",
+    logits: [
+      { token: "Indigo", probability: 0.75 },
+      { token: "Purple", probability: 0.15 },
+      { token: "Violet", probability: 0.05 },
+      { token: "and", probability: 0.03 },
+      { token: "Pink", probability: 0.02 },
+    ],
+  },
+  {
+    id: 29,
+    category: "Logic",
+    context: "A, B, C, D, E,",
+    top_token: "F",
+    logits: [
+      { token: "F", probability: 0.96 },
+      { token: "...", probability: 0.02 },
+      { token: "and", probability: 0.01 },
+      { token: "G", probability: 0.005 },
+      { token: "etc", probability: 0.005 },
+    ],
+  },
+  {
+    id: 30,
+    category: "Logic",
+    context: "2, 4, 8, 16,",
+    top_token: "32",
+    logits: [
+      { token: "32", probability: 0.94 },
+      { token: "...", probability: 0.03 },
+      { token: "and", probability: 0.015 },
+      { token: "64", probability: 0.01 },
+      { token: "etc", probability: 0.005 },
+    ],
+  },
+];
+
+export const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  Idiom: { bg: "bg-blue-500/20", text: "text-blue-400", border: "border-blue-500/30" },
+  Code: { bg: "bg-purple-500/20", text: "text-purple-400", border: "border-purple-500/30" },
+  Movie: { bg: "bg-amber-500/20", text: "text-amber-400", border: "border-amber-500/30" },
+  Fact: { bg: "bg-emerald-500/20", text: "text-emerald-400", border: "border-emerald-500/30" },
+  Logic: { bg: "bg-rose-500/20", text: "text-rose-400", border: "border-rose-500/30" },
+};

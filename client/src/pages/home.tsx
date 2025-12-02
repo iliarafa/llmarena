@@ -14,7 +14,7 @@ import { saveBattle, type Battle } from "@/lib/battleHistory";
 import { generatePDF, downloadMarkdown, downloadJSON } from "@/lib/reportExporter";
 import GuestAccountBanner from "@/components/GuestAccountBanner";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History, Shield, Lock } from "lucide-react";
+import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History, Shield, Lock, Gamepad2 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import {
   Tooltip,
@@ -404,6 +404,12 @@ export default function Home() {
                         Buy Credits
                       </Button>
                     </Link>
+                    <Link href="/logit-run">
+                      <Button variant="ghost" className="w-full justify-start" data-testid="link-logit-run-mobile">
+                        <Gamepad2 className="w-4 h-4 mr-3" />
+                        Logit Run
+                      </Button>
+                    </Link>
                     {user?.isAdmin && (
                       <Link href="/admin">
                         <Button variant="ghost" className="w-full justify-start" data-testid="link-admin-mobile">
@@ -439,6 +445,12 @@ export default function Home() {
                 <Button variant="ghost" size="sm" className="text-[#616161] dark:text-white" data-testid="link-notebook">
                   <BookOpen className="w-4 h-4 mr-2" />
                   Notebook
+                </Button>
+              </Link>
+              <Link href="/logit-run">
+                <Button variant="ghost" size="sm" className="text-[#616161] dark:text-white" data-testid="link-logit-run">
+                  <Gamepad2 className="w-4 h-4 mr-2" />
+                  Logit Run
                 </Button>
               </Link>
             </div>
