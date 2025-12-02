@@ -154,12 +154,12 @@ export default function ModelSelector({
             const isDarkLogo = model.id === 'gpt-4o' || model.id === 'grok';
             
             if (isSelected) {
-              return 'grayscale-0 brightness-100 contrast-100 opacity-100 dark:invert-0';
+              return 'opacity-100 dark:invert-0';
             }
             if (isDarkLogo) {
-              return 'grayscale brightness-200 contrast-200 opacity-60 dark:brightness-0 dark:invert dark:contrast-100 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100 group-hover:dark:brightness-100 group-hover:dark:invert-0';
+              return 'dark:grayscale dark:brightness-0 dark:invert dark:opacity-60 group-hover:dark:grayscale-0 group-hover:dark:brightness-100 group-hover:dark:opacity-100 group-hover:dark:invert-0';
             }
-            return 'grayscale brightness-200 contrast-200 opacity-60 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100';
+            return 'dark:grayscale dark:brightness-200 dark:contrast-200 dark:opacity-60 group-hover:dark:grayscale-0 group-hover:dark:brightness-100 group-hover:dark:contrast-100 group-hover:dark:opacity-100';
           };
           
           return (
