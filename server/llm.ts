@@ -347,7 +347,7 @@ async function callMaximusModel(
   }
 }
 
-const MAXIMUS_FALLBACK_ORDER: MaximusModelId[] = ["gpt-4o", "gemini-flash", "grok"];
+const MAXIMUS_FALLBACK_ORDER: MaximusModelId[] = ["gemini-flash", "grok", "gpt-4o"];
 
 function getModelsToTry(primaryModel: MaximusModelId): MaximusModelId[] {
   const primaryIndex = MAXIMUS_FALLBACK_ORDER.indexOf(primaryModel);

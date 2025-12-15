@@ -59,7 +59,7 @@ export default function Home() {
   const [blindModeEnabled, setBlindModeEnabled] = useState(false);
   const [blindModeRevealed, setBlindModeRevealed] = useState(false);
   const [maximusEnabled, setMaximusEnabled] = useState(false);
-  const [maximusEngineModel, setMaximusEngineModel] = useState<MaximusModelId>("gpt-4o");
+  const [maximusEngineModel, setMaximusEngineModel] = useState<MaximusModelId>("gemini-flash");
   const [maximusResponse, setMaximusResponse] = useState<MaximusResponse | undefined>();
   const [maximusLoading, setMaximusLoading] = useState(false);
   const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0);
