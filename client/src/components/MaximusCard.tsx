@@ -11,6 +11,8 @@ export interface MaximusResponse {
   generationTime?: number;
   maximusModel: string;
   tokenCount?: number;
+  usedFallback?: boolean;
+  originalModel?: string;
 }
 
 interface MaximusCardProps {
@@ -81,7 +83,7 @@ export default function MaximusCard({ maximusResponse, isLoading }: MaximusCardP
     );
   }
 
-  const { synthesis, generationTime, maximusModel, tokenCount } = maximusResponse;
+  const { synthesis, generationTime, maximusModel, tokenCount, usedFallback, originalModel } = maximusResponse;
 
   if (!synthesis) {
     return null;
@@ -98,6 +100,11 @@ export default function MaximusCard({ maximusResponse, isLoading }: MaximusCardP
               <Badge variant="outline" className="ml-2 border-amber-500/50 text-amber-600 dark:text-amber-400 text-[10px]">
                 The Ultimate Truth
               </Badge>
+              {usedFallback && (
+                <Badge variant="outline" className="border-orange-500/50 text-orange-600 dark:text-orange-400 text-[10px]">
+                  Fallback
+                </Badge>
+              )}
             </CardTitle>
             <div className="flex items-center gap-3">
               {generationTime && (
@@ -126,7 +133,12 @@ export default function MaximusCard({ maximusResponse, isLoading }: MaximusCardP
               </Button>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground" data-testid="text-maximus-engine">Maximus Engine: {maximusModel}</p>
+          <p className="text-xs text-muted-foreground" data-testid="text-maximus-engine">
+            Maximus Engine: {maximusModel}
+            {usedFallback && originalModel && (
+              <span className="text-orange-600 dark:text-orange-400"> (fallback from {originalModel})</span>
+            )}
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="p-4 bg-gradient-to-br from-amber-100/50 to-yellow-100/50 dark:from-amber-950/40 dark:to-yellow-950/40 rounded-lg border border-amber-300/50 dark:border-amber-700/50">

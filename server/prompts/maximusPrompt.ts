@@ -24,6 +24,8 @@ export interface MaximusResponse {
   generationTime?: number;
   maximusModel: string;
   tokenCount?: number;
+  usedFallback?: boolean;
+  originalModel?: string;
 }
 
 export function buildMaximusPrompt(

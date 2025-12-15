@@ -308,6 +308,57 @@ export async function generateCaesarVerdict(
   }
 }
 
+async function callMaximusModel(
+  maximusPrompt: string,
+  model: MaximusModelId
+): Promise<{ responseText: string; tokenCount?: number }> {
+  switch (model) {
+    case "gpt-4o":
+      const openaiResponse = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [{ role: "user", content: maximusPrompt }],
+        max_tokens: 4096,
+      });
+      return {
+        responseText: openaiResponse.choices[0]?.message?.content || "",
+        tokenCount: openaiResponse.usage?.completion_tokens,
+      };
+      
+    case "gemini-flash":
+      const geminiResult = await gemini.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [{ role: "user", parts: [{ text: maximusPrompt }] }],
+      });
+      return {
+        responseText: geminiResult.text || "",
+        tokenCount: geminiResult.candidates?.[0]?.tokenCount,
+      };
+      
+    case "grok":
+      const grokResponse = await openrouter.chat.completions.create({
+        model: "x-ai/grok-4-fast",
+        messages: [{ role: "user", content: maximusPrompt }],
+        max_tokens: 4096,
+      });
+      return {
+        responseText: grokResponse.choices[0]?.message?.content || "",
+        tokenCount: grokResponse.usage?.completion_tokens,
+      };
+  }
+}
+
+const MAXIMUS_FALLBACK_ORDER: MaximusModelId[] = ["gpt-4o", "gemini-flash", "grok"];
+
+function getModelsToTry(primaryModel: MaximusModelId): MaximusModelId[] {
+  const primaryIndex = MAXIMUS_FALLBACK_ORDER.indexOf(primaryModel);
+  if (primaryIndex === -1) {
+    return [primaryModel, ...MAXIMUS_FALLBACK_ORDER];
+  }
+  const afterPrimary = MAXIMUS_FALLBACK_ORDER.slice(primaryIndex);
+  const beforePrimary = MAXIMUS_FALLBACK_ORDER.slice(0, primaryIndex);
+  return [...afterPrimary, ...beforePrimary];
+}
+
 export async function generateMaximus(
   userPrompt: string,
   modelResponses: LLMResponse[],
@@ -315,7 +366,6 @@ export async function generateMaximus(
 ): Promise<MaximusResponse> {
   const startTime = Date.now();
   
-  // Filter out errored responses and build the prompt
   const validResponses = modelResponses
     .filter(r => r.response && !r.error)
     .map(r => ({
@@ -333,53 +383,41 @@ export async function generateMaximus(
   
   const maximusPrompt = buildMaximusPrompt(userPrompt, validResponses);
   
-  try {
-    let responseText = "";
-    let tokenCount: number | undefined;
-    
-    switch (maximusModel) {
-      case "gpt-4o":
-        const openaiResponse = await openai.chat.completions.create({
-          model: "gpt-4o",
-          messages: [{ role: "user", content: maximusPrompt }],
-          max_tokens: 4096,
-        });
-        responseText = openaiResponse.choices[0]?.message?.content || "";
-        tokenCount = openaiResponse.usage?.completion_tokens;
-        break;
-        
-      case "gemini-flash":
-        const geminiResult = await gemini.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents: [{ role: "user", parts: [{ text: maximusPrompt }] }],
-        });
-        responseText = geminiResult.text || "";
-        tokenCount = geminiResult.candidates?.[0]?.tokenCount;
-        break;
-        
-      case "grok":
-        const grokResponse = await openrouter.chat.completions.create({
-          model: "x-ai/grok-4-fast",
-          messages: [{ role: "user", content: maximusPrompt }],
-          max_tokens: 4096,
-        });
-        responseText = grokResponse.choices[0]?.message?.content || "";
-        tokenCount = grokResponse.usage?.completion_tokens;
-        break;
+  const modelsToTry = getModelsToTry(maximusModel);
+  
+  const errors: string[] = [];
+  
+  for (const model of modelsToTry) {
+    try {
+      console.log(`Maximus: Trying ${model}...`);
+      const { responseText, tokenCount } = await callMaximusModel(maximusPrompt, model);
+      
+      if (!responseText) {
+        throw new Error("Empty response received");
+      }
+      
+      const usedFallback = model !== maximusModel;
+      if (usedFallback) {
+        console.log(`Maximus: Primary engine (${maximusModel}) failed, used fallback (${model})`);
+      }
+      
+      return {
+        synthesis: responseText,
+        generationTime: Date.now() - startTime,
+        maximusModel: model,
+        tokenCount,
+        usedFallback,
+        originalModel: usedFallback ? maximusModel : undefined,
+      };
+    } catch (error: any) {
+      console.error(`Maximus ${model} error:`, error.message);
+      errors.push(`${model}: ${error.message}`);
     }
-    
-    return {
-      synthesis: responseText,
-      generationTime: Date.now() - startTime,
-      maximusModel: maximusModel,
-      tokenCount,
-    };
-  } catch (error: any) {
-    console.error("Maximus generation error:", error);
-    return {
-      error: error.message || "Failed to generate synthesis",
-      generationTime: Date.now() - startTime,
-      maximusModel: maximusModel,
-    };
   }
+  
+  return {
+    error: `All Maximus engines failed. Errors: ${errors.join("; ")}`,
+    generationTime: Date.now() - startTime,
+    maximusModel: maximusModel,
+  };
 }
