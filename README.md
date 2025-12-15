@@ -1,4 +1,4 @@
-# Arena AI
+# LLM ARENA
 
 **Privacy-first AI model comparison platform. Compare GPT-4o, Claude, Gemini & Grok side-by-side. AI judge evaluates winners. Pay-per-use credits, no subscriptions.**
 
