@@ -7,7 +7,7 @@ export default function ComparisonGridExample() {
   const mockResponses: ModelResponse[] = [
     {
       modelId: "gpt-4o",
-      response: "This is GPT-4o's response to your prompt. It provides detailed and thoughtful analysis.",
+      response: "This is GPT-5.4's response to your prompt. It provides detailed and thoughtful analysis.",
       generationTime: 1234,
       tokenCount: 456
     },

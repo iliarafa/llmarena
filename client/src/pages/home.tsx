@@ -1,5 +1,12 @@
 import { useState } from "react";
 import ModelSelector, { AVAILABLE_MODELS, type ModelId, type JudgeModelId, type MaximusModelId, type Model } from "@/components/ModelSelector";
+import {
+  CREDIT_COST_BY_MODEL_COUNT,
+  CAESAR_CREDIT_COST,
+  MAXIMUS_CREDIT_COST,
+  DEFAULT_JUDGE_MODEL,
+  DEFAULT_MAXIMUS_MODEL,
+} from "@shared/models";
 import PromptInput from "@/components/PromptInput";
 import ComparisonGrid, { type ModelResponse } from "@/components/ComparisonGrid";
 import CaesarCard, { type CaesarResponse } from "@/components/CaesarCard";
@@ -53,13 +60,13 @@ export default function Home() {
   const [prompt, setPrompt] = useState("");
   const [responses, setResponses] = useState<ModelResponse[]>([]);
   const [caesarEnabled, setCaesarEnabled] = useState(false);
-  const [caesarJudgeModel, setCaesarJudgeModel] = useState<JudgeModelId>("gemini-flash");
+  const [caesarJudgeModel, setCaesarJudgeModel] = useState<JudgeModelId>(DEFAULT_JUDGE_MODEL);
   const [caesarResponse, setCaesarResponse] = useState<CaesarResponse | undefined>();
   const [caesarLoading, setCaesarLoading] = useState(false);
   const [blindModeEnabled, setBlindModeEnabled] = useState(false);
   const [blindModeRevealed, setBlindModeRevealed] = useState(false);
   const [maximusEnabled, setMaximusEnabled] = useState(false);
-  const [maximusEngineModel, setMaximusEngineModel] = useState<MaximusModelId>("gemini-flash");
+  const [maximusEngineModel, setMaximusEngineModel] = useState<MaximusModelId>(DEFAULT_MAXIMUS_MODEL);
   const [maximusResponse, setMaximusResponse] = useState<MaximusResponse | undefined>();
   const [maximusLoading, setMaximusLoading] = useState(false);
   const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0);
@@ -72,18 +79,9 @@ export default function Home() {
   
   const isGuest = !isAuthenticated && !!localStorage.getItem("guestToken");
   
-  // Calculate credit cost using tiered pricing (matches backend)
-  // 1 model = 3 credits, 2 models = 5 credits, 3 models = 7 credits, 4 models = 10 credits
-  const creditCostMap: Record<number, number> = {
-    0: 0,
-    1: 3,
-    2: 5,
-    3: 7,
-    4: 10,
-  };
-  const baseCreditCost = creditCostMap[selectedModels.length] || 0;
-  const caesarCost = caesarEnabled ? 3 : 0;
-  const maximusCost = maximusEnabled ? 5 : 0;
+  const baseCreditCost = CREDIT_COST_BY_MODEL_COUNT[selectedModels.length] || 0;
+  const caesarCost = caesarEnabled ? CAESAR_CREDIT_COST : 0;
+  const maximusCost = maximusEnabled ? MAXIMUS_CREDIT_COST : 0;
   const creditCost = baseCreditCost + caesarCost + maximusCost;
 
   // Create model name mapping for Caesar card
@@ -349,14 +347,8 @@ export default function Home() {
   };
 
   const handleLogout = () => {
-    if (isGuest) {
-      // Clear guest token
-      localStorage.removeItem("guestToken");
-      window.location.href = "/";
-    } else {
-      // Redirect to logout endpoint
-      window.location.href = "/api/logout";
-    }
+    localStorage.removeItem("guestToken");
+    window.location.href = "/";
   };
 
   return (

@@ -342,7 +342,7 @@ export default function Admin() {
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle>Access Denied</CardTitle>
-            <CardDescription>You must be logged in to access this page.</CardDescription>
+            <CardDescription>Signed-in admin accounts are not available. Replit Auth has been removed; guest tokens are the primary path.</CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/">

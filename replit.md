@@ -1,7 +1,9 @@
 # LLM Comparison Platform with Prepaid Credits
 
+> **Historical Replit notes.** The app no longer requires Replit to build or run. Replit Auth and Replit AI Integrations have been removed. See `README.md` and `.env.example` for the current Express + Vite + Neon + Stripe setup. `.replit` may remain as a leftover config file.
+
 ## Overview
-This project is a privacy-first, pay-per-use LLM model comparison platform. It enables users to submit a single prompt and simultaneously view responses from multiple AI models (GPT-4o, Claude Sonnet 4, Gemini Flash, Grok). The platform operates in two modes: Guest Mode for anonymous use with secure tokens and credit purchases, and Authenticated Mode via Replit Auth for users who wish to preserve credits across devices. The core business model is pay-per-use with prepaid credits, not subscription-based, offering various credit packs. Key features include the Caesar Judge (an AI-powered evaluation system for response comparison) and Maximus (the ultimate champion that synthesizes the best insights from all model responses).
+This project is a privacy-first, pay-per-use LLM model comparison platform. It enables users to submit a single prompt and simultaneously view responses from multiple AI models (GPT-5.4, Claude Sonnet 5, Gemini 3.8 Flash, Grok 4.6). Guest tokens are the primary identity path. Authenticated accounts (formerly Replit Auth) are not available. The core business model is pay-per-use with prepaid credits, not subscription-based, offering various credit packs. Key features include the Caesar Judge (an AI-powered evaluation system for response comparison) and Maximus (the ultimate champion that synthesizes the best insights from all model responses).
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -17,7 +19,7 @@ The platform is designed with a core principle of zero data collection regarding
 - **State Management**: React Query
 - **Routing**: Wouter
 - **Key Features**:
-    - **Landing Page**: Entry point with privacy messaging and dual authentication options (Guest or Replit Auth).
+    - **Landing Page**: Entry point with privacy messaging. Guest tokens are the only auth path.
     - **Home Page**: Main comparison interface.
     - **Dashboard**: Privacy-first statistics (credit balance, comparison count, credits spent, recent activity timestamps).
     - **Purchase Page**: Stripe integration for credit pack purchases.
@@ -39,7 +41,7 @@ The platform is designed with a core principle of zero data collection regarding
 ### Backend Architecture
 - **Framework**: Express.js with TypeScript (ES modules, tsx for dev, esbuild for prod).
 - **API Design**: RESTful, dual authentication, privacy-first logging.
-- **Authentication**: Replit Auth (`/api/login`, `/api/callback`, `/api/logout`, `/api/auth/user`) and Guest Token system (`/api/guest/create`, `/api/guest/verify`, `/api/link-guest-account`).
+- **Authentication**: Guest Token system (`/api/guest/create`, `/api/guest/verify`). Replit Auth routes return 410. `/api/auth/user` always 401s. `/api/link-guest-account` is gone.
 - **Comparison Endpoint (`POST /api/compare`)**: Processes comparisons, deducts credits, logs minimal data (`userId/guestTokenId`, `creditsCost`), and never stores prompts/responses. Includes optional Caesar Judge integration.
 - **Dashboard Endpoint (`GET /api/dashboard/stats`)**: Provides aggregate user statistics without exposing sensitive data.
 - **Stripe Endpoints**: `create-checkout-session`, `stripe-webhook`.
@@ -47,12 +49,12 @@ The platform is designed with a core principle of zero data collection regarding
     - `GET /api/admin/users?search=` - List all users with optional search.
     - `GET /api/admin/guest-tokens?search=` - List all guest tokens with optional search.
     - `POST /api/admin/gift-credits` - Gift credits to a user or guest token. Requires `isAdmin: true`.
-- **LLM Integration**: Orchestrates OpenAI, Anthropic, Google GenAI, and OpenRouter SDKs via Replit AI Integrations for GPT-4o, Claude Sonnet 4, Gemini Flash, and Grok.
+- **LLM Integration**: Orchestrates OpenAI, Anthropic, Google GenAI, and OpenRouter SDKs via standard env vars (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY` / `GOOGLE_API_KEY`, `OPENROUTER_API_KEY`) for GPT-5.4, Claude Sonnet 5, Gemini 3.8 Flash, and Grok 4.6.
 
 ### Data Storage
 - **ORM**: Drizzle ORM with PostgreSQL (Neon via `@neondatabase/serverless`).
 - **Database Tables**:
-    - `sessions`: Replit Auth session storage.
+    - `sessions`: Unused leftover table (kept to avoid a schema migration).
     - `users`: User accounts (email, name, creditBalance, stripeCustomerId, isAdmin).
     - `guestTokens`: Anonymous tokens (token, creditBalance).
     - `usageHistory`: **Minimal logging** of `id`, `userId`, `guestTokenId`, `timestamp`, `creditsCost`. **Does NOT store prompts, responses, or model IDs.**
@@ -66,7 +68,7 @@ The platform is designed with a core principle of zero data collection regarding
 - Anthropic
 - Google Gemini
 - OpenRouter (for Grok)
-- All integrated via Replit AI Integrations for API key management.
+- Owner-provided API keys via environment variables (see `.env.example`).
 
 ### Database
 - Neon PostgreSQL
@@ -83,7 +85,7 @@ The platform is designed with a core principle of zero data collection regarding
 - **Add-ons**:
   - Caesar Judge: +3 credits
   - Maximus: +5 credits
-- Pricing logic defined in `server/routes.ts` (backend) and `client/src/pages/home.tsx` (frontend display). Keep these synchronized.
+- Pricing logic defined once in `shared/models.ts` and imported by `server/routes.ts` and `client/src/pages/home.tsx`.
 
 ### UI Components
 - Radix UI primitives

@@ -46,7 +46,7 @@ Required JSON Structure:
   }
 }`;
 
-export type JudgeModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
+export type { JudgeModelId } from "@shared/models";
 
 export interface HallucinationWarning {
   detected: boolean;

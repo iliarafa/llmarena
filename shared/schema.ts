@@ -3,7 +3,7 @@ import { pgTable, text, varchar, integer, timestamp, decimal, boolean, jsonb, in
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Sessions table for Replit Auth
+// Sessions table (unused after Replit Auth removal; kept to avoid a schema migration)
 export const sessions = pgTable(
   "sessions",
   {
@@ -14,7 +14,7 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// Users table with credit balance and Replit Auth fields
+// Users table with credit balance (login is deferred; admin/user rows may still exist)
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email").unique(),

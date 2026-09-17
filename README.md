@@ -1,12 +1,14 @@
 # LLM ARENA
 
-**Privacy-first AI model comparison platform. Compare GPT-4o, Claude, Gemini & Grok side-by-side. AI judge evaluates winners. Pay-per-use credits, no subscriptions.**
+**Privacy-first AI model comparison platform. Compare GPT-5.4, Claude Sonnet 5, Gemini 3.8 Flash & Grok 4.6 side-by-side. AI judge evaluates winners. Pay-per-use credits, no subscriptions.**
+
+Replit is **not required**. This is a normal Express + Vite app. Use your own API keys.
 
 ---
 
 ## Overview
 
-Arena AI lets you submit a single prompt and instantly compare responses from the world's leading AI models. See how GPT-4o, Claude Sonnet 4, Gemini Flash, and Grok tackle the same challenge — all in one view.
+Arena AI lets you submit a single prompt and instantly compare responses from leading AI models. See how GPT-5.4, Claude Sonnet 5, Gemini 3.8 Flash, and Grok 4.6 tackle the same challenge — all in one view.
 
 ### Why Arena AI?
 
@@ -21,10 +23,12 @@ Arena AI lets you submit a single prompt and instantly compare responses from th
 
 ### Model Comparison
 Submit one prompt, get responses from up to 4 AI models simultaneously:
-- **GPT-4o** (OpenAI)
-- **Claude Sonnet 4** (Anthropic)
-- **Gemini Flash** (Google)
-- **Grok** (xAI)
+- **GPT-5.4** (OpenAI)
+- **Claude Sonnet 5** (Anthropic)
+- **Gemini 3.8 Flash** (Google)
+- **Grok 4.6** (xAI via OpenRouter)
+
+App-level IDs stay `gpt-4o`, `claude-sonnet`, `gemini-flash`, and `grok` so existing battle history and API payloads stay compatible. Provider slugs live in `shared/models.ts`.
 
 ### Caesar Judge
 An AI-powered evaluation system that analyzes all responses and declares a winner based on:
@@ -33,10 +37,10 @@ An AI-powered evaluation system that analyzes all responses and declares a winne
 - Creativity
 - Safety
 
-Caesar provides a confidence score, detailed reasoning, and score breakdown for each model.
+Caesar provides a confidence score, detailed reasoning, and score breakdown for each model. Default judge engine: Gemini 3.8 Flash.
 
 ### Maximus
-The ultimate synthesizer. Maximus reads all model responses and forges the best possible answer by combining the strongest insights from each.
+The ultimate synthesizer. Maximus reads all model responses and forges the best possible answer by combining the strongest insights from each. Default engine: Gemini 3.8 Flash, with fallback to Grok then GPT-5.4 if the primary engine fails.
 
 ### Blind Mode
 Toggle Blind Mode to hide model identities during comparison. Models appear as "Contender A", "Contender B", etc. — revealing their true names only after you vote or request Caesar's verdict.
@@ -70,6 +74,8 @@ Your prompts and AI responses exist only in your browser session.
 ---
 
 ## Credit Pricing
+
+Tiers are defined once in `shared/models.ts` and used by both the Express compare route and the home page.
 
 ### Model Comparison
 | Models Selected | Credits |
@@ -106,10 +112,10 @@ Purchase credits via Stripe — no subscriptions required.
 - PostgreSQL (Neon)
 
 ### AI Providers
-- OpenAI (GPT-4o)
-- Anthropic (Claude Sonnet 4)
-- Google GenAI (Gemini Flash)
-- OpenRouter (Grok)
+- OpenAI (GPT-5.4)
+- Anthropic (Claude Sonnet 5)
+- Google GenAI (Gemini 3.8 Flash)
+- OpenRouter (Grok 4.6)
 
 ### Payments
 - Stripe
@@ -118,67 +124,83 @@ Purchase credits via Stripe — no subscriptions required.
 
 ## Getting Started
 
+Replit is not required to build or run this app. Any Node 18+ host works (local, Railway, Fly, a VPS, etc.).
+
 ### Prerequisites
 - Node.js 18+
-- PostgreSQL database
-- API keys for AI providers
+- A Neon (or other Postgres) `DATABASE_URL`
+- Provider keys for the models you want to call
+- Stripe keys if you want credit purchases
 
 ### Environment Variables
 
-```bash
-# Database
-DATABASE_URL=postgresql://...
+Copy `.env.example` to `.env` and fill in values. **Never commit secrets.**
 
-# AI Providers
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-GOOGLE_GENERATIVE_AI_API_KEY=...
-OPENROUTER_API_KEY=sk-or-...
+**Required to boot**
+- `DATABASE_URL` — Neon/Postgres connection string. The server throws at import if this is missing (guest tokens live in the DB).
 
-# Stripe
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-VITE_STRIPE_PUBLIC_KEY=pk_live_...
+**Optional at boot (recommended for a full compare)**
+- `OPENAI_API_KEY`
+- `ANTHROPIC_API_KEY`
+- `GOOGLE_GENERATIVE_AI_API_KEY` (or `GOOGLE_API_KEY`)
+- `OPENROUTER_API_KEY`
 
-# Replit Auth (optional)
-REPLIT_DOMAINS=...
-ISSUER_URL=...
-```
+Missing AI keys do not crash the process. Compare still returns; that model’s card shows an error.
+
+**Stripe (required only for purchases / webhooks)**
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `VITE_STRIPE_PUBLIC_KEY`
+
+The server boots without Stripe. Checkout fails with a clear error until `STRIPE_SECRET_KEY` is set.
+
+**Other**
+- `PORT` — defaults to `5000`
+
+Replit Auth / AI Integrations env vars (`REPLIT_DOMAINS`, `REPL_ID`, `ISSUER_URL`, `AI_INTEGRATIONS_*`) are unused.
 
 ### Installation
 
 ```bash
-# Install dependencies
+cp .env.example .env
+# edit .env with your keys
+
 npm install
 
-# Push database schema
+# Push database schema (needs DATABASE_URL)
 npm run db:push
 
-# Start development server
+# Dev server (API + Vite client)
 npm run dev
 ```
 
-The app will be available at `http://localhost:5000`
+The app will be available at `http://localhost:5000`.
+
+```bash
+# Typecheck
+npm run check
+
+# Production build
+npm run build
+npm start
+```
 
 ---
 
 ## Authentication
 
-Arena AI supports two authentication modes:
+Guest tokens are the **primary and only** path right now.
 
-1. **Guest Mode**: Anonymous usage with a secure token. Credits are tied to your browser.
-2. **Replit Auth**: Sign in to preserve credits across devices and sessions.
+1. **Guest Mode**: Create a token on the landing page. Credits are tied to that token in the database and stored in `localStorage` in this browser.
+2. **Signed-in accounts**: Removed. Replit Auth (OIDC login, sessions, `/api/login`) is gone. Old login URLs return `410 Gone`. Account linking is unavailable. A future auth provider can be added later — do not wire callers back to Replit.
 
-Guest accounts can be linked to authenticated accounts to transfer credits.
+The `/admin` UI previously required a Replit session. It now shows access denied until a new account provider exists. Guest compare, credits, and Stripe checkout still work.
 
 ---
 
 ## Admin Panel
 
-Admins can access `/admin` to:
-- View and search all users
-- View and search guest tokens
-- Gift credits to users or guests
+`/admin` is retained in the codebase but is not reachable without authenticated admin users. Guest tokens are the supported path for this revive.
 
 ---
 
@@ -190,4 +212,4 @@ MIT
 
 ## Version
 
-v1.1
+v1.2
