@@ -4,24 +4,34 @@ import { storage } from "./storage";
 import { generateComparisons, generateCaesarVerdict, generateMaximus } from "./llm";
 import { z } from "zod";
 import { randomBytes } from "crypto";
-import { setupAuth, isAuthenticated } from "./replitAuth";
-import { requireAuth, getCreditBalance, getAuthId, updateCreditBalance } from "./authMiddleware";
+import { requireAuth, isAuthenticated, getCreditBalance, getAuthId, updateCreditBalance } from "./authMiddleware";
 import Stripe from "stripe";
+import {
+  CONTENDER_MODEL_IDS,
+  JUDGE_MODEL_IDS,
+  MAXIMUS_MODEL_IDS,
+  CREDIT_COST_BY_MODEL_COUNT,
+  CAESAR_CREDIT_COST,
+  MAXIMUS_CREDIT_COST,
+} from "@shared/models";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+function getStripe(): Stripe {
+  const secret = process.env.STRIPE_SECRET_KEY;
+  if (!secret) {
+    throw new Error("Missing required Stripe secret: STRIPE_SECRET_KEY");
+  }
+  return new Stripe(secret, {
+    apiVersion: "2025-10-29.clover",
+  });
 }
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-10-29.clover",
-});
 
 const compareRequestSchema = z.object({
   prompt: z.string().min(1),
-  modelIds: z.array(z.enum(["gpt-4o", "claude-sonnet", "gemini-flash", "grok"])).min(1),
+  modelIds: z.array(z.enum(CONTENDER_MODEL_IDS)).min(1),
   caesarEnabled: z.boolean().optional(),
-  caesarJudgeModel: z.enum(["claude-3-5-sonnet", "gpt-4o", "gemini-flash", "grok"]).optional(),
+  caesarJudgeModel: z.enum(JUDGE_MODEL_IDS).optional(),
   maximusEnabled: z.boolean().optional(),
-  maximusEngineModel: z.enum(["gpt-4o", "gemini-flash", "grok"]).optional(),
+  maximusEngineModel: z.enum(MAXIMUS_MODEL_IDS).optional(),
 });
 
 const checkoutRequestSchema = z.object({
@@ -34,20 +44,28 @@ const checkoutRequestSchema = z.object({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Set up Replit Auth
-  await setupAuth(app);
+  // Auth stub: Replit Auth is gone. Guests are the primary path.
+  app.get("/api/auth/user", isAuthenticated);
 
-  // Auth endpoint - get current user
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      console.log("User data returned:", JSON.stringify(user));
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
+  app.get("/api/login", (_req, res) => {
+    res.status(410).json({
+      error: "Gone",
+      message: "Replit Auth has been removed. Create a guest token to use the app.",
+    });
+  });
+
+  app.get("/api/callback", (_req, res) => {
+    res.status(410).json({
+      error: "Gone",
+      message: "Replit Auth has been removed. Create a guest token to use the app.",
+    });
+  });
+
+  app.get("/api/logout", (_req, res) => {
+    res.status(410).json({
+      error: "Gone",
+      message: "Replit Auth has been removed. Clear your guest token in the browser to sign out.",
+    });
   });
 
   // Create a new guest token
@@ -96,73 +114,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Link guest token to authenticated user account (transfer credits)
-  app.post("/api/link-guest-account", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any).claims.sub;
-      const { guestToken } = req.body;
-      
-      if (!guestToken) {
-        return res.status(400).json({ error: "Guest token is required" });
-      }
-      
-      // Verify guest token exists
-      const token = await storage.getGuestTokenByToken(guestToken);
-      if (!token) {
-        return res.status(404).json({ error: "Invalid guest token" });
-      }
-      
-      // Prevent re-linking tokens that have already been linked
-      if (token.linkedAt || token.linkedToUserId) {
-        return res.status(400).json({ 
-          error: "Token already linked",
-          message: "This guest token has already been linked to an account." 
-        });
-      }
-      
-      // Prevent linking tokens with zero balance
-      if (parseFloat(token.creditBalance) === 0) {
-        return res.status(400).json({ 
-          error: "No credits to transfer",
-          message: "This guest token has no credits to transfer." 
-        });
-      }
-      
-      // Get or create user
-      const user = await storage.getUser(userId) || await storage.upsertUser({
-        id: userId,
-        email: (req.user as any).claims.email,
-        firstName: (req.user as any).claims.firstName,
-        lastName: (req.user as any).claims.lastName,
-        profileImageUrl: (req.user as any).claims.profileImageUrl,
-        creditBalance: "0",
-      });
-      
-      // Calculate new balance by adding guest credits to user credits
-      const guestCredits = parseFloat(token.creditBalance);
-      const userCredits = parseFloat(user.creditBalance);
-      const newBalance = (guestCredits + userCredits).toFixed(2);
-      
-      // Update user's credit balance
-      await storage.updateUserCredits(userId, newBalance);
-      
-      // Transfer usage history from guest to user
-      await storage.linkGuestHistoryToUser(token.id, userId);
-      
-      // Mark token as linked and zero balance (atomic operation)
-      await storage.markGuestTokenAsLinked(token.id, userId);
-      
-      // Return updated balance (credits as integers for display)
-      res.json({
-        success: true,
-        creditsTransferred: Math.floor(guestCredits),
-        newBalance: Math.floor(parseFloat(newBalance)),
-        message: `Successfully linked account and transferred ${Math.floor(guestCredits)} credits`,
-      });
-    } catch (error: any) {
-      console.error("Account linking error:", error);
-      res.status(500).json({ error: "Failed to link accounts" });
-    }
+  // Account linking required Replit Auth; that path is gone. Credits stay on the guest token.
+  app.post("/api/link-guest-account", (_req, res) => {
+    res.status(410).json({
+      error: "Gone",
+      message: "Account linking is unavailable. Replit Auth has been removed; guest tokens are the primary path.",
+    });
   });
 
   // Get dashboard stats (privacy-first: only counts and totals, no prompts/responses)
@@ -212,13 +169,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Calculate credit cost based on tiered pricing
       const modelCount = modelIds.length;
-      const creditCostMap: Record<number, number> = {
-        1: 3,
-        2: 5,
-        3: 7,
-        4: 10,
-      };
-      const baseCreditCost = creditCostMap[modelCount];
+      const baseCreditCost = CREDIT_COST_BY_MODEL_COUNT[modelCount];
       
       if (!baseCreditCost) {
         return res.status(400).json({
@@ -228,8 +179,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Add Caesar cost if enabled (+3 credits) and Maximus cost if enabled (+5 credits)
-      const caesarCost = caesarEnabled ? 3 : 0;
-      const maximusCost = maximusEnabled ? 5 : 0;
+      const caesarCost = caesarEnabled ? CAESAR_CREDIT_COST : 0;
+      const maximusCost = maximusEnabled ? MAXIMUS_CREDIT_COST : 0;
       const creditCost = baseCreditCost + caesarCost + maximusCost;
       
       // Check credit balance
@@ -259,7 +210,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (caesarEnabled && caesarJudgeModel && validResponseCount >= 2) {
         caesar = await generateCaesarVerdict(prompt, responses, caesarJudgeModel);
         if (!caesar.error) {
-          actualCaesarCost = 3;
+          actualCaesarCost = CAESAR_CREDIT_COST;
         }
       }
       
@@ -268,7 +219,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (maximusEnabled && maximusEngineModel && validResponseCount >= 2) {
         maximus = await generateMaximus(prompt, responses, maximusEngineModel);
         if (!maximus.error) {
-          actualMaximusCost = 5;
+          actualMaximusCost = MAXIMUS_CREDIT_COST;
         }
       }
       
@@ -335,6 +286,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const authId = getAuthId(req);
       const guestToken = req.guestToken?.token;
       
+      const stripe = getStripe();
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items: [
@@ -381,7 +333,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Verify webhook signature (using raw body)
       const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
       if (webhookSecret) {
-        event = stripe.webhooks.constructEvent(req.rawBody as Buffer, sig, webhookSecret);
+        event = getStripe().webhooks.constructEvent(req.rawBody as Buffer, sig, webhookSecret);
       } else {
         // For development without webhook secret
         event = req.body as Stripe.Event;

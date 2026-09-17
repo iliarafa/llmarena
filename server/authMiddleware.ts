@@ -2,6 +2,17 @@ import type { RequestHandler } from "express";
 import { storage } from "./storage";
 import type { User, GuestToken } from "@shared/schema";
 
+/**
+ * Replit Auth has been removed. Authenticated accounts are not available.
+ * Guest tokens are the primary (and only) identity path for now.
+ */
+export const isAuthenticated: RequestHandler = (_req, res) => {
+  res.status(401).json({
+    message: "Unauthorized",
+    error: "Authenticated accounts are not available. Use a guest token.",
+  });
+};
+
 // Extend Express Request type to include our auth info
 declare global {
   namespace Express {
@@ -32,22 +43,12 @@ export const requireAuth: RequestHandler = async (req, res, next) => {
       }
     }
     
-    // Check for logged-in user session (Replit Auth)
-    const user = req.user as any;
-    if (req.isAuthenticated() && user?.claims?.sub) {
-      const userId = user.claims.sub;
-      const authenticatedUser = await storage.getUser(userId);
-      
-      if (authenticatedUser) {
-        req.authenticatedUser = authenticatedUser;
-        return next();
-      }
-    }
-    
-    // No valid authentication found
+    // Authenticated sessions (formerly Replit Auth) are not available.
+    // Guest tokens are the only supported identity path.
+
     return res.status(401).json({ 
       error: "Unauthorized",
-      message: "Please provide a valid guest token or log in to access this resource." 
+      message: "Please provide a valid guest token to access this resource." 
     });
   } catch (error) {
     console.error("Authentication error:", error);

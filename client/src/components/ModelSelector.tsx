@@ -13,10 +13,20 @@ import grokLogo from "@assets/grok_1764386738517.png";
 import chatGptLogo from "@assets/ChatGPT-Logo_1764386066627.png";
 import geminiLogo from "@assets/gemini-color_1764386333911.png";
 import claudeLogo from "@assets/claude-color_1764386516580.png";
+import {
+  MODEL_DISPLAY_NAMES,
+  MODEL_SHORT_NAMES,
+  JUDGE_DISPLAY_NAMES,
+  MAXIMUS_DISPLAY_NAMES,
+  JUDGE_MODEL_IDS,
+  MAXIMUS_MODEL_IDS,
+  type ContenderModelId,
+  type JudgeModelId,
+  type MaximusModelId,
+} from "@shared/models";
 
-export type ModelId = "gpt-4o" | "claude-sonnet" | "gemini-flash" | "grok";
-export type JudgeModelId = "claude-3-5-sonnet" | "gpt-4o" | "gemini-flash" | "grok";
-export type MaximusModelId = "gpt-4o" | "gemini-flash" | "grok";
+export type ModelId = ContenderModelId;
+export type { JudgeModelId, MaximusModelId };
 
 export interface Model {
   id: ModelId;
@@ -33,29 +43,26 @@ export interface JudgeModel {
 }
 
 export const AVAILABLE_MODELS: Model[] = [
-  { id: "gpt-4o", name: "GPT-4o", shortName: "GPT-4o", iconImage: chatGptLogo, color: "text-green-600" },
-  { id: "claude-sonnet", name: "Claude Sonnet", shortName: "Claude", iconImage: claudeLogo, color: "text-orange-600" },
-  { id: "gemini-flash", name: "Gemini Flash", shortName: "Gemini", iconImage: geminiLogo, color: "text-blue-600" },
-  { id: "grok", name: "Grok", shortName: "Grok", iconImage: grokLogo, color: "text-foreground" },
+  { id: "gpt-4o", name: MODEL_DISPLAY_NAMES["gpt-4o"], shortName: MODEL_SHORT_NAMES["gpt-4o"], iconImage: chatGptLogo, color: "text-green-600" },
+  { id: "claude-sonnet", name: MODEL_DISPLAY_NAMES["claude-sonnet"], shortName: MODEL_SHORT_NAMES["claude-sonnet"], iconImage: claudeLogo, color: "text-orange-600" },
+  { id: "gemini-flash", name: MODEL_DISPLAY_NAMES["gemini-flash"], shortName: MODEL_SHORT_NAMES["gemini-flash"], iconImage: geminiLogo, color: "text-blue-600" },
+  { id: "grok", name: MODEL_DISPLAY_NAMES["grok"], shortName: MODEL_SHORT_NAMES["grok"], iconImage: grokLogo, color: "text-foreground" },
 ];
 
-export const JUDGE_MODELS: JudgeModel[] = [
-  { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet" },
-  { id: "gpt-4o", name: "GPT-4o" },
-  { id: "gemini-flash", name: "Gemini Flash" },
-  { id: "grok", name: "Grok-4" },
-];
+export const JUDGE_MODELS: JudgeModel[] = JUDGE_MODEL_IDS.map((id) => ({
+  id,
+  name: JUDGE_DISPLAY_NAMES[id],
+}));
 
 export interface MaximusModel {
   id: MaximusModelId;
   name: string;
 }
 
-export const MAXIMUS_MODELS: MaximusModel[] = [
-  { id: "gpt-4o", name: "GPT-4o" },
-  { id: "gemini-flash", name: "Gemini Flash" },
-  { id: "grok", name: "Grok-4" },
-];
+export const MAXIMUS_MODELS: MaximusModel[] = MAXIMUS_MODEL_IDS.map((id) => ({
+  id,
+  name: MAXIMUS_DISPLAY_NAMES[id],
+}));
 
 interface ModelSelectorProps {
   selectedModels: ModelId[];

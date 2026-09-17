@@ -9,7 +9,7 @@ export function useAccountLinking() {
 
   useEffect(() => {
     const linkAccount = async () => {
-      // Only run if user just authenticated
+      // Replit Auth is gone; linking is a no-op until a future account provider exists.
       if (!isAuthenticated) return;
 
       // Check if there's a guest token to link

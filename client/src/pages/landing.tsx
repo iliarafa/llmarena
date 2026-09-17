@@ -4,7 +4,6 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Sparkles, Zap, Shield, Crown, Eye, Sword, Layers, ChevronRight, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeProvider";
-import { Link } from "wouter";
 import llmFightImage from "@assets/Gemini_Generated_Image_d61xiad61xiad61x.png";
 
 function BattleModesContent() {
@@ -82,10 +81,6 @@ export default function Landing() {
     }
   };
 
-  const handleSignIn = () => {
-    window.location.href = "/api/login";
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50 dark:from-black dark:to-black">
       <div className="absolute top-4 right-4 z-50">
@@ -131,26 +126,15 @@ export default function Landing() {
 
           <div className="flex flex-row items-center justify-center gap-3 mt-6 md:hidden" data-testid="mobile-hero-cta">
             {!guestToken ? (
-              <>
-                <Button 
-                  onClick={handleCreateGuestToken}
-                  disabled={isCreatingToken}
-                  size="sm"
-                  className="bg-gray-900 hover:bg-gray-800 text-white font-medium dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
-                  data-testid="button-create-guest-token-mobile"
-                >
-                  {isCreatingToken ? "Creating..." : "Create Guest Token"}
-                </Button>
-                <Button 
-                  onClick={handleSignIn}
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-600 dark:text-gray-400 font-medium"
-                  data-testid="button-sign-in-mobile"
-                >
-                  Sign In
-                </Button>
-              </>
+              <Button 
+                onClick={handleCreateGuestToken}
+                disabled={isCreatingToken}
+                size="sm"
+                className="bg-gray-900 hover:bg-gray-800 text-white font-medium dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+                data-testid="button-create-guest-token-mobile"
+              >
+                {isCreatingToken ? "Creating..." : "Create Guest Token"}
+              </Button>
             ) : (
               <div className="flex flex-col items-center gap-3 w-full px-4">
                 <div className="flex items-center gap-2 p-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 w-full max-w-sm">
@@ -180,64 +164,46 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Auth Section - Borderless Typographic */}
-        <div className="hidden md:grid md:grid-cols-2 md:gap-12 max-w-2xl mx-auto mb-8 pl-6">
-          <div>
-            <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3 text-[15px]" data-testid="text-try-guest-title">
-              Try as Guest
-            </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-              No sign-up required. Get a secure token and buy credits anonymously.
-            </p>
-            {!guestToken ? (
-              <button 
-                onClick={handleCreateGuestToken}
-                disabled={isCreatingToken}
-                className="w-full h-10 text-sm font-medium rounded-md bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors"
-                data-testid="button-create-guest-token"
-              >
-                {isCreatingToken ? "Creating..." : "Create Guest Token"}
-              </button>
-            ) : (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 text-xs break-all font-mono text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-2 py-1.5 rounded" data-testid="text-guest-token">
-                    {guestToken}
-                  </code>
-                  <button
-                    onClick={handleCopyToken}
-                    className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                    data-testid="button-copy-token"
-                  >
-                    <Copy className="w-4 h-4" />
-                  </button>
-                </div>
+        {/* Guest token is the only auth path — Replit Auth has been removed. */}
+        <div className="hidden md:block max-w-2xl mx-auto mb-8 pl-6">
+          <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3 text-[15px]" data-testid="text-try-guest-title">
+            Continue as Guest
+          </h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+            No sign-up required. Get a secure token and buy credits anonymously. Signed-in accounts are not available yet.
+          </p>
+          {!guestToken ? (
+            <button 
+              onClick={handleCreateGuestToken}
+              disabled={isCreatingToken}
+              className="w-full max-w-sm h-10 text-sm font-medium rounded-md bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors"
+              data-testid="button-create-guest-token"
+            >
+              {isCreatingToken ? "Creating..." : "Create Guest Token"}
+            </button>
+          ) : (
+            <div className="space-y-3 max-w-sm">
+              <div className="flex items-center gap-2">
+                <code className="flex-1 text-xs break-all font-mono text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-2 py-1.5 rounded" data-testid="text-guest-token">
+                  {guestToken}
+                </code>
                 <button
-                  onClick={() => window.location.href = "/"}
-                  className="w-full h-10 text-sm font-medium rounded-md bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors"
-                  data-testid="button-continue-guest"
+                  onClick={handleCopyToken}
+                  className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  data-testid="button-copy-token"
                 >
-                  Continue to Arena
+                  <Copy className="w-4 h-4" />
                 </button>
               </div>
-            )}
-          </div>
-
-          <div>
-            <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3 text-[15px]" data-testid="text-sign-in-title">
-              Sign In
-            </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-              Preserve your credits across devices with Google, Apple, GitHub, or email.
-            </p>
-            <button 
-              onClick={handleSignIn}
-              className="w-full h-10 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-900 dark:text-white transition-colors"
-              data-testid="button-sign-in"
-            >
-              Sign In / Create Account
-            </button>
-          </div>
+              <button
+                onClick={() => window.location.href = "/"}
+                className="w-full h-10 text-sm font-medium rounded-md bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors"
+                data-testid="button-continue-guest"
+              >
+                Continue to Arena
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Mobile Feature List - 4 Items with Progressive Disclosure */}
@@ -249,7 +215,7 @@ export default function Landing() {
           >
             <Zap className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out">Compare Models</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run GPT-4o, Claude, Gemini, and Grok side by side.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run GPT-5.4, Claude Sonnet 5, Gemini 3.8 Flash, and Grok 4.6 side by side.</p>
           </div>
 
           {/* 2. Battle Modes - Interactive */}
@@ -296,7 +262,7 @@ export default function Landing() {
           >
             <Zap className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
             <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out text-[13px]">Compare Models</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run GPT-4o, Claude, Gemini, and Grok side by side.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run GPT-5.4, Claude Sonnet 5, Gemini 3.8 Flash, and Grok 4.6 side by side.</p>
           </div>
 
           {/* 2. Battle Modes - Interactive */}
