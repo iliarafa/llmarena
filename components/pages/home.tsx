@@ -1,0 +1,722 @@
+"use client";
+
+import { useState } from "react";
+import ModelSelector, { AVAILABLE_MODELS, type ModelId, type JudgeModelId, type MaximusModelId, type Model } from "@/components/ModelSelector";
+import {
+  CREDIT_COST_BY_MODEL_COUNT,
+  CAESAR_CREDIT_COST,
+  MAXIMUS_CREDIT_COST,
+  DEFAULT_JUDGE_MODEL,
+  DEFAULT_MAXIMUS_MODEL,
+} from "@shared/models";
+import PromptInput from "@/components/PromptInput";
+import ComparisonGrid, { type ModelResponse } from "@/components/ComparisonGrid";
+import CaesarCard, { type CaesarResponse } from "@/components/CaesarCard";
+import MaximusCard, { type MaximusResponse } from "@/components/MaximusCard";
+import HistorySidebar from "@/components/HistorySidebar";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useCreditBalance } from "@/hooks/useCreditBalance";
+import { useAccountLinking } from "@/hooks/useAccountLinking";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { saveBattle, type Battle } from "@/lib/battleHistory";
+import { generatePDF, downloadMarkdown, downloadJSON } from "@/lib/reportExporter";
+import GuestAccountBanner from "@/components/GuestAccountBanner";
+import { Button } from "@/components/ui/button";
+import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History, Shield, Lock, Gamepad2 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeProvider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+// Fisher-Yates shuffle algorithm for randomizing model display order in blind mode
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
+export default function Home() {
+  const [selectedModels, setSelectedModels] = useState<ModelId[]>([]);
+  const [prompt, setPrompt] = useState("");
+  const [responses, setResponses] = useState<ModelResponse[]>([]);
+  const [caesarEnabled, setCaesarEnabled] = useState(false);
+  const [caesarJudgeModel, setCaesarJudgeModel] = useState<JudgeModelId>(DEFAULT_JUDGE_MODEL);
+  const [caesarResponse, setCaesarResponse] = useState<CaesarResponse | undefined>();
+  const [caesarLoading, setCaesarLoading] = useState(false);
+  const [blindModeEnabled, setBlindModeEnabled] = useState(false);
+  const [blindModeRevealed, setBlindModeRevealed] = useState(false);
+  const [maximusEnabled, setMaximusEnabled] = useState(false);
+  const [maximusEngineModel, setMaximusEngineModel] = useState<MaximusModelId>(DEFAULT_MAXIMUS_MODEL);
+  const [maximusResponse, setMaximusResponse] = useState<MaximusResponse | undefined>();
+  const [maximusLoading, setMaximusLoading] = useState(false);
+  const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0);
+  const [displayOrder, setDisplayOrder] = useState<Model[]>([]); // Randomized model order for blind mode
+  const { toast } = useToast();
+  const { user, isAuthenticated } = useAuth();
+  const { creditBalance } = useCreditBalance();
+  const router = useRouter();
+  useAccountLinking();
+  
+  const isGuest = !isAuthenticated && !!localStorage.getItem("guestToken");
+  
+  const baseCreditCost = CREDIT_COST_BY_MODEL_COUNT[selectedModels.length] || 0;
+  const caesarCost = caesarEnabled ? CAESAR_CREDIT_COST : 0;
+  const maximusCost = maximusEnabled ? MAXIMUS_CREDIT_COST : 0;
+  const creditCost = baseCreditCost + caesarCost + maximusCost;
+
+  // Create model name mapping for Caesar card
+  const modelNames: { [modelId: string]: string } = {};
+  AVAILABLE_MODELS.forEach(m => {
+    modelNames[m.id] = m.name;
+  });
+
+  const handleCompare = async () => {
+    if (selectedModels.length === 0) {
+      toast({
+        title: "No models selected",
+        description: "Please select at least one model to compare",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!prompt.trim()) {
+      toast({
+        title: "Empty prompt",
+        description: "Please enter a prompt to send to the models",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Reset blind mode reveal state for new comparison
+    if (blindModeEnabled) {
+      setBlindModeRevealed(false);
+    }
+
+    // Get the models for this comparison
+    const modelsForComparison = AVAILABLE_MODELS.filter(m => selectedModels.includes(m.id));
+    
+    // If blind mode is enabled, shuffle the display order to prevent predictability
+    // This randomizes which model appears as "Contender A", "Contender B", etc.
+    if (blindModeEnabled) {
+      const shuffledModels = shuffleArray(modelsForComparison);
+      setDisplayOrder(shuffledModels);
+    } else {
+      // When blind mode is off, use the original selection order
+      setDisplayOrder(modelsForComparison);
+    }
+
+    // Set all selected models to loading state
+    setResponses(
+      selectedModels.map(modelId => ({
+        modelId,
+        isLoading: true
+      }))
+    );
+    
+    // Set Caesar to loading if enabled
+    if (caesarEnabled) {
+      setCaesarLoading(true);
+      setCaesarResponse(undefined);
+    }
+    
+    // Set Maximus to loading if enabled
+    if (maximusEnabled) {
+      setMaximusLoading(true);
+      setMaximusResponse(undefined);
+    }
+
+    const features = [];
+    if (caesarEnabled) features.push('Caesar judging');
+    if (maximusEnabled) features.push('Maximus synthesis');
+    const featuresDesc = features.length > 0 ? ` + ${features.join(' + ')}` : '';
+
+    toast({
+      title: "Generating responses",
+      description: `Comparing across ${selectedModels.length} model${selectedModels.length > 1 ? 's' : ''}${featuresDesc}`
+    });
+
+    try {
+      const res = await apiRequest("POST", "/api/compare", {
+        prompt,
+        modelIds: selectedModels,
+        caesarEnabled,
+        caesarJudgeModel: caesarEnabled ? caesarJudgeModel : undefined,
+        maximusEnabled,
+        maximusEngineModel: maximusEnabled ? maximusEngineModel : undefined,
+      });
+
+      if (!res.ok && res.status !== 402) {
+        throw new Error(`Compare failed with status ${res.status}`);
+      }
+
+      if (res.status === 402) {
+        const errorData = await res.json();
+        
+        setResponses(
+          selectedModels.map(modelId => ({
+            modelId,
+            error: "Insufficient credits"
+          }))
+        );
+        setCaesarLoading(false);
+        setMaximusLoading(false);
+        
+        toast({
+          title: "Insufficient Credits",
+          description: `You need ${errorData.required} credits but only have ${errorData.available}. Purchase more credits to continue.`,
+          variant: "destructive",
+          action: (
+            <Button variant="outline" size="sm" onClick={() => router.push("/purchase")}>
+              Buy Credits
+            </Button>
+          ),
+        });
+        return;
+      }
+
+      const result = await res.json();
+      setResponses(result.responses);
+      
+      // Set Caesar response if present and auto-reveal blind mode
+      if (result.caesar) {
+        setCaesarResponse(result.caesar);
+        if (blindModeEnabled) {
+          setBlindModeRevealed(true);
+        }
+      }
+      setCaesarLoading(false);
+      
+      // Set Maximus response if present
+      if (result.maximus) {
+        setMaximusResponse(result.maximus);
+      }
+      setMaximusLoading(false);
+      
+      // Invalidate credit balance queries to refresh the displayed balance
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/guest/verify"] });
+      
+      // Save battle to local history
+      const validResponses = result.responses.filter((r: ModelResponse) => r.response && !r.error);
+      if (validResponses.length > 0) {
+        const battleResponses = validResponses.map((r: ModelResponse) => ({
+          modelId: r.modelId,
+          modelName: modelNames[r.modelId] || r.modelId,
+          response: r.response!,
+          generationTime: r.generationTime,
+          tokenCount: r.tokenCount,
+        }));
+
+        const caesarResult = result.caesar?.verdict ? {
+          winner: result.caesar.verdict.winner,
+          winnerModelName: result.caesar.verdict.winner === "Tie" 
+            ? "Tie" 
+            : modelNames[result.caesar.modelMapping[result.caesar.verdict.winner]] || result.caesar.verdict.winner,
+          confidence: result.caesar.verdict.confidence,
+          oneLineVerdict: result.caesar.verdict.one_line_verdict,
+          detailedReasoning: result.caesar.verdict.detailed_reasoning || [],
+          scores: result.caesar.verdict.scores || {},
+          judgeModel: result.caesar.judgeModel,
+          modelMapping: result.caesar.modelMapping,
+        } : undefined;
+
+        saveBattle({
+          prompt,
+          responses: battleResponses,
+          caesar: caesarResult,
+          blindMode: blindModeEnabled,
+        });
+        setHistoryRefreshTrigger(prev => prev + 1);
+      }
+
+      // Show success message with credits used (with guards for missing fields)
+      if (result.creditsUsed !== undefined && result.creditsRemaining !== undefined) {
+        toast({
+          title: "Comparison Complete",
+          description: `Used ${result.creditsUsed} credits. You have ${result.creditsRemaining} credits remaining.`,
+        });
+      } else {
+        toast({
+          title: "Comparison Complete",
+          description: "Responses generated successfully.",
+        });
+      }
+    } catch (error: any) {
+      console.error("Comparison error:", error);
+      
+      setResponses(
+        selectedModels.map(modelId => ({
+          modelId,
+          error: "Failed to generate response"
+        }))
+      );
+      setCaesarLoading(false);
+      setMaximusLoading(false);
+
+      toast({
+        title: "Error",
+        description: "Failed to generate comparisons. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // For non-comparison display (like the selector), use the raw selected models order
+  const models = AVAILABLE_MODELS.filter(m => selectedModels.includes(m.id));
+  
+  // For displaying comparison results, use displayOrder (which is shuffled in blind mode)
+  // Fall back to models if displayOrder hasn't been set yet (before first comparison)
+  const displayModels = displayOrder.length > 0 ? displayOrder : models;
+
+  // Handle voting in blind mode - reveals the model names
+  const handleVote = (modelId: string) => {
+    if (blindModeEnabled && !blindModeRevealed) {
+      setBlindModeRevealed(true);
+      toast({
+        title: "Vote Recorded!",
+        description: `You voted for the response. Model identities revealed!`,
+      });
+    }
+  };
+
+  // Load a battle from history
+  const handleLoadBattle = (battle: Battle) => {
+    setPrompt(battle.prompt);
+    setBlindModeEnabled(battle.blindMode);
+    setBlindModeRevealed(true); // Always reveal when loading from history
+    
+    // Convert battle responses back to ModelResponse format
+    const loadedResponses: ModelResponse[] = battle.responses.map(r => ({
+      modelId: r.modelId,
+      response: r.response,
+      generationTime: r.generationTime,
+      tokenCount: r.tokenCount,
+    }));
+    setResponses(loadedResponses);
+    
+    // Set selected models from the battle
+    const modelIds = battle.responses.map(r => r.modelId as ModelId);
+    setSelectedModels(modelIds);
+    
+    // Set display order from the loaded battle (maintain original order from history)
+    const loadedModels = AVAILABLE_MODELS.filter(m => modelIds.includes(m.id));
+    setDisplayOrder(loadedModels);
+    
+    // Restore Caesar response if available
+    if (battle.caesar) {
+      const caesarResp: CaesarResponse = {
+        verdict: {
+          winner: battle.caesar.winner as "A" | "B" | "C" | "D" | "Tie",
+          confidence: battle.caesar.confidence,
+          one_line_verdict: battle.caesar.oneLineVerdict,
+          detailed_reasoning: battle.caesar.detailedReasoning || [],
+          scores: battle.caesar.scores || {},
+        },
+        judgeModel: battle.caesar.judgeModel,
+        modelMapping: battle.caesar.modelMapping || {},
+      };
+      setCaesarResponse(caesarResp);
+      setCaesarEnabled(true);
+    } else {
+      setCaesarResponse(undefined);
+      setCaesarEnabled(false);
+    }
+    
+    toast({
+      title: "Battle Loaded",
+      description: "Viewing saved battle from history",
+    });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("guestToken");
+    window.location.href = "/";
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-black dark:to-black">
+      <header className="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-12 md:h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2 md:gap-4">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden h-9 w-9" data-testid="button-mobile-menu">
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72">
+                <SheetHeader>
+                  <SheetTitle>LLM Arena</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6 space-y-4">
+                  <div className="px-2 py-2 rounded-lg bg-gray-50 dark:bg-black">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Coins className="w-4 h-4 text-muted-foreground" />
+                      <span className="font-medium">{creditBalance.toFixed(0)} credits</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <HistorySidebar 
+                      onLoadBattle={handleLoadBattle}
+                      refreshTrigger={historyRefreshTrigger}
+                    />
+                    <Link href="/notebook">
+                      <Button variant="ghost" className="w-full justify-start" data-testid="link-notebook-mobile">
+                        <BookOpen className="w-4 h-4 mr-3" />
+                        Notebook
+                      </Button>
+                    </Link>
+                    <Link href="/dashboard">
+                      <Button variant="ghost" className="w-full justify-start" data-testid="link-dashboard-mobile">
+                        <BarChart3 className="w-4 h-4 mr-3" />
+                        Dashboard
+                      </Button>
+                    </Link>
+                    <Link href="/purchase">
+                      <Button variant="ghost" className="w-full justify-start" data-testid="link-purchase-mobile">
+                        <CreditCard className="w-4 h-4 mr-3" />
+                        Buy Credits
+                      </Button>
+                    </Link>
+                    <Link href="/logit-run">
+                      <Button variant="ghost" className="w-full justify-start group" data-testid="link-logit-run-mobile">
+                        <Gamepad2 className="w-4 h-4 mr-3 transition-colors group-hover:text-purple-500" />
+                        Logit Run
+                      </Button>
+                    </Link>
+                    {user?.isAdmin && (
+                      <Link href="/admin">
+                        <Button variant="ghost" className="w-full justify-start" data-testid="link-admin-mobile">
+                          <Shield className="w-4 h-4 mr-3" />
+                          Admin Panel
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                  <div className="pt-4 border-t">
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start text-muted-foreground" 
+                      onClick={handleLogout}
+                      data-testid="button-logout-mobile"
+                    >
+                      <LogOut className="w-4 h-4 mr-3" />
+                      {isGuest ? "Clear Token" : "Logout"}
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+            
+            <h1 className="text-lg md:text-xl font-bold" data-testid="text-app-title">LLM Arena</h1>
+            
+            <div className="hidden md:flex items-center gap-2">
+              <HistorySidebar 
+                onLoadBattle={handleLoadBattle}
+                refreshTrigger={historyRefreshTrigger}
+              />
+              <Link href="/notebook">
+                <Button variant="ghost" size="sm" className="text-[#616161] dark:text-white" data-testid="link-notebook">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Notebook
+                </Button>
+              </Link>
+              <Link href="/logit-run">
+                <Button variant="ghost" size="sm" className="text-[#616161] dark:text-white group" data-testid="link-logit-run">
+                  <Gamepad2 className="w-4 h-4 mr-2 transition-colors group-hover:text-purple-500" />
+                  Logit Run
+                </Button>
+              </Link>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
+              <Coins className="w-4 h-4" />
+              <span data-testid="text-header-credits">{creditBalance.toFixed(0)} credits</span>
+              
+              <span className="text-gray-300 dark:text-gray-600 mx-1">|</span>
+              
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    type="button"
+                    className="flex items-center gap-1.5 cursor-help focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-sm" 
+                    data-testid="badge-secure-session"
+                    aria-label="Session security information"
+                  >
+                    <div className="relative flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 pulse-slow" />
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">E2E Encrypted <span className="hidden lg:inline">• No Logs</span></span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs">
+                  <p className="text-xs">Your session exists only in RAM. Closing this tab wipes all data instantly.</p>
+                </TooltipContent>
+              </Tooltip>
+              
+              <Link href="/purchase">
+                <Button variant="ghost" size="sm" className="h-8 text-[#383838] dark:text-[#d4d4d4]" data-testid="button-header-buy-credits">
+                  Buy Credits
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="flex md:hidden items-center gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Coins className="w-3.5 h-3.5" />
+                <span data-testid="text-header-credits-mobile">{creditBalance.toFixed(0)}</span>
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    type="button"
+                    className="flex items-center gap-1 cursor-help focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-sm" 
+                    data-testid="badge-secure-session-mobile"
+                    aria-label="Session security information"
+                  >
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-slow" />
+                    <Lock className="w-3 h-3 text-gray-400" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs">
+                  <p className="text-xs">E2E Encrypted • No Logs. Session exists only in RAM.</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            
+            <ThemeToggle className="h-9 w-9" />
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9" data-testid="button-user-menu">
+                  <User className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel data-testid="text-user-status">
+                  {isGuest ? "Guest User" : (user as any)?.email || "User"}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="px-2 py-1.5 text-sm" data-testid="text-credit-balance">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Coins className="w-4 h-4" />
+                    <span className="font-medium">{creditBalance.toFixed(0)} credits</span>
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                <Link href="/dashboard">
+                  <DropdownMenuItem data-testid="button-dashboard">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/purchase">
+                  <DropdownMenuItem data-testid="button-buy-credits">
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Buy Credits
+                  </DropdownMenuItem>
+                </Link>
+                {user?.isAdmin && (
+                  <Link href="/admin">
+                    <DropdownMenuItem data-testid="button-admin">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Admin Panel
+                    </DropdownMenuItem>
+                  </Link>
+                )}
+                <DropdownMenuItem onClick={handleLogout} data-testid="button-logout">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  {isGuest ? "Clear Token" : "Logout"}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6 space-y-4 md:space-y-6 pb-28 md:pb-8">
+        <div className="max-w-4xl mx-auto space-y-3 md:space-y-4">
+          {isGuest && <GuestAccountBanner creditBalance={creditBalance} />}
+          
+          <ModelSelector 
+            selectedModels={selectedModels}
+            onSelectionChange={setSelectedModels}
+            caesarEnabled={caesarEnabled}
+            onCaesarToggle={setCaesarEnabled}
+            caesarJudgeModel={caesarJudgeModel}
+            onCaesarJudgeChange={setCaesarJudgeModel}
+            blindModeEnabled={blindModeEnabled}
+            onBlindModeToggle={setBlindModeEnabled}
+            maximusEnabled={maximusEnabled}
+            onMaximusToggle={setMaximusEnabled}
+            maximusEngineModel={maximusEngineModel}
+            onMaximusEngineChange={setMaximusEngineModel}
+          />
+          
+          <div className="hidden md:block">
+            <PromptInput
+              value={prompt}
+              onChange={setPrompt}
+              onSubmit={handleCompare}
+              isLoading={responses.some(r => r.isLoading) || caesarLoading}
+              disabled={selectedModels.length === 0}
+              creditCost={creditCost}
+              creditBalance={creditBalance}
+              noModelsSelected={selectedModels.length === 0}
+            />
+          </div>
+        </div>
+
+        <div className="pt-2">
+          {responses.some(r => r.response && !r.error) && (
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Comparison Results</h2>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" data-testid="button-download-report">
+                    <FileDown className="w-4 h-4 mr-2" />
+                    Download Report
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      generatePDF({
+                        prompt,
+                        responses,
+                        modelNames,
+                        caesar: caesarResponse,
+                        blindMode: blindModeEnabled && !blindModeRevealed,
+                      });
+                      toast({
+                        title: "PDF Generated",
+                        description: blindModeEnabled && !blindModeRevealed 
+                          ? "Report downloaded - model names are revealed in export"
+                          : "Your comparison report has been downloaded",
+                      });
+                    }}
+                    data-testid="button-export-pdf"
+                  >
+                    Export as PDF
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      downloadMarkdown({
+                        prompt,
+                        responses,
+                        modelNames,
+                        caesar: caesarResponse,
+                        blindMode: blindModeEnabled && !blindModeRevealed,
+                      });
+                      toast({
+                        title: "Markdown Generated",
+                        description: blindModeEnabled && !blindModeRevealed 
+                          ? "Report downloaded - model names are revealed in export"
+                          : "Your comparison report has been downloaded",
+                      });
+                    }}
+                    data-testid="button-export-markdown"
+                  >
+                    Export as Markdown
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      downloadJSON({
+                        prompt,
+                        responses,
+                        modelNames,
+                        caesar: caesarResponse,
+                        blindMode: blindModeEnabled && !blindModeRevealed,
+                      });
+                      toast({
+                        title: "JSON Generated",
+                        description: blindModeEnabled && !blindModeRevealed 
+                          ? "Report downloaded - model names are revealed in export"
+                          : "Your comparison report has been downloaded",
+                      });
+                    }}
+                    data-testid="button-export-json"
+                  >
+                    Export as JSON
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
+          <div className={`grid gap-6 ${caesarEnabled || caesarResponse ? 'lg:grid-cols-[1fr_350px] items-stretch' : ''}`}>
+            <ComparisonGrid 
+              models={displayModels}
+              responses={responses}
+              prompt={prompt}
+              blindModeEnabled={blindModeEnabled}
+              blindModeRevealed={blindModeRevealed}
+              onVote={handleVote}
+              caesarResponse={caesarResponse}
+              caesarEnabled={caesarEnabled}
+              maximusEnabled={maximusEnabled}
+            />
+            {(caesarEnabled || caesarResponse) && (
+              <div className="h-full min-h-full">
+                <CaesarCard 
+                  caesarResponse={caesarResponse}
+                  isLoading={caesarLoading}
+                  modelNames={modelNames}
+                />
+              </div>
+            )}
+          </div>
+          
+          {(maximusEnabled || maximusResponse) && (
+            <div className="mt-6">
+              <MaximusCard 
+                maximusResponse={maximusResponse}
+                isLoading={maximusLoading}
+              />
+            </div>
+          )}
+        </div>
+      </main>
+      
+      <div className="md:hidden">
+        <PromptInput
+          value={prompt}
+          onChange={setPrompt}
+          onSubmit={handleCompare}
+          isLoading={responses.some(r => r.isLoading) || caesarLoading}
+          disabled={selectedModels.length === 0}
+          creditCost={creditCost}
+          creditBalance={creditBalance}
+          noModelsSelected={selectedModels.length === 0}
+          isMobileFooter={true}
+        />
+      </div>
+    </div>
+  );
+}
