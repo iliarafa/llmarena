@@ -2,7 +2,7 @@
 
 **Privacy-first AI model comparison platform. Compare GPT-5.4, Claude Sonnet 5, Gemini 3.8 Flash & Grok 4.6 side-by-side. AI judge evaluates winners. Pay-per-use credits, no subscriptions.**
 
-Replit is **not required**. This is a normal Express + Vite app. Use your own API keys.
+This is a **Next.js App Router** app, deployable on Vercel. Use your own API keys. Replit is not required.
 
 ---
 
@@ -75,7 +75,7 @@ Your prompts and AI responses exist only in your browser session.
 
 ## Credit Pricing
 
-Tiers are defined once in `shared/models.ts` and used by both the Express compare route and the home page.
+Tiers are defined once in `shared/models.ts` and used by both the compare route and the home page.
 
 ### Model Comparison
 | Models Selected | Credits |
@@ -94,22 +94,27 @@ Tiers are defined once in `shared/models.ts` and used by both the Express compar
 ### Credit Packs
 Purchase credits via Stripe — no subscriptions required.
 
+| Pack | Credits | Price |
+|------|---------|-------|
+| Starter | 25 | $3.00 |
+| Challenger | 100 | $10.00 |
+| Pro | 300 | $25.00 |
+| Ultimate | 1000 | $50.00 |
+
 ---
 
 ## Tech Stack
 
-### Frontend
-- React + TypeScript
-- Vite
+### App
+- Next.js 15 App Router + TypeScript
+- React 18
 - Tailwind CSS
 - Shadcn/ui (Radix UI)
 - TanStack Query
-- Wouter (routing)
 
-### Backend
-- Express.js + TypeScript
+### Data
 - Drizzle ORM
-- PostgreSQL (Neon)
+- PostgreSQL (Neon) — `DATABASE_URL` only; not Supabase
 
 ### AI Providers
 - OpenAI (GPT-5.4)
@@ -118,13 +123,11 @@ Purchase credits via Stripe — no subscriptions required.
 - OpenRouter (Grok 4.6)
 
 ### Payments
-- Stripe
+- Stripe Checkout + webhooks
 
 ---
 
-## Getting Started
-
-Replit is not required to build or run this app. Any Node 18+ host works (local, Railway, Fly, a VPS, etc.).
+## Getting Started (local)
 
 ### Prerequisites
 - Node.js 18+
@@ -134,10 +137,10 @@ Replit is not required to build or run this app. Any Node 18+ host works (local,
 
 ### Environment Variables
 
-Copy `.env.example` to `.env` and fill in values. **Never commit secrets.**
+Copy `.env.example` to `.env.local` and fill in values. **Never commit secrets.**
 
-**Required to boot**
-- `DATABASE_URL` — Neon/Postgres connection string. The server throws at import if this is missing (guest tokens live in the DB).
+**Required at runtime**
+- `DATABASE_URL` — Neon/Postgres connection string. Guest tokens live in the DB. The client is created lazily so `next build` does not require this variable.
 
 **Optional at boot (recommended for a full compare)**
 - `OPENAI_API_KEY`
@@ -150,31 +153,29 @@ Missing AI keys do not crash the process. Compare still returns; that model’s 
 **Stripe (required only for purchases / webhooks)**
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
-- `VITE_STRIPE_PUBLIC_KEY`
+- `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` (was `VITE_STRIPE_PUBLIC_KEY`)
 
-The server boots without Stripe. Checkout fails with a clear error until `STRIPE_SECRET_KEY` is set.
+The app boots without Stripe. Checkout fails with a clear error until `STRIPE_SECRET_KEY` is set.
 
-**Other**
-- `PORT` — defaults to `5000`
-
-Replit Auth / AI Integrations env vars (`REPLIT_DOMAINS`, `REPL_ID`, `ISSUER_URL`, `AI_INTEGRATIONS_*`) are unused.
+**Optional**
+- `NEXT_PUBLIC_APP_URL` — fallback origin for Stripe redirects. On Vercel, `VERCEL_URL` / the request `Origin` header are used automatically.
 
 ### Installation
 
 ```bash
-cp .env.example .env
-# edit .env with your keys
+cp .env.example .env.local
+# edit .env.local with your keys
 
 npm install
 
 # Push database schema (needs DATABASE_URL)
 npm run db:push
 
-# Dev server (API + Vite client)
+# Dev server (Next.js — API routes + UI)
 npm run dev
 ```
 
-The app will be available at `http://localhost:5000`.
+The app will be available at `http://localhost:3000`.
 
 ```bash
 # Typecheck
@@ -185,6 +186,14 @@ npm run build
 npm start
 ```
 
+### Local Stripe webhooks
+
+```bash
+stripe listen --forward-to localhost:3000/api/stripe-webhook
+```
+
+Use the CLI `whsec_...` as `STRIPE_WEBHOOK_SECRET`. The webhook handler reads the **raw body** via `request.text()` and verifies `stripe-signature`.
+
 ---
 
 ## Authentication
@@ -192,15 +201,94 @@ npm start
 Guest tokens are the **primary and only** path right now.
 
 1. **Guest Mode**: Create a token on the landing page. Credits are tied to that token in the database and stored in `localStorage` in this browser.
-2. **Signed-in accounts**: Removed. Replit Auth (OIDC login, sessions, `/api/login`) is gone. Old login URLs return `410 Gone`. Account linking is unavailable. A future auth provider can be added later — do not wire callers back to Replit.
+2. **Signed-in accounts**: Not wired in this rewrite. `getSessionUser()` in `lib/session.ts` is the hook point for Auth.js (Google/GitHub) later. Do not wire callers back to Replit.
 
-The `/admin` UI previously required a Replit session. It now shows access denied until a new account provider exists. Guest compare, credits, and Stripe checkout still work.
+Old login URLs (`/api/login`, `/api/callback`, `/api/logout`, `/api/link-guest-account`) return `410 Gone`.
+
+The `/admin` UI and `/api/admin/*` routes require a signed-in user with `isAdmin`. Until Auth.js is added, those endpoints return 401 and the admin page shows access denied. Gift-credits is implemented and gated behind `requireAdmin` → `user.isAdmin`.
 
 ---
 
-## Admin Panel
+## Deploy on Vercel
 
-`/admin` is retained in the codebase but is not reachable without authenticated admin users. Guest tokens are the supported path for this revive.
+### Import the repo
+
+1. [Import](https://vercel.com/new) `iliarafa/llmarena` (or your fork) into Vercel.
+2. Framework Preset: **Next.js** (auto-detected). Root directory: repo root. No `vercel.json` is required.
+3. Add the environment variables below to **Production** and **Preview**.
+4. Deploy.
+
+### Environment variables on Vercel
+
+| Name | Required | Notes |
+|------|----------|-------|
+| `DATABASE_URL` | Yes (runtime) | Neon connection string, `sslmode=require` |
+| `STRIPE_SECRET_KEY` | For purchases | |
+| `STRIPE_WEBHOOK_SECRET` | For purchases | From Stripe Dashboard → Webhooks |
+| `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` | For purchases | Publishable key |
+| `OPENAI_API_KEY` | Recommended | GPT-5.4 |
+| `ANTHROPIC_API_KEY` | Recommended | Claude Sonnet 5 |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Recommended | Gemini 3.8 Flash (or `GOOGLE_API_KEY`) |
+| `OPENROUTER_API_KEY` | Recommended | Grok 4.6 |
+
+After the first deploy, set the Stripe webhook URL to:
+
+```
+https://<your-vercel-domain>/api/stripe-webhook
+```
+
+Events: `checkout.session.completed`.
+
+### Vercel settings for compare
+
+`POST /api/compare` fans out to up to 4 providers, then optionally Caesar and Maximus. That can take well over 60 seconds.
+
+This route sets:
+
+```ts
+export const maxDuration = 300;
+export const runtime = "nodejs";
+```
+
+**Required on the Vercel project (Pro recommended):**
+
+1. Enable **Fluid Compute** (default on new projects).
+2. In Project Settings → Functions, set **Max Duration** to **300 seconds** (or at least as high as `maxDuration`).
+3. Hobby is too short for a full 4-model compare + Caesar + Maximus. Use **Pro**.
+
+The compare handler still returns one JSON payload (same product contract as the Express app). Keeping the work in a single Node function avoids storing prompts or responses.
+
+### Database
+
+Point `DATABASE_URL` at the existing Neon database. Run `npm run db:push` once against that database if the schema is not already applied. Do **not** migrate to Supabase.
+
+---
+
+## Architecture (what moved)
+
+| Before (Express + Vite) | After (Next.js App Router) |
+|-------------------------|----------------------------|
+| `server/index.ts` + Vite middleware | `next dev` / `next start` |
+| `server/routes.ts` | `app/api/**/route.ts` |
+| `server/llm.ts`, `storage.ts`, `db.ts` | `lib/llm.ts`, `lib/storage.ts`, `lib/db.ts` |
+| `server/authMiddleware.ts` | `lib/session.ts` (`getIdentity`, `requireAuth`, `requireAdmin`, `getSessionUser`) |
+| `client/src/pages/*` | `components/pages/*` + `app/*/page.tsx` |
+| `client/src/components` | `components/` |
+| `VITE_STRIPE_PUBLIC_KEY` | `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` |
+| Port 5000 | Port 3000 |
+
+Shared source of truth is unchanged: `shared/models.ts` (IDs, labels, credit tiers) and `shared/schema.ts` (Drizzle).
+
+---
+
+## Verify locally
+
+1. `npm install && npm run check && npm run build`
+2. Set `DATABASE_URL` in `.env.local`, run `npm run db:push`, then `npm run dev`
+3. Open `http://localhost:3000` → Create Guest Token → Continue to Arena
+4. Buy credits (Stripe test mode) or gift via admin once Auth.js + `isAdmin` exist
+5. Select 2+ models, run a compare, optionally enable Caesar and Maximus
+6. Confirm battle history is only in the browser; dashboard shows timestamps + credits only
 
 ---
 
