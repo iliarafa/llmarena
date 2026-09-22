@@ -1,14 +1,18 @@
-import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import * as schema from "@shared/schema";
+import { supabaseSslOverride } from "./database-url";
 
-type Database = NeonHttpDatabase<typeof schema>;
+type Database = NodePgDatabase<typeof schema>;
 
 let cached: Database | null = null;
 
 /**
- * Lazy Neon + Drizzle client. Avoids throwing at import time so `next build`
- * can succeed without DATABASE_URL (required at runtime).
+ * Lazy node-postgres + Drizzle client. Avoids throwing at import time so
+ * `next build` can succeed without DATABASE_URL (required at runtime).
+ *
+ * Supabase dashboard URLs (`*.supabase.co` / pooler, `?sslmode=require`) use
+ * libpq-style SSL: encrypted, certificate not verified. See database-url.ts.
  */
 export function getDb(): Database {
   if (cached) return cached;
@@ -18,8 +22,10 @@ export function getDb(): Database {
     throw new Error("DATABASE_URL is not set");
   }
 
-  const sql = neon(databaseUrl);
-  cached = drizzle(sql, { schema });
+  const pool = new Pool(
+    supabaseSslOverride(databaseUrl) ?? { connectionString: databaseUrl },
+  );
+  cached = drizzle(pool, { schema });
   return cached;
 }
 

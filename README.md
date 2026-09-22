@@ -114,8 +114,8 @@ Purchase credits via Stripe — no subscriptions required.
 - Auth.js (NextAuth v5) — Google and GitHub
 
 ### Data
-- Drizzle ORM
-- PostgreSQL (Neon) — `DATABASE_URL` only; not Supabase
+- Drizzle ORM (`drizzle-orm/node-postgres` + `pg`)
+- Supabase Postgres — `DATABASE_URL` only. Not the Supabase JS client or Supabase Auth.
 
 ### AI Providers
 - OpenAI (GPT-5.4)
@@ -132,7 +132,7 @@ Purchase credits via Stripe — no subscriptions required.
 
 ### Prerequisites
 - Node.js 18+
-- A Neon (or other Postgres) `DATABASE_URL`
+- A Supabase Postgres `DATABASE_URL` (direct or pooler)
 - Provider keys for the models you want to call
 - Stripe keys if you want credit purchases
 
@@ -141,7 +141,7 @@ Purchase credits via Stripe — no subscriptions required.
 Copy `.env.example` to `.env.local` and fill in values. **Never commit secrets.**
 
 **Required at runtime**
-- `DATABASE_URL` — Neon/Postgres connection string. Guest tokens live in the DB. The client is created lazily so `next build` does not require this variable.
+- `DATABASE_URL` — Supabase Postgres connection string (Dashboard → Project Settings → Database). The pooler URI on port 6543 is recommended. Guest tokens live in the DB. The client is created lazily so `next build` does not require this variable. Dashboard URLs include `?sslmode=require`; that works as-is (see Database SSL below).
 
 **Optional at boot (recommended for a full compare)**
 - `OPENAI_API_KEY`
@@ -178,7 +178,7 @@ cp .env.example .env.local
 
 npm install
 
-# Push database schema (needs DATABASE_URL)
+# Push database schema (needs DATABASE_URL from the environment, .env.local, or .env)
 npm run db:push
 
 # Dev server (Next.js — API routes + UI)
@@ -260,7 +260,7 @@ Legacy Replit URLs (`/api/login`, `/api/callback`, `/api/logout`) still return `
 
 | Name | Required | Notes |
 |------|----------|-------|
-| `DATABASE_URL` | Yes (runtime) | Neon connection string, `sslmode=require` |
+| `DATABASE_URL` | Yes (runtime) | Supabase Postgres URI. Pooler URL with `sslmode=require` is fine |
 | `STRIPE_SECRET_KEY` | For purchases | |
 | `STRIPE_WEBHOOK_SECRET` | For purchases | From Stripe Dashboard → Webhooks |
 | `NEXT_PUBLIC_STRIPE_PUBLIC_KEY` | For purchases | Publishable key |
@@ -304,7 +304,15 @@ The compare handler still returns one JSON payload (same product contract as the
 
 ### Database
 
-Point `DATABASE_URL` at the existing Neon database. Run `npm run db:push` once against that database if the schema is not already applied. Do **not** migrate to Supabase.
+Point `DATABASE_URL` at a Supabase Postgres database (Project Settings → Database → connection string). The pooler URL is the right choice on Vercel. Run `npm run db:push` once if the schema is not already applied.
+
+This is a normal Postgres connection through Drizzle and `pg`. The app does not use the Supabase JS client or Supabase Auth.
+
+#### Database SSL
+
+`pg` treats `sslmode=require` as full certificate verification. Supabase’s pooler certificate fails that check. Libpq’s `require` only encrypts the session.
+
+For hosts ending in `.supabase.co` or `.supabase.com` (the direct host and the pooler), the app connects with `ssl: { rejectUnauthorized: false }` and Drizzle Kit receives the same URL with `sslmode=no-verify`. Paste the dashboard URI unchanged. Other Postgres hosts are left alone. If you want verification, set `sslmode=verify-full` or provide `sslrootcert`. You can also set `sslmode=no-verify` yourself. Never commit the password.
 
 ---
 
