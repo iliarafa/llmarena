@@ -13,7 +13,7 @@ import {
   processedWebhookEvents,
 } from "@shared/schema";
 import { getDb } from "./db";
-import { eq, desc, like, or } from "drizzle-orm";
+import { and, desc, eq, isNull, like, or, sql } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -30,6 +30,18 @@ export interface IStorage {
   updateGuestTokenCredits(tokenId: string, newBalance: string): Promise<void>;
   updateGuestTokenLastUsed(tokenId: string): Promise<void>;
   markGuestTokenAsLinked(tokenId: string, userId: string): Promise<void>;
+  /**
+   * Atomically claim an unlinked guest token for a user and zero its balance.
+   * Returns undefined if another request already claimed it.
+   */
+  claimGuestTokenForUser(tokenId: string, userId: string): Promise<GuestToken | undefined>;
+  /** Create or refresh the users row for an OAuth sign-in. Never resets credits or isAdmin. */
+  upsertOAuthUser(input: {
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+    profileImageUrl: string | null;
+  }): Promise<User>;
 
   logComparison(usage: InsertUsageHistory): Promise<UsageHistory>;
   getUserUsageHistory(userId: string, limit?: number): Promise<UsageHistory[]>;
@@ -145,6 +157,67 @@ export class DbStorage implements IStorage {
       .where(eq(guestTokens.id, tokenId));
   }
 
+  async claimGuestTokenForUser(tokenId: string, userId: string): Promise<GuestToken | undefined> {
+    const result = await getDb().update(guestTokens)
+      .set({
+        linkedAt: new Date(),
+        linkedToUserId: userId,
+        creditBalance: "0",
+      })
+      .where(and(eq(guestTokens.id, tokenId), isNull(guestTokens.linkedAt)))
+      .returning();
+    return result[0];
+  }
+
+  async upsertOAuthUser(input: {
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+    profileImageUrl: string | null;
+  }): Promise<User> {
+    const email = input.email.trim().toLowerCase();
+    const existing = await getDb()
+      .select()
+      .from(users)
+      .where(sql`lower(${users.email}) = ${email}`)
+      .limit(1);
+
+    if (existing[0]) {
+      await getDb().update(users)
+        .set({
+          firstName: input.firstName ?? existing[0].firstName,
+          lastName: input.lastName ?? existing[0].lastName,
+          profileImageUrl: input.profileImageUrl ?? existing[0].profileImageUrl,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, existing[0].id));
+      const updated = await this.getUser(existing[0].id);
+      if (!updated) throw new Error("User not found after OAuth profile update");
+      return updated;
+    }
+
+    try {
+      const created = await getDb().insert(users).values({
+        email,
+        firstName: input.firstName,
+        lastName: input.lastName,
+        profileImageUrl: input.profileImageUrl,
+        // Same starting balance as a new guest token (schema default is also 0).
+        creditBalance: "0",
+      }).returning();
+      return created[0];
+    } catch (error) {
+      if (!isUniqueViolation(error)) throw error;
+      const raced = await getDb()
+        .select()
+        .from(users)
+        .where(sql`lower(${users.email}) = ${email}`)
+        .limit(1);
+      if (raced[0]) return raced[0];
+      throw error;
+    }
+  }
+
   async logComparison(insertUsage: InsertUsageHistory): Promise<UsageHistory> {
     const result = await getDb().insert(usageHistory).values(insertUsage).returning();
     return result[0];
@@ -251,6 +324,12 @@ export class DbStorage implements IStorage {
     const updatedResult = await getDb().select().from(guestTokens).where(eq(guestTokens.id, tokenId)).limit(1);
     return updatedResult[0];
   }
+}
+
+function isUniqueViolation(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const candidate = error as { code?: string; message?: string };
+  return candidate.code === "23505" || (candidate.message?.includes("duplicate key") ?? false);
 }
 
 export const storage = new DbStorage();

@@ -14,7 +14,8 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// Users table with credit balance (login is deferred; admin/user rows may still exist)
+// Users table. Auth.js upserts a row by email on Google/GitHub sign-in.
+// Provider account ids are kept on the session JWT; this table has no accounts columns.
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email").unique(),

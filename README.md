@@ -111,6 +111,7 @@ Purchase credits via Stripe — no subscriptions required.
 - Tailwind CSS
 - Shadcn/ui (Radix UI)
 - TanStack Query
+- Auth.js (NextAuth v5) — Google and GitHub
 
 ### Data
 - Drizzle ORM (`drizzle-orm/node-postgres` + `pg`)
@@ -160,6 +161,15 @@ The app boots without Stripe. Checkout fails with a clear error until `STRIPE_SE
 **Optional**
 - `NEXT_PUBLIC_APP_URL` — fallback origin for Stripe redirects. On Vercel, `VERCEL_URL` / the request `Origin` header are used automatically.
 
+**Auth.js (required only for Google / GitHub sign-in)**
+
+Guest mode works without these. See [Authentication](#authentication) for OAuth app setup.
+
+- `AUTH_SECRET` — encrypts the session JWT. `openssl rand -base64 32`
+- `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` — Google OAuth client (Auth.js names, not `AUTH_GOOGLE_CLIENT_ID`)
+- `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` — GitHub OAuth app
+- `AUTH_URL` — canonical origin with no path, e.g. `https://llmarena-rafa1l.vercel.app`. Optional on Vercel (`VERCEL` turns on `trustHost`, so the callback host follows the request). `NEXTAUTH_URL` is the v4 alias and is used only when `AUTH_URL` is unset.
+
 ### Installation
 
 ```bash
@@ -198,14 +208,42 @@ Use the CLI `whsec_...` as `STRIPE_WEBHOOK_SECRET`. The webhook handler reads th
 
 ## Authentication
 
-Guest tokens are the **primary and only** path right now.
+Two paths, both live:
 
-1. **Guest Mode**: Create a token on the landing page. Credits are tied to that token in the database and stored in `localStorage` in this browser.
-2. **Signed-in accounts**: Not wired in this rewrite. `getSessionUser()` in `lib/session.ts` is the hook point for Auth.js (Google/GitHub) later. Do not wire callers back to Replit.
+1. **Guest Mode**: "Continue as guest" creates a token. Credits stay on that token in the database and in `localStorage` in this browser. API calls send `Authorization: Bearer <token>`.
+2. **Signed-in accounts**: Auth.js (NextAuth v5) with Google and GitHub. `getSessionUser()` reads the session cookie and returns the matching `users` row (created on first sign-in). New accounts start at **0** credits, the same default as a new guest token. `requireAdmin` allows the account through when `users.isAdmin` is true. There is no admin-promotion UI — set `is_admin` in the database.
 
-Old login URLs (`/api/login`, `/api/callback`, `/api/logout`, `/api/link-guest-account`) return `410 Gone`.
+When both a session and a guest token are present, APIs use the **account**. Signing in from a browser that still has a guest token calls `POST /api/link-guest-account`, which moves that token's credits and usage history onto the user and then clears the local token. Balances are not merged any other way.
 
-The `/admin` UI and `/api/admin/*` routes require a signed-in user with `isAdmin`. Until Auth.js is added, those endpoints return 401 and the admin page shows access denied. Gift-credits is implemented and gated behind `requireAdmin` → `user.isAdmin`.
+Provider account ids (Google `sub`, GitHub id) are stored on the encrypted session JWT. The `users` table has no accounts columns; the same email from either provider maps to one row. `isAdmin` and `creditBalance` are never reset on later sign-ins.
+
+### OAuth apps
+
+Register these redirect URIs (Auth.js callback paths):
+
+| Environment | Google | GitHub |
+|-------------|--------|--------|
+| Local | `http://localhost:3000/api/auth/callback/google` | `http://localhost:3000/api/auth/callback/github` |
+| Production | `https://llmarena-rafa1l.vercel.app/api/auth/callback/google` | `https://llmarena-rafa1l.vercel.app/api/auth/callback/github` |
+| Alternate production host | `https://llmarena-coral.vercel.app/api/auth/callback/google` | `https://llmarena-coral.vercel.app/api/auth/callback/github` |
+
+**Google Cloud**
+
+1. Open [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials).
+2. Create an OAuth client ID of type **Web application**.
+3. Authorized redirect URIs: the Google URLs in the table above (add localhost for dev).
+4. Copy the client id into `AUTH_GOOGLE_ID` and the client secret into `AUTH_GOOGLE_SECRET`.
+
+**GitHub**
+
+1. Open GitHub → Settings → Developer settings → OAuth Apps → New OAuth App.
+2. Homepage URL: `https://llmarena-rafa1l.vercel.app` (or `http://localhost:3000` for a local-only app).
+3. Authorization callback URL: the GitHub URL for that host. GitHub allows one callback URL per OAuth app, so use a separate app for localhost if you need both.
+4. Copy the client id into `AUTH_GITHUB_ID` and generate a client secret for `AUTH_GITHUB_SECRET`.
+
+Set `AUTH_SECRET` everywhere Auth.js runs. Set `AUTH_URL` to the canonical origin (no path) when you want every callback pinned to one host. Leave it unset on Vercel if sign-in should stay on whichever domain the user opened (`llmarena-rafa1l` or `llmarena-coral`); register both callback URLs in that case.
+
+Legacy Replit URLs (`/api/login`, `/api/callback`, `/api/logout`) still return `410 Gone`. Auth.js lives at `/api/auth/[...nextauth]`. `GET /api/auth/user` is this app's profile endpoint, not an Auth.js route.
 
 ---
 
@@ -230,6 +268,12 @@ The `/admin` UI and `/api/admin/*` routes require a signed-in user with `isAdmin
 | `ANTHROPIC_API_KEY` | Recommended | Claude Sonnet 5 |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | Recommended | Gemini 3.8 Flash (or `GOOGLE_API_KEY`) |
 | `OPENROUTER_API_KEY` | Recommended | Grok 4.6 |
+| `AUTH_SECRET` | For sign-in | Session JWT encryption |
+| `AUTH_GOOGLE_ID` | For Google sign-in | OAuth client id |
+| `AUTH_GOOGLE_SECRET` | For Google sign-in | OAuth client secret |
+| `AUTH_GITHUB_ID` | For GitHub sign-in | OAuth client id |
+| `AUTH_GITHUB_SECRET` | For GitHub sign-in | OAuth client secret |
+| `AUTH_URL` | Optional | Canonical origin, no path. `NEXTAUTH_URL` is the v4 alias |
 
 After the first deploy, set the Stripe webhook URL to:
 
@@ -294,7 +338,7 @@ Shared source of truth is unchanged: `shared/models.ts` (IDs, labels, credit tie
 1. `npm install && npm run check && npm run build`
 2. Set `DATABASE_URL` in `.env.local`, run `npm run db:push`, then `npm run dev`
 3. Open `http://localhost:3000` → Create Guest Token → Continue to Arena
-4. Buy credits (Stripe test mode) or gift via admin once Auth.js + `isAdmin` exist
+4. Buy credits (Stripe test mode). Gift via admin after signing in as a user with `is_admin = true`
 5. Select 2+ models, run a compare, optionally enable Caesar and Maximus
 6. Confirm battle history is only in the browser; dashboard shows timestamps + credits only
 

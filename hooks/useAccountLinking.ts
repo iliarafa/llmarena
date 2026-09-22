@@ -11,7 +11,6 @@ export function useAccountLinking() {
 
   useEffect(() => {
     const linkAccount = async () => {
-      // Replit Auth is gone; linking is a no-op until a future account provider exists.
       if (!isAuthenticated) return;
 
       // Check if there's a guest token to link
@@ -27,35 +26,32 @@ export function useAccountLinking() {
           guestToken,
         });
 
-        // Check for HTTP errors
         if (!res.ok) {
-          throw new Error(`Linking failed with status ${res.status}`);
+          // Drop invalid or already-claimed tokens. Transient failures leave the
+          // token in place so the next visit can retry.
+          if (res.status === 400 || res.status === 409) {
+            localStorage.setItem(linkedKey, "attempted");
+            localStorage.removeItem("guestToken");
+          }
+          return;
         }
 
         const data = await res.json();
 
         if (data.success) {
-          // Mark this token as linked so we don't try again
           localStorage.setItem(linkedKey, "true");
-          
-          // Clear the guest token
           localStorage.removeItem("guestToken");
-
-          // Invalidate queries to refresh user data
           queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
 
-          // Show success message
-          toast({
-            title: "Account Linked!",
-            description: `Successfully transferred ${data.creditsTransferred} credits to your account.`,
-          });
+          if (data.creditsTransferred > 0) {
+            toast({
+              title: "Account Linked!",
+              description: `Successfully transferred ${data.creditsTransferred} credits to your account.`,
+            });
+          }
         }
       } catch (error) {
         console.error("Account linking error:", error);
-        // Clear the guest token on error to prevent repeated attempts
-        localStorage.removeItem("guestToken");
-        // Mark as attempted to prevent infinite loops
-        localStorage.setItem(linkedKey, "attempted");
       }
     };
 

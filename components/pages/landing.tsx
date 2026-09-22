@@ -6,6 +6,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Sparkles, Zap, Shield, Crown, Eye, Sword, Layers, ChevronRight, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeProvider";
+import { SignInButtons } from "@/components/SignInButtons";
 const llmFightImage = "/assets/Gemini_Generated_Image_d61xiad61xiad61x.png";
 
 function BattleModesContent() {
@@ -129,7 +130,14 @@ export default function Landing() {
             </div>
           </div>
 
-          <div className="flex flex-row items-center justify-center gap-3 mt-6 md:hidden" data-testid="mobile-hero-cta">
+          <div className="flex flex-col items-center gap-4 mt-6 md:hidden" data-testid="mobile-hero-cta">
+            <div className="w-full max-w-sm px-4">
+              <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3 text-xs text-center">
+                Sign in
+              </h3>
+              <SignInButtons className="mx-auto" testIdSuffix="mobile" />
+            </div>
+            <p className="text-[10px] font-mono uppercase tracking-widest text-gray-400">or continue as guest</p>
             {!guestToken ? (
               <Button 
                 onClick={handleCreateGuestToken}
@@ -169,13 +177,22 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Guest token is the only auth path — Replit Auth has been removed. */}
+        <div className="hidden md:block max-w-2xl mx-auto mb-8 pl-6">
+          <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3 text-[15px]" data-testid="text-sign-in-title">
+            Sign in
+          </h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+            Google or GitHub. Credits stay on your account across browsers.
+          </p>
+          <SignInButtons />
+        </div>
+
         <div className="hidden md:block max-w-2xl mx-auto mb-8 pl-6">
           <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3 text-[15px]" data-testid="text-try-guest-title">
             Continue as Guest
           </h3>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-            No sign-up required. Get a secure token and buy credits anonymously. Signed-in accounts are not available yet.
+            No sign-up required. Get a secure token and buy credits anonymously. You can sign in later to move those credits onto your account.
           </p>
           {!guestToken ? (
             <button 
