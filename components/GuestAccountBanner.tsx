@@ -22,7 +22,7 @@ export default function GuestAccountBanner({ creditBalance }: GuestAccountBanner
               Credits are tied to this browser
             </p>
             <p className="text-sm text-muted-foreground">
-              You have {creditBalance.toFixed(0)} credits on your guest token. Save the token if you want to keep access after clearing site data. Signed-in accounts are not available yet.
+              You have {creditBalance.toFixed(0)} credits on your guest token. Sign in from the account menu to move them onto your account, or save the token to keep using it in this browser.
             </p>
           </div>
         </div>

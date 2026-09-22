@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Search, Gift, User, Key, Coins, UserPlus, Pencil, Trash2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { SignInButtons } from "@/components/SignInButtons";
 import type { User as UserType, GuestToken } from "@shared/schema";
 
 export default function Admin() {
@@ -344,11 +345,12 @@ export default function Admin() {
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle>Access Denied</CardTitle>
-            <CardDescription>Signed-in admin accounts are not available. Replit Auth has been removed; guest tokens are the primary path.</CardDescription>
+            <CardDescription>Sign in with a Google or GitHub account that has admin access.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            <SignInButtons />
             <Link href="/">
-              <Button data-testid="button-go-home">Go Home</Button>
+              <Button variant="outline" data-testid="button-go-home">Go Home</Button>
             </Link>
           </CardContent>
         </Card>

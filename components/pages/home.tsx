@@ -17,11 +17,13 @@ import HistorySidebar from "@/components/HistorySidebar";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreditBalance } from "@/hooks/useCreditBalance";
-import { useAccountLinking } from "@/hooks/useAccountLinking";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { saveBattle, type Battle } from "@/lib/battleHistory";
 import { generatePDF, downloadMarkdown, downloadJSON } from "@/lib/reportExporter";
 import GuestAccountBanner from "@/components/GuestAccountBanner";
+import { signInWith } from "@/components/SignInButtons";
+import { signOut } from "next-auth/react";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, Coins, CreditCard, BarChart3, BookOpen, FileDown, Menu, History, Shield, Lock, Gamepad2 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeProvider";
@@ -78,8 +80,7 @@ export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const { creditBalance } = useCreditBalance();
   const router = useRouter();
-  useAccountLinking();
-  
+
   const isGuest = !isAuthenticated && !!localStorage.getItem("guestToken");
   
   const baseCreditCost = CREDIT_COST_BY_MODEL_COUNT[selectedModels.length] || 0;
@@ -354,8 +355,12 @@ export default function Home() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("guestToken");
-    window.location.href = "/";
+    if (!isAuthenticated) {
+      localStorage.removeItem("guestToken");
+      window.location.href = "/";
+      return;
+    }
+    void signOut({ redirectTo: "/" });
   };
 
   return (
@@ -418,7 +423,29 @@ export default function Home() {
                       </Link>
                     )}
                   </div>
-                  <div className="pt-4 border-t">
+                  <div className="pt-4 border-t space-y-1">
+                    {isGuest && (
+                      <>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          onClick={() => signInWith("google")}
+                          data-testid="button-signin-google-menu-mobile"
+                        >
+                          <FaGoogle className="w-4 h-4 mr-3" />
+                          Sign in with Google
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          onClick={() => signInWith("github")}
+                          data-testid="button-signin-github-menu-mobile"
+                        >
+                          <FaGithub className="w-4 h-4 mr-3" />
+                          Sign in with GitHub
+                        </Button>
+                      </>
+                    )}
                     <Button 
                       variant="ghost" 
                       className="w-full justify-start text-muted-foreground" 
@@ -426,7 +453,7 @@ export default function Home() {
                       data-testid="button-logout-mobile"
                     >
                       <LogOut className="w-4 h-4 mr-3" />
-                      {isGuest ? "Clear Token" : "Logout"}
+                      {isAuthenticated ? "Sign out" : "Clear Token"}
                     </Button>
                   </div>
                 </div>
@@ -551,9 +578,21 @@ export default function Home() {
                     </DropdownMenuItem>
                   </Link>
                 )}
+                {isGuest && (
+                  <>
+                    <DropdownMenuItem onClick={() => signInWith("google")} data-testid="button-signin-google-menu">
+                      <FaGoogle className="w-4 h-4 mr-2" />
+                      Sign in with Google
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => signInWith("github")} data-testid="button-signin-github-menu">
+                      <FaGithub className="w-4 h-4 mr-2" />
+                      Sign in with GitHub
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuItem onClick={handleLogout} data-testid="button-logout">
                   <LogOut className="w-4 h-4 mr-2" />
-                  {isGuest ? "Clear Token" : "Logout"}
+                  {isAuthenticated ? "Sign out" : "Clear Token"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

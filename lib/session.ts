@@ -1,13 +1,15 @@
 import type { GuestToken, User } from "@shared/schema";
+import { auth } from "@/auth";
 import { storage } from "./storage";
 
 /**
  * Identity helpers for API route handlers.
  *
- * Guest tokens (Authorization: Bearer <token>) are the only live identity
- * path in this PR. Signed-in users are resolved through getSessionUser()
- * so Auth.js (or another provider) can be added later without rewriting
- * compare, credits, Stripe, or admin gates.
+ * Signed-in users come from the Auth.js session cookie (Google / GitHub).
+ * Guest tokens (Authorization: Bearer <token>) still work when there is no
+ * session. A session wins when both are present so compare, credits, and
+ * Stripe follow the account after sign-in. Guest credit merge is a separate
+ * call to /api/link-guest-account.
  */
 export type AppIdentity = {
   user: User | null;
@@ -26,11 +28,27 @@ export class HttpError extends Error {
 }
 
 /**
- * Future Auth.js hook. Return the signed-in user from the session, or null.
- * Guest-only for this rewrite — do not invent a second login path here.
+ * Resolve the Auth.js session cookie to a row in `users`.
+ *
+ * `auth()` reads the current request via `next/headers` (cookie only — it does
+ * not treat the guest Bearer token as a session). The DB id is written onto
+ * the JWT at sign-in. Returns null when nobody is signed in, or when Auth.js
+ * is not configured, so guest Bearer auth keeps working.
  */
 export async function getSessionUser(_request: Request): Promise<User | null> {
-  return null;
+  let userId: string | undefined;
+  try {
+    const session = await auth();
+    userId = session?.user?.id;
+  } catch (error) {
+    // Missing AUTH_SECRET and other Auth.js config errors must not take down
+    // guest Bearer auth. Database errors from the lookup below still propagate.
+    console.error("Failed to resolve Auth.js session:", error);
+    return null;
+  }
+  if (!userId) return null;
+  const user = await storage.getUser(userId);
+  return user ?? null;
 }
 
 export function getBearerToken(request: Request): string | null {
@@ -41,17 +59,22 @@ export function getBearerToken(request: Request): string | null {
 }
 
 export async function getIdentity(request: Request): Promise<AppIdentity> {
+  const user = await getSessionUser(request);
+  if (user) {
+    return { user, guestToken: null };
+  }
+
   const bearer = getBearerToken(request);
   if (bearer) {
     const guestToken = await storage.getGuestTokenByToken(bearer);
-    if (guestToken) {
+    // A linked token has already been merged into an account; don't revive it.
+    if (guestToken && !guestToken.linkedAt) {
       await storage.updateGuestTokenLastUsed(guestToken.id);
       return { user: null, guestToken };
     }
   }
 
-  const user = await getSessionUser(request);
-  return { user, guestToken: null };
+  return { user: null, guestToken: null };
 }
 
 export async function requireAuth(request: Request): Promise<AppIdentity> {
@@ -59,7 +82,7 @@ export async function requireAuth(request: Request): Promise<AppIdentity> {
   if (!identity.guestToken && !identity.user) {
     throw new HttpError(401, {
       error: "Unauthorized",
-      message: "Please provide a valid guest token to access this resource.",
+      message: "Sign in or provide a valid guest token to access this resource.",
     });
   }
   return identity;
@@ -70,7 +93,7 @@ export async function requireAdmin(request: Request): Promise<User> {
   if (!user) {
     throw new HttpError(401, {
       message: "Unauthorized",
-      error: "Authenticated accounts are not available. Use a guest token.",
+      error: "Sign in required.",
     });
   }
   if (!user.isAdmin) {
