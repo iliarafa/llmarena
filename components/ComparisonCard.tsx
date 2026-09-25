@@ -132,7 +132,7 @@ export default function ComparisonCard({
             <img 
               src={model.iconImage} 
               alt={model.name} 
-              className={`flex-shrink-0 object-contain ${model.id === 'gpt-4o' ? 'h-7 w-7' : 'h-6 w-6'}`} 
+              className={`flex-shrink-0 object-contain ${model.id === 'gpt-4o' ? 'h-7 w-7' : 'h-6 w-6'}${model.id === 'gpt-4o' || model.id === 'grok' ? ' dark:brightness-0 dark:invert' : ''}`} 
             />
           ) : null}
           <h3 className="text-lg font-semibold truncate">

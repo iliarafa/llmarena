@@ -126,7 +126,7 @@ export default function ModelSelector({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+        <span className="text-xs font-mono font-medium text-gray-500 dark:text-gray-400 uppercase tracking-widest">
           Select Models
         </span>
         <div className="flex items-center gap-3">
@@ -173,10 +173,10 @@ export default function ModelSelector({
               key={model.id}
               onClick={() => handleToggle(model.id)}
               className={`
-                group flex flex-col items-center justify-center gap-3 p-4 cursor-pointer transition-all
+                group flex flex-col items-center justify-center gap-3 p-4 cursor-pointer transition-all rounded-xl border
                 ${isSelected 
-                  ? 'ring-2 ring-gray-900 dark:ring-white bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-white' 
-                  : 'bg-white dark:bg-black text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/30'
+                  ? 'ring-2 ring-gray-900 dark:ring-white border-transparent bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-white' 
+                  : 'bg-white dark:bg-black border-black/5 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/30'
                 }
               `}
               data-testid={`checkbox-model-${model.id}`}
@@ -184,11 +184,13 @@ export default function ModelSelector({
               {Icon ? (
                 <Icon className={`h-8 w-8 transition-all duration-200 ${isSelected ? model.color : 'text-gray-400 dark:text-gray-500'}`} />
               ) : model.iconImage ? (
-                <img 
-                  src={model.iconImage} 
-                  alt={model.name} 
-                  className={`object-contain transition-all duration-200 ${getIconFilterClasses()} ${model.id === 'gpt-4o' ? 'h-10 w-10' : 'h-8 w-8'}`} 
-                />
+                <div className="h-10 w-10 flex items-center justify-center shrink-0">
+                  <img 
+                    src={model.iconImage} 
+                    alt={model.name} 
+                    className={`object-contain transition-all duration-200 ${getIconFilterClasses()} ${model.id === 'gpt-4o' ? 'h-10 w-10' : 'h-8 w-8'}`} 
+                  />
+                </div>
               ) : null}
               <Label className={`text-sm font-medium cursor-pointer transition-colors ${isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200'}`}>
                 <span className="hidden sm:inline">{model.shortName}</span>
@@ -199,7 +201,7 @@ export default function ModelSelector({
         })}
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full p-4 gap-0 md:gap-6 bg-white dark:bg-black">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full p-4 gap-0 md:gap-6 bg-white dark:bg-black rounded-xl border border-black/5 dark:border-white/10">
         <div className="w-full md:w-auto flex flex-row items-center justify-between py-3 md:py-0">
           <div className="flex items-center gap-2">
             <Crown className={`h-4 w-4 ${caesarEnabled ? 'text-amber-500' : 'text-gray-400'}`} />

@@ -139,15 +139,17 @@ export default function Landing() {
             </div>
             <p className="text-[10px] font-mono uppercase tracking-widest text-gray-400">or continue as guest</p>
             {!guestToken ? (
-              <Button 
-                onClick={handleCreateGuestToken}
-                disabled={isCreatingToken}
-                size="sm"
-                className="bg-gray-900 hover:bg-gray-800 text-white font-medium dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
-                data-testid="button-create-guest-token-mobile"
-              >
-                {isCreatingToken ? "Creating..." : "Create Guest Token"}
-              </Button>
+              <div className="w-full max-w-sm px-4">
+                <Button 
+                  onClick={handleCreateGuestToken}
+                  disabled={isCreatingToken}
+                  size="sm"
+                  className="w-full h-10 text-sm bg-gray-900 hover:bg-gray-800 text-white font-medium dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+                  data-testid="button-create-guest-token-mobile"
+                >
+                  {isCreatingToken ? "Creating..." : "Create Guest Token"}
+                </Button>
+              </div>
             ) : (
               <div className="flex flex-col items-center gap-3 w-full px-4">
                 <div className="flex items-center gap-2 p-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 w-full max-w-sm">
@@ -177,7 +179,7 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="hidden md:block max-w-2xl mx-auto mb-8 pl-6">
+        <div className="hidden md:flex md:flex-col md:items-center max-w-2xl mx-auto mb-8 text-center">
           <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3 text-[15px]" data-testid="text-sign-in-title">
             Sign in
           </h3>
@@ -187,11 +189,11 @@ export default function Landing() {
           <SignInButtons />
         </div>
 
-        <div className="hidden md:block max-w-2xl mx-auto mb-8 pl-6">
+        <div className="hidden md:flex md:flex-col md:items-center max-w-2xl mx-auto mb-8 text-center">
           <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-3 text-[15px]" data-testid="text-try-guest-title">
             Continue as Guest
           </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 max-w-md mx-auto">
             No sign-up required. Get a secure token and buy credits anonymously. You can sign in later to move those credits onto your account.
           </p>
           {!guestToken ? (
@@ -204,7 +206,7 @@ export default function Landing() {
               {isCreatingToken ? "Creating..." : "Create Guest Token"}
             </button>
           ) : (
-            <div className="space-y-3 max-w-sm">
+            <div className="space-y-3 max-w-sm w-full mx-auto">
               <div className="flex items-center gap-2">
                 <code className="flex-1 text-xs break-all font-mono text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-2 py-1.5 rounded" data-testid="text-guest-token">
                   {guestToken}
@@ -276,7 +278,7 @@ export default function Landing() {
         </div>
 
         {/* Desktop Feature List - 4 Items with Progressive Disclosure */}
-        <div className="hidden md:flex flex-col max-w-2xl mx-auto pl-6">
+        <div className="hidden md:flex flex-col max-w-xl mx-auto w-full">
           {/* 1. Compare Models */}
           <div 
             className="group relative pl-6 py-4 border-b border-black/5 dark:border-white/5"
