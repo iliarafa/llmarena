@@ -1,6 +1,6 @@
 import type { GuestToken, User } from "@shared/schema";
 import { auth } from "@/auth";
-import { storage } from "./storage";
+import { storage, type CreditTarget } from "./storage";
 
 /**
  * Identity helpers for API route handlers.
@@ -114,14 +114,11 @@ export function getAuthIds(identity: AppIdentity): { userId?: string; guestToken
   return {};
 }
 
-export async function updateCreditBalance(identity: AppIdentity, newBalance: string): Promise<void> {
-  if (identity.guestToken) {
-    await storage.updateGuestTokenCredits(identity.guestToken.id, newBalance);
-    identity.guestToken.creditBalance = newBalance;
-  } else if (identity.user) {
-    await storage.updateUserCredits(identity.user.id, newBalance);
-    identity.user.creditBalance = newBalance;
-  }
+/** The credit row compare, gifts, and refunds should update. Guest wins if both are set. */
+export function creditTargetFromIdentity(identity: AppIdentity): CreditTarget | null {
+  if (identity.guestToken) return { kind: "guest", id: identity.guestToken.id };
+  if (identity.user) return { kind: "user", id: identity.user.id };
+  return null;
 }
 
 export function jsonError(error: unknown): Response {

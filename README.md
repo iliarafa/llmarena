@@ -202,7 +202,27 @@ npm start
 stripe listen --forward-to localhost:3000/api/stripe-webhook
 ```
 
-Use the CLI `whsec_...` as `STRIPE_WEBHOOK_SECRET`. The webhook handler reads the **raw body** via `request.text()` and verifies `stripe-signature`.
+Use the CLI `whsec_...` as `STRIPE_WEBHOOK_SECRET`. The webhook handler reads the **raw body** via `request.text()` and verifies `stripe-signature`. If `STRIPE_WEBHOOK_SECRET` is missing, the route returns 500 and does not parse the body.
+
+### Tests
+
+Credit tests use Vitest and a real Postgres. They mock model calls and never call Stripe's network. They refuse to start if `DATABASE_URL` is a Supabase host, if the host is not local, or if the database name does not contain `test`. They do not load `.env` or `.env.local`. Do not point them at production or use production secrets.
+
+The test setup creates the tables it needs (`users`, `guest_tokens`, `usage_history`, `processed_webhook_events`). You do not need `npm run db:push` for the suite.
+
+```bash
+docker run --rm --name llmarena-test-db \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=llmarena_test \
+  -p 5432:5432 \
+  postgres:16
+
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/llmarena_test npm test
+```
+
+A local Postgres 16 install works the same way. Create a database whose name contains `test`, then export `DATABASE_URL` for that database only.
+
+`npm run check` is the TypeScript check. GitHub Actions runs `npm run check` and `npm test` on pull requests, with a `postgres:16` service container.
 
 ---
 
