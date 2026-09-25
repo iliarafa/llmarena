@@ -99,11 +99,11 @@ export default function Purchase() {
           </h2>
         </div>
 
-        <div className="flex items-center justify-center gap-6 text-gray-500 dark:text-gray-400 text-sm font-medium mb-10">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-6 text-gray-500 dark:text-gray-400 text-sm font-medium mb-10">
           <span>Credits never expire</span>
-          <span className="text-gray-300 dark:text-gray-600">•</span>
+          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">•</span>
           <span>Access all models</span>
-          <span className="text-gray-300 dark:text-gray-600">•</span>
+          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">•</span>
           <span>Instant delivery</span>
         </div>
 
@@ -119,7 +119,7 @@ export default function Purchase() {
               data-testid={`credit-tier-${tier.credits}`}
             >
               {tier.popular && (
-                <div className="text-xs font-bold uppercase tracking-widest text-center text-black dark:text-white mb-4">
+                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 bg-white dark:bg-black text-[11px] font-mono font-bold uppercase tracking-widest text-black dark:text-white whitespace-nowrap">
                   Most Popular
                 </div>
               )}
@@ -154,7 +154,7 @@ export default function Purchase() {
                   disabled={purchasingCredits !== null}
                   className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     tier.popular
-                      ? "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+                      ? "border border-transparent bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
                       : "border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800"
                   }`}
                   data-testid={`button-purchase-${tier.credits}`}

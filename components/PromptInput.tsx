@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
@@ -80,6 +81,15 @@ export default function PromptInput({
             <span className="text-[10px] font-mono text-gray-400">
               • {creditBalance.toFixed(0)} avail
             </span>
+            {hasInsufficientCredits && (
+              <Link
+                href="/purchase"
+                className="ml-2 text-[10px] font-mono font-medium text-gray-900 dark:text-white underline underline-offset-4 decoration-gray-300 dark:decoration-gray-600 hover:decoration-current"
+                data-testid="link-buy-credits-mobile"
+              >
+                Buy credits →
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -119,6 +129,15 @@ export default function PromptInput({
             <span className="text-xs font-mono text-gray-400">
               • {creditBalance.toFixed(0)} available
             </span>
+            {hasInsufficientCredits && (
+              <Link
+                href="/purchase"
+                className="ml-2 text-xs font-mono font-medium text-gray-900 dark:text-white underline underline-offset-4 decoration-gray-300 dark:decoration-gray-600 hover:decoration-current"
+                data-testid="link-buy-credits"
+              >
+                Buy credits →
+              </Link>
+            )}
           </div>
         </div>
         
