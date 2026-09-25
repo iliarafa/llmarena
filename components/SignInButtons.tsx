@@ -28,7 +28,7 @@ export function SignInButtons({
         data-testid={`button-signin-google${suffix}`}
       >
         <FaGoogle className="w-4 h-4" />
-        <span className="hidden sm:inline">Sign in with </span>Google
+        <span><span className="hidden sm:inline">Sign in with </span>Google</span>
       </button>
       <button
         type="button"
@@ -38,7 +38,7 @@ export function SignInButtons({
         data-testid={`button-signin-github${suffix}`}
       >
         <FaGithub className="w-4 h-4" />
-        <span className="hidden sm:inline">Sign in with </span>GitHub
+        <span><span className="hidden sm:inline">Sign in with </span>GitHub</span>
       </button>
     </div>
   );

@@ -238,7 +238,7 @@ export default function Landing() {
             data-testid="feature-list-compare"
           >
             <Zap className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
-            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out">Compare Models</h3>
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-neutral-500 dark:group-hover:text-neutral-400 transition-colors duration-300 ease-out">Compare Models</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run GPT-5.4, Claude Sonnet 5, Gemini 3.8 Flash, and Grok 4.6 side by side.</p>
           </div>
 
@@ -285,7 +285,7 @@ export default function Landing() {
             data-testid="feature-tile-compare"
           >
             <Zap className="absolute left-0 top-[18px] w-4 h-4 text-gray-400 dark:text-gray-500" strokeWidth={2} />
-            <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-sky-500 transition-colors duration-300 ease-out text-[13px]">Compare Models</h3>
+            <h3 className="font-mono font-bold uppercase tracking-widest text-gray-900 dark:text-white group-hover:text-neutral-500 dark:group-hover:text-neutral-400 transition-colors duration-300 ease-out text-[13px]">Compare Models</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Run GPT-5.4, Claude Sonnet 5, Gemini 3.8 Flash, and Grok 4.6 side by side.</p>
           </div>
 
