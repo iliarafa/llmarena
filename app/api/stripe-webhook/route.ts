@@ -8,8 +8,15 @@ export const runtime = "nodejs";
 /**
  * Stripe webhook. Uses request.text() (raw body) — required for
  * constructEvent signature verification in the App Router.
+ * Missing STRIPE_WEBHOOK_SECRET refuses the request. There is no unsigned fallback.
  */
 export async function POST(request: Request) {
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    console.error("STRIPE_WEBHOOK_SECRET not set; refusing webhook");
+    return Response.json({ error: "STRIPE_WEBHOOK_SECRET not set" }, { status: 500 });
+  }
+
   const sig = request.headers.get("stripe-signature");
   if (!sig) {
     return Response.json({ error: "No signature" }, { status: 400 });
@@ -19,12 +26,7 @@ export async function POST(request: Request) {
 
   let event: Stripe.Event;
   try {
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-    if (webhookSecret) {
-      event = getStripe().webhooks.constructEvent(rawBody, sig, webhookSecret);
-    } else {
-      event = JSON.parse(rawBody) as Stripe.Event;
-    }
+    event = getStripe().webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Invalid signature";
     console.error("Webhook signature verification failed:", message);
@@ -54,22 +56,21 @@ export async function POST(request: Request) {
       }
 
       if (userId) {
-        const user = await storage.getUser(userId);
-        if (user) {
-          const currentBalance = parseFloat(user.creditBalance);
-          const newBalance = (currentBalance + creditsToAdd).toFixed(2);
-          await storage.updateUserCredits(userId, newBalance);
-          console.log(`Added ${creditsToAdd} credits to user ${userId}. New balance: ${newBalance}`);
-        } else {
+        const newBalance = await storage.addCredits({ kind: "user", id: userId }, creditsToAdd);
+        if (newBalance === undefined) {
           console.error(`User ${userId} not found`);
+        } else {
+          console.log(`Added ${creditsToAdd} credits to user ${userId}. New balance: ${newBalance}`);
         }
       } else if (guestToken) {
         const token = await storage.getGuestTokenByToken(guestToken);
         if (token) {
-          const currentBalance = parseFloat(token.creditBalance);
-          const newBalance = (currentBalance + creditsToAdd).toFixed(2);
-          await storage.updateGuestTokenCredits(token.id, newBalance);
-          console.log(`Added ${creditsToAdd} credits to guest token. New balance: ${newBalance}`);
+          const newBalance = await storage.addCredits({ kind: "guest", id: token.id }, creditsToAdd);
+          if (newBalance === undefined) {
+            console.error("Guest token not found");
+          } else {
+            console.log(`Added ${creditsToAdd} credits to guest token. New balance: ${newBalance}`);
+          }
         } else {
           console.error("Guest token not found");
         }

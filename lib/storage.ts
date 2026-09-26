@@ -55,7 +55,25 @@ export interface IStorage {
   getAllGuestTokens(search?: string): Promise<GuestToken[]>;
   addCreditsToUser(userId: string, amount: number): Promise<User>;
   addCreditsToGuestToken(tokenId: string, amount: number): Promise<GuestToken>;
+
+  /**
+   * Subtract `amount` only when the row can cover it. One UPDATE, so concurrent
+   * compares cannot all pass a balance check and then write the same number back.
+   * Guest rows that are already linked are not spendable.
+   * Returns the balance after the subtraction, or undefined when no row matched.
+   */
+  reserveCredits(target: CreditTarget, amount: number): Promise<string | undefined>;
+  /**
+   * Add `amount` in one UPDATE. Returns the balance after the addition, or
+   * undefined when the row does not exist.
+   */
+  addCredits(target: CreditTarget, amount: number): Promise<string | undefined>;
 }
+
+export type CreditTarget = {
+  kind: "user" | "guest";
+  id: string;
+};
 
 export class DbStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
@@ -297,33 +315,94 @@ export class DbStorage implements IStorage {
   }
 
   async addCreditsToUser(userId: string, amount: number): Promise<User> {
-    const user = await this.getUser(userId);
-    if (!user) {
+    const newBalance = await this.addCredits({ kind: "user", id: userId }, amount);
+    if (newBalance === undefined) {
       throw new Error("User not found");
     }
-    const currentBalance = parseFloat(user.creditBalance);
-    const newBalance = (currentBalance + amount).toFixed(2);
-    await getDb().update(users)
-      .set({ creditBalance: newBalance })
-      .where(eq(users.id, userId));
     const updated = await this.getUser(userId);
-    return updated!;
+    if (!updated) {
+      throw new Error("User not found");
+    }
+    return { ...updated, creditBalance: newBalance };
   }
 
   async addCreditsToGuestToken(tokenId: string, amount: number): Promise<GuestToken> {
-    const result = await getDb().select().from(guestTokens).where(eq(guestTokens.id, tokenId)).limit(1);
-    const token = result[0];
-    if (!token) {
+    const newBalance = await this.addCredits({ kind: "guest", id: tokenId }, amount);
+    if (newBalance === undefined) {
       throw new Error("Guest token not found");
     }
-    const currentBalance = parseFloat(token.creditBalance);
-    const newBalance = (currentBalance + amount).toFixed(2);
-    await getDb().update(guestTokens)
-      .set({ creditBalance: newBalance })
-      .where(eq(guestTokens.id, tokenId));
     const updatedResult = await getDb().select().from(guestTokens).where(eq(guestTokens.id, tokenId)).limit(1);
-    return updatedResult[0];
+    const updated = updatedResult[0];
+    if (!updated) {
+      throw new Error("Guest token not found");
+    }
+    return { ...updated, creditBalance: newBalance };
   }
+
+  async reserveCredits(target: CreditTarget, amount: number): Promise<string | undefined> {
+    const delta = creditAmount(amount);
+    if (target.kind === "user") {
+      const rows = await getDb()
+        .update(users)
+        .set({
+          creditBalance: sql<string>`${users.creditBalance} - CAST(${delta} AS numeric)`,
+        })
+        .where(and(
+          eq(users.id, target.id),
+          sql`${users.creditBalance} >= CAST(${delta} AS numeric)`,
+        ))
+        .returning({ creditBalance: users.creditBalance });
+      return rows[0]?.creditBalance;
+    }
+
+    const rows = await getDb()
+      .update(guestTokens)
+      .set({
+        creditBalance: sql<string>`${guestTokens.creditBalance} - CAST(${delta} AS numeric)`,
+      })
+      .where(and(
+        eq(guestTokens.id, target.id),
+        isNull(guestTokens.linkedAt),
+        sql`${guestTokens.creditBalance} >= CAST(${delta} AS numeric)`,
+      ))
+      .returning({ creditBalance: guestTokens.creditBalance });
+    return rows[0]?.creditBalance;
+  }
+
+  async addCredits(target: CreditTarget, amount: number): Promise<string | undefined> {
+    const delta = creditAmount(amount);
+    if (target.kind === "user") {
+      const rows = await getDb()
+        .update(users)
+        .set({
+          creditBalance: sql<string>`${users.creditBalance} + CAST(${delta} AS numeric)`,
+        })
+        .where(eq(users.id, target.id))
+        .returning({ creditBalance: users.creditBalance });
+      return rows[0]?.creditBalance;
+    }
+
+    const rows = await getDb()
+      .update(guestTokens)
+      .set({
+        creditBalance: sql<string>`${guestTokens.creditBalance} + CAST(${delta} AS numeric)`,
+      })
+      .where(eq(guestTokens.id, target.id))
+      .returning({ creditBalance: guestTokens.creditBalance });
+    return rows[0]?.creditBalance;
+  }
+}
+
+/** Positive cent-precision amount, safe to bind as numeric. */
+function creditAmount(amount: number): string {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error("Credit amount must be a positive finite number");
+  }
+  const cents = Math.round(amount * 100);
+  if (cents <= 0 || !Number.isSafeInteger(cents)) {
+    throw new Error("Credit amount must be a positive finite number");
+  }
+  return (cents / 100).toFixed(2);
 }
 
 function isUniqueViolation(error: unknown): boolean {
