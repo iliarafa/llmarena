@@ -1,10 +1,15 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { startTransition } from "react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
+import { signInWithProvider } from "@/components/sign-in-actions";
 
 export function signInWith(provider: "google" | "github") {
-  void signIn(provider, { redirectTo: "/" });
+  startTransition(() => {
+    void signInWithProvider(provider).then((url) => {
+      window.location.href = url;
+    });
+  });
 }
 
 export function SignInButtons({
