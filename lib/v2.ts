@@ -23,10 +23,28 @@ async function q<T>(query: ReturnType<typeof sql>): Promise<T[]> {
   return (res.rows ?? res) as T[];
 }
 
-export async function createWallet(userId: string | null = null): Promise<Wallet> {
+export async function createWallet(userId: string | null = null, ip: string | null = null): Promise<Wallet> {
   const token = "w_" + randomBytes(24).toString("hex");
-  const [w] = await q<Wallet>(sql`insert into v2_wallets (token, user_id) values (${token}, ${userId}) returning id, token, user_id, tokens`);
+  const [w] = await q<Wallet>(sql`insert into v2_wallets (token, user_id, created_ip) values (${token}, ${userId}, ${ip}) returning id, token, user_id, tokens`);
   return w;
+}
+
+/** Client IP: the iliasr.nyc proxy passes the visitor's IP; direct calls use Vercel's header. */
+export function clientIp(request: Request): string | null {
+  const h = request.headers;
+  const raw = h.get("x-four-minds-ip") || h.get("x-real-ip") || h.get("x-forwarded-for") || "";
+  return raw.split(",")[0].trim().slice(0, 64) || null;
+}
+
+export const V2_WALLETS_PER_IP_HOUR = 10;
+export const V2_WALLETS_ALL_HOUR = 300;
+/** Simple guard on new guest wallets: per IP and overall, per rolling hour. */
+export async function walletRateLimited(ip: string | null): Promise<boolean> {
+  const [all] = await q<{ n: number }>(sql`select count(*)::int as n from v2_wallets where created_at > now() - interval '1 hour'`);
+  if (all && all.n >= V2_WALLETS_ALL_HOUR) return true;
+  if (!ip) return false;
+  const [mine] = await q<{ n: number }>(sql`select count(*)::int as n from v2_wallets where created_ip = ${ip} and created_at > now() - interval '1 hour'`);
+  return !!mine && mine.n >= V2_WALLETS_PER_IP_HOUR;
 }
 
 export async function walletByToken(token: string): Promise<Wallet | null> {
