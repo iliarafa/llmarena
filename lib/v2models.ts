@@ -71,6 +71,8 @@ export async function runModel(id: V2ModelId, prompt: string): Promise<V2Result>
     return { id, ...r, ms: Date.now() - t, costUsd };
   } catch (e: any) {
     console.error(`v2 ${id} error:`, e?.message);
-    return { id, ms: Date.now() - t, error: String(e?.message || "Failed").slice(0, 300) };
+    // Provider details stay in the server log; users get a plain line.
+    const status = e?.status ?? e?.code;
+    return { id, ms: Date.now() - t, error: status === 429 || /quota|credits/i.test(String(e?.message)) ? "This model is unavailable right now." : "This model failed to answer." };
   }
 }
