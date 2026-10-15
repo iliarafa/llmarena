@@ -96,3 +96,21 @@ export function allowedReturn(url: string | null): string | null {
   } catch {}
   return null;
 }
+
+/**
+ * Four Minds Stripe setup. Production with STRIPE_LIVE_SECRET_KEY set -> live
+ * account and live price ids (STRIPE_LIVE_PRICE_1/_5/_20). Everything else
+ * (previews, or production before the key exists) -> the existing test key
+ * with inline price_data. Regular llmarena credit purchases never use this.
+ */
+import Stripe from "stripe";
+import { getStripe } from "./stripe";
+let liveClient: Stripe | null = null;
+export function v2Stripe(): { stripe: Stripe; live: boolean; priceId: (n: number) => string | undefined } {
+  const key = process.env.STRIPE_LIVE_SECRET_KEY;
+  if (process.env.VERCEL_ENV === "production" && key) {
+    liveClient ??= new Stripe(key, { apiVersion: "2025-10-29.clover" });
+    return { stripe: liveClient, live: true, priceId: (n) => process.env[`STRIPE_LIVE_PRICE_${n}`] };
+  }
+  return { stripe: getStripe(), live: false, priceId: () => undefined };
+}
