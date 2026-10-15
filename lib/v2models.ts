@@ -6,7 +6,7 @@ import { V2_MAX_OUTPUT_TOKENS as CAP } from "./v2";
 /** Prices per 1M tokens (input, output) from official pricing pages, Oct 2026. */
 export const V2_MODELS = [
   { id: "grok", label: "Grok 4.7", vendor: "xAI", model: "x-ai/grok-4.7", price: [2, 6] },
-  { id: "claude", label: "Claude Opus 5.5", vendor: "Anthropic", model: "claude-opus-5.5", price: [4, 20] },
+  { id: "claude", label: "Claude Opus 5.5", vendor: "Anthropic", model: "claude-opus-5-5", price: [4, 20] },
   { id: "gemini", label: "Gemini 4 Argon", vendor: "Google", model: "gemini-4-argon", price: [2, 10] },
   { id: "gpt", label: "GPT-6.1 Sol", vendor: "OpenAI", model: "gpt-6.1-sol", price: [2, 10] },
 ] as const;

@@ -10,7 +10,7 @@ const body = z.object({ prompt: z.string().trim().min(1).max(V2_MAX_PROMPT_CHARS
 
 /**
  * Spend 1 token, fan out to 4 models, stream NDJSON: one line per model as it
- * finishes, then a final {done} line. Refunds the token if every model fails.
+ * finishes, then a final {done} line. Refunds the token unless all four models answer.
  * Privacy: prompt and answers are never stored, only cost totals.
  */
 export async function POST(request: Request) {
@@ -33,7 +33,8 @@ export async function POST(request: Request) {
           send({ type: "result", ...r, text: r.text });
         }));
         let tokens = left;
-        if (results.every((r) => r.error)) tokens = await addTokens(w.id, 1);
+        // The token only counts when all four answer; any failure refunds it.
+        if (results.some((r) => r.error)) tokens = await addTokens(w.id, 1);
         const cost = results.reduce((s, r) => s + (r.costUsd || 0), 0);
         await logUsage(w.id, cost, results.map(({ id, inTok, outTok, costUsd, ms, error }) => ({ id, inTok, outTok, costUsd, ms, error: !!error }))).catch(() => {});
         send({ type: "done", tokens, refunded: tokens > left, costUsd: cost });
