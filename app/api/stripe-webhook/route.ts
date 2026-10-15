@@ -42,6 +42,12 @@ export async function POST(request: Request) {
       const session = event.data.object as Stripe.Checkout.Session;
       const { credits, userId, guestToken } = session.metadata || {};
 
+      // Compare v2 (iliasr.nyc/compare) is fulfilled by /api/v2/claim after
+      // redirect, verified against Stripe and idempotent on the session id.
+      if (session.metadata?.kind === "compare_v2") {
+        return Response.json({ received: true, status: "compare_v2_ignored" });
+      }
+
       if (!credits) {
         console.error("No credits in session metadata");
         return Response.json({ error: "Missing credits metadata" }, { status: 400 });
