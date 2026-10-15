@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const sep = back.includes("?") ? "&" : "?";
     const session = await getStripe().checkout.sessions.create({
       mode: "payment",
-      line_items: [{ quantity: 1, price_data: { currency: "usd", unit_amount: pack.amount, product_data: { name: pack.name, description: "1 token = one prompt compared across Grok, Claude, Gemini and GPT" } } }],
+      line_items: [{ quantity: 1, price_data: { currency: "usd", unit_amount: pack.amount, product_data: { name: pack.name, description: "Four Minds: 1 token = one prompt answered by Grok, Claude, Gemini and GPT" } } }],
       success_url: `${back}${sep}paid={CHECKOUT_SESSION_ID}`,
       cancel_url: back,
       metadata: { kind: "compare_v2", walletId: w.id, tokens: String(parsed.data.pack) },

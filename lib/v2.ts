@@ -8,9 +8,9 @@ import { getDb } from "./db";
 import { getBearerToken } from "./session";
 
 export const V2_PACKS: Record<number, { amount: number; name: string }> = {
-  1: { amount: 200, name: "1 comparison token" },
-  5: { amount: 500, name: "5 comparison tokens" },
-  20: { amount: 1500, name: "20 comparison tokens" },
+  1: { amount: 200, name: "Four Minds · 1 token" },
+  5: { amount: 500, name: "Four Minds · 5 tokens" },
+  20: { amount: 1500, name: "Four Minds · 20 tokens" },
 };
 
 export const V2_MAX_PROMPT_CHARS = 32_000; // ~8k tokens
